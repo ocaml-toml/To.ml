@@ -36,7 +36,7 @@ rule tomlex lexbuf = parse
   | '"' { stringify (Buffer.create 13) lexbuf }
   | '#' { let _ = comment lexbuf in (); tomlex rexbuf }
   | t_key as value { KEY (value) }
-  | eof   {}
+  | eof   { EOF }
 
 and stringify buff lexbuf = parse
   (* escape everything *)
