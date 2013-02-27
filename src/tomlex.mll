@@ -16,10 +16,14 @@ let t_bool    = ("true"|"false")
 (** booleans are full undercase *)
 let t_key     = [^ '\t' '\n' ' ' '\r' '"' '=' '[' ',' ']']+
 (** keys begins with non blank char and end with the first blank *)
+(* very ugly, beark ! But how doing it right in ocamllex ? *)
+let t_date    = ['0'-'9']['0'-'9']['0'-'9']['0'-'9']'-'['0'-'9']['0'-'9']'-'['0'-'9']['0'-'9']'T'['0'-'9']['0'-'9']':'['0'-'9']['0'-'9']':'['0'-'9']['0'-'9']'Z'
+(** ISO8601 date of form 1979-05-27T07:32:00Z *)
 
 (* TODO datetime *)
 
 rule tomlex = parse
+  | t_date as value { STRING value }
   | t_int as value   { INTEGER (int_of_string value) }
   | t_float as value { FLOAT (float_of_string value) }
   | t_bool as value  {match value with

@@ -33,7 +33,8 @@ toml:
   | keyValue toml { let (group,value) = $1 in
                        TypeTo.add $2 ((!current_group^group), value);
                     $2
-  }
+                  }
+  | error toml { $2 }
   | EOF { TypeTo.init () }
 
 group:
@@ -52,10 +53,12 @@ array:
   | int_chunk  { NodeInt($1) }
   | float_chunk { NodeFloat($1) }
   | string_chunk { NodeString($1) }
-  | LBRACK array_chunk RBRACK { NodeArray($2) }
+  | LBRACK RBRACK { NodeArray([NodeBool([])]) }
+  | LBRACK array RBRACK { NodeArray([$2]) }
+  | LBRACK array_chunk { NodeArray($2) }
 
 array_chunk:
-    array { [$1] }
+    array RBRACK { [$1] }
   | array COLON array_chunk { $1::$3 }
 
 bool_chunk:

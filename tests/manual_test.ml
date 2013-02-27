@@ -27,7 +27,6 @@ let print_val k v =
 let print h =
   Hashtbl.iter print_val h
 
-
 let _ =
   let input = (open_in Sys.argv.(1)) in
     let buff = Buffer.create 100 in
