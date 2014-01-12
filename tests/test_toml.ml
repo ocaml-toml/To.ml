@@ -53,6 +53,12 @@ let _ =
         assert_equal var (TBool true);
         assert_raises Not_found (fun () -> Hashtbl.find toml "key");
         assert_equal (TInt 1337) (Hashtbl.find toml "group1.key2"));
+
+      "Comment" >:: (fun () ->
+        let str = "[group1]\nkey = true # this is comment" in
+        let toml = To.parse str in
+        let var = Hashtbl.find toml "group1.key" in
+        assert_equal var (TBool true));
   ];
     (* "Lexer" >:::                                                 *)
     (* [                                                            *)

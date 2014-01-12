@@ -26,20 +26,15 @@ rule tomlex = parse
   | t_date as value { STRING value }
   | t_int as value   { INTEGER (int_of_string value) }
   | t_float as value { FLOAT (float_of_string value) }
-  | t_bool as value  {match value with
-                     | "true" -> BOOL true
-                     | "false" -> BOOL false
-                     | _ -> failwith("Shit happens in lexer, really")
-                       (* if fired, ocamllex have big problems *)
-                     }
-  | t_white+ { (tomlex lexbuf) }
-  | t_eol { (tomlex lexbuf) }
+  | t_bool as value  { BOOL (bool_of_string value) }
+  | t_white+ { tomlex lexbuf }
+  | t_eol { tomlex lexbuf }
   | '=' { EQUAL }
   | '[' { LBRACK }
   | ']' { RBRACK }
   | '"' { stringify (Buffer.create 13) lexbuf }
   | ',' { COMMA }
-  | '#' { let _ = comment lexbuf in (); tomlex lexbuf }
+  | '#' { comment lexbuf }
   | t_key as value { KEY (value) }
   | eof   { EOF }
 
@@ -52,7 +47,8 @@ and stringify buff = parse
   | _ as c { Buffer.add_char buff c; stringify buff lexbuf }
 
 and comment = parse
-  | (t_eol|eof) { () }
+  | t_eol { tomlex lexbuf }
+  | eof { EOF }
   | _ { comment lexbuf }
 
 
