@@ -40,8 +40,12 @@ let _ =
         let str = "key = [true, true, false, true]" in
         let toml = To.parse str in
         let var = Hashtbl.find toml "key" in
-        assert_equal var (TArray(NodeBool([true; true; false; true]))));
-
+        assert_equal var (TArray(NodeBool([true; true; false; true])));
+        let str = "key = [true, true,]" in
+        let toml = To.parse str in
+        let var = Hashtbl.find toml "key" in
+        assert_equal var (TArray(NodeBool([true; true]))));
+    
       "Grouped key" >:: (fun () ->
         let str = "[group1]\nkey = true\nkey2 = 1337" in
         let toml = To.parse str in
