@@ -1,5 +1,5 @@
 
-FLAGS := -use-ocamlfind
+FLAGS := -use-ocamlfind -use-menhir
 PKGS :=
 INC := -I src
 
