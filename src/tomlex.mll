@@ -38,7 +38,7 @@ rule tomlex = parse
   | '[' { LBRACK }
   | ']' { RBRACK }
   | '"' { stringify (Buffer.create 13) lexbuf }
-  | ',' { COLON }
+  | ',' { COMMA }
   | '#' { let _ = comment lexbuf in (); tomlex lexbuf }
   | t_key as value { KEY (value) }
   | eof   { EOF }
