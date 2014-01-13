@@ -4,9 +4,10 @@
 
 open OUnit
 open TypeTo
-
+open Pprint
 
 let _ =
+  let assert_equal = assert_equal ~printer:string_of_toml in
   let suite = "Main tests" >:::
   [
     "Rache Methodology Approved" >::: [
@@ -59,6 +60,13 @@ let _ =
         let toml = To.parse str in
         let var = Hashtbl.find toml "group1.key" in
         assert_equal var (TBool true));
+
+      "Date" >:: (fun () ->
+        let str = "[group1]\nkey = 1979-05-27T07:32:00Z" in
+        let toml = To.parse str in
+        let var = Hashtbl.find toml "group1.key" in
+         assert_equal (TDate "1979-05-27T07:32:00Z") var);
+
   ];
     (* "Lexer" >:::                                                 *)
     (* [                                                            *)
