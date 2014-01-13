@@ -37,6 +37,12 @@ let _ =
         let var = Hashtbl.find toml "key" in
         assert_equal var (TBool true));
 
+      "String" >:: (fun () ->
+        let str = "\nkey = \"random string with\\nescaped linefeed\"" in
+        let toml = To.parse str in
+        let var = Hashtbl.find toml "key" in
+         assert_equal (TString "random string with\nescaped linefeed") var);
+
       "Array key" >:: (fun () ->
         let str = "key = [true, true, false, true]" in
         let toml = To.parse str in
