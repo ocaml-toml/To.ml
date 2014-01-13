@@ -4,7 +4,7 @@
 
 let t_white   = ['\t' ' ']
 (** Tab char or space char *)
-let t_eol     = ('\n'|'\r'|"\r\n")
+let t_eol     = ['\n' '\r']
 (** Cross platform end of lines *)
 let t_blank   = (t_white|t_eol)
 (** Blank characters as specified by the ref *)
@@ -28,13 +28,13 @@ rule tomlex = parse
   | t_float as value { FLOAT (float_of_string value) }
   | t_bool as value  { BOOL (bool_of_string value) }
   | t_white+ { tomlex lexbuf }
-  | t_eol { tomlex lexbuf }
+  | t_eol+ { tomlex lexbuf }
   | '=' { EQUAL }
   | '[' { LBRACK }
   | ']' { RBRACK }
   | '"' { stringify (Buffer.create 13) lexbuf }
   | ',' { COMMA }
-  | '#' { comment lexbuf }
+  | '#' (_ # t_eol)* { tomlex lexbuf }
   | t_key as value { KEY (value) }
   | eof   { EOF }
 
@@ -45,11 +45,5 @@ and stringify buff = parse
   | eof  { failwith("Unterminated string in file") } (* TODO line handling *)
   | '"'  { STRING (Buffer.contents buff) }
   | _ as c { Buffer.add_char buff c; stringify buff lexbuf }
-
-and comment = parse
-  | t_eol { tomlex lexbuf }
-  | eof { EOF }
-  | _ { comment lexbuf }
-
 
 {}
