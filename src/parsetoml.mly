@@ -11,7 +11,7 @@ let current_group = ref ""
 %token <bool> BOOL
 %token <int> INTEGER
 %token <float> FLOAT
-%token <string> STRING
+%token <string> STRING DATE
 %token <string> KEY
 %token LBRACK RBRACK EQUAL EOF COMMA
 
@@ -44,6 +44,7 @@ value:
   | INTEGER { TInt($1) }
   | FLOAT { TFloat($1) }
   | STRING { TString($1) }
+  | DATE { TDate $1 }
   | LBRACK array_start { TArray($2) }
 
 
@@ -53,6 +54,7 @@ array_start:
   | INTEGER array_end(INTEGER) { NodeInt($1 :: $2) }
   | FLOAT array_end(FLOAT) { NodeFloat($1 :: $2) }
   | STRING array_end(STRING) { NodeString($1 :: $2) }
+  | DATE array_end(DATE) { NodeDate($1 :: $2) }
 (*
   | LBRACK array_start RBRACK { NodeArray([$2]) }
  *)

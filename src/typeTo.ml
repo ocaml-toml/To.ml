@@ -21,7 +21,7 @@ type tomlValue =
   | TInt of int
   | TFloat of float
   | TString of string
-  | TDate of string (* TODO ? *)
+  | TDate of string
   | TArray of tomlNodeArray
 
 (** A Toml configuration
