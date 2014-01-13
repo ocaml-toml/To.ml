@@ -38,10 +38,30 @@ let _ =
         assert_equal var (TBool true));
 
       "String" >:: (fun () ->
-        let str = "\nkey = \"random string with\\nescaped linefeed\"" in
-        let toml = To.parse str in
-        let var = Hashtbl.find toml "key" in
-         assert_equal (TString "random string with\nescaped linefeed") var);
+         assert_equal
+           (TString "\b")
+           (Hashtbl.find (To.parse "key=\"\\b\"") "key");
+         assert_equal
+           (TString "\t")
+           (Hashtbl.find (To.parse "key=\"\\t\"") "key");
+         assert_equal
+           (TString "\n")
+           (Hashtbl.find (To.parse "key=\"\\n\"") "key");
+         assert_equal
+           (TString "\r")
+           (Hashtbl.find (To.parse "key=\"\\r\"") "key");
+         assert_equal
+           (TString "\"")
+           (Hashtbl.find (To.parse "key=\"\\\"\"") "key");
+         assert_equal
+           (TString "\\")
+           (Hashtbl.find (To.parse "key=\"\\\\\"") "key");
+         assert_equal
+           (TString "\\")
+           (Hashtbl.find (To.parse "key=\"\\\\\"") "key");
+         assert_raises
+           (Failure "Forbidden escaped char")
+           (fun () -> To.parse "key=\"\\j\""));
 
       "Array key" >:: (fun () ->
         let str = "key = [true, true, false, true]" in

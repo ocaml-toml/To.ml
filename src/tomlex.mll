@@ -2,6 +2,11 @@
  open Parsetoml
 }
 
+(** TODO:
+    - datetime
+    - \uXXXX \f \/ escaped characters
+ *)
+
 let t_white   = ['\t' ' ']
 (** Tab char or space char *)
 let t_eol     = ['\n' '\r']
@@ -19,8 +24,7 @@ let t_key     = [^ '\t' '\n' ' ' '\r' '"' '=' '[' ',' ']']+
 (* very ugly, beark ! But how doing it right in ocamllex ? *)
 let t_date    = t_digit t_digit t_digit t_digit '-' t_digit t_digit '-' t_digit t_digit 'T' t_digit t_digit ':' t_digit t_digit ':' t_digit t_digit 'Z'
 (** ISO8601 date of form 1979-05-27T07:32:00Z *)
-
-(* TODO datetime *)
+let t_escape  =  '\\' ['b' 't' 'n' 'f' 'r' '"' '/' '\\']
 
 rule tomlex = parse
   | t_int as value   { INTEGER (int_of_string value) }
@@ -39,10 +43,11 @@ rule tomlex = parse
   | eof   { EOF }
 
 and stringify buff = parse
-  (* escape everything *)
-  | '\\'_ as value { Buffer.add_string buff value; stringify buff lexbuf }
+  | t_escape as value
+    { Buffer.add_string buff (Scanf.unescaped value); stringify buff lexbuf }
+  | '\\' { failwith "Forbidden escaped char" }
   (* no unterminated strings *)
-  | eof  { failwith("Unterminated string in file") } (* TODO line handling *)
+  | eof  { failwith "Unterminated string in file" } (* TODO line handling *)
   | '"'  { STRING (Buffer.contents buff) }
   | _ as c { Buffer.add_char buff c; stringify buff lexbuf }
 
