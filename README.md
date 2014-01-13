@@ -3,10 +3,10 @@ To.ml
 
 Implementation in OCaml of the Toml minimal langage (https://github.com/mojombo/toml)
 
-Compilation is made with with Ocamlbuild because life is easier for everyone.
+Compilation is made with Ocamlbuild because life is easier for everyone.
 
-This project use standard OcamlLex and Ocaml parser features, but in order to
-compile tests you'll need OUnit.
+This project use OcamlLex and menhir parsing features. In order to
+compile tests you will also need OUnit.
 
 Thanks
 ------
