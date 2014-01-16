@@ -72,6 +72,14 @@ let _ =
         let toml = To.parse str in
         let var = Hashtbl.find toml "key" in
         assert_equal var (TArray(NodeBool([true; true]))));
+
+      "Nested Arrays" >:: (fun () ->
+        let str ="key=[[1,2],[\"a\",\"b\",\"c\",\"d\"]]" in
+        let toml = To.parse str in
+        assert_equal
+          (TArray(NodeArray([NodeInt([1; 2]);
+                             NodeString(["a";"b";"c";"d"])])))
+          (Hashtbl.find toml "key"));
     
       "Grouped key" >:: (fun () ->
         let str = "[group1]\nkey = true\nkey2 = 1337" in

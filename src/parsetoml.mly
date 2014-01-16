@@ -25,13 +25,18 @@ let current_group = ref ""
 %%
 /* Grammar rules */
 toml:
-  group toml { $2 }
+    group toml { $2 }
   | keyValue toml { let (group,value) = $1 in
                        TypeTo.add $2 ((!current_group^group), value);
                     $2
                   }
-  | error toml { $2 }
   | EOF { TypeTo.init () }
+
+
+(*
+  should fail instead of continue parsing ?
+  | error toml { $2 }
+ *)
 
 group:
   LBRACK KEY RBRACK { current_group := ($2^".") }
@@ -47,7 +52,6 @@ value:
   | DATE { TDate $1 }
   | LBRACK array_start { TArray($2) }
 
-
 array_start:
     RBRACK { NodeBool([]) }
   | BOOL array_end(BOOL) { NodeBool($1 :: $2) }
@@ -55,12 +59,14 @@ array_start:
   | FLOAT array_end(FLOAT) { NodeFloat($1 :: $2) }
   | STRING array_end(STRING) { NodeString($1 :: $2) }
   | DATE array_end(DATE) { NodeDate($1 :: $2) }
-(*
-  | LBRACK array_start RBRACK { NodeArray([$2]) }
- *)
+  | LBRACK array_start nested_array_end { NodeArray($2 :: $3) }
 
 array_end(param):
     COMMA param array_end(param) { $2 :: $3 }
+  | COMMA? RBRACK { [] }
+
+nested_array_end:
+    COMMA LBRACK array_start nested_array_end { $3 :: $4 }
   | COMMA? RBRACK { [] }
 
 %%
