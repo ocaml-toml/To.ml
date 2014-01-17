@@ -25,6 +25,12 @@ let _ =
         assert_equal var (TString "VaLUe42");
         assert_equal var2 (TInt 42));
 
+      "Int" >:: (fun () ->
+        let str = "key = 42\nkey2=-42" in
+        let toml = To.parse str in
+        assert_equal (TInt 42) (Hashtbl.find toml "key");
+        assert_equal (TInt (-42)) (Hashtbl.find toml "key2"));
+
       "Float key" >:: (fun () ->
         let str = "key = 3.141595" in
         let toml = To.parse str in
