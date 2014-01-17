@@ -11,5 +11,6 @@ compile tests you will also need **OUnit**.
 
 ## Limitations
 
-As Ocaml only handle ascii by default (regardless any external library), no support for UTF-8 is provided.
-
+Due to OCaml limits (regardless any external library):
+* No support for UTF-8
+* No support for date (parsed as string, even if typed as date)
