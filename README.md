@@ -1,13 +1,11 @@
-To.ml
-=====
+# To.ml
 
-Implementation in OCaml of the Toml minimal langage (https://github.com/mojombo/toml)
+Ocaml parser for TOML (Tom's Obvious Minimal Language) (https://github.com/mojombo/toml)
 
-Compilation is made with Ocamlbuild because life is easier for everyone.
+## Dependencies
 
-This project use OcamlLex and menhir parsing features. In order to
-compile tests you will also need OUnit.
+Compiled with **ocamlbuild** because it makes life easier for everyone.
 
-Thanks
-------
-thanks to @thompelletier for pointing me that wonderful language
+This project use **ocamllex** and **menhir** parsing features. In order to
+compile tests you will also need **OUnit**.
+
