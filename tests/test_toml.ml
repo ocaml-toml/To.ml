@@ -32,10 +32,10 @@ let _ =
         assert_equal (TInt (-42)) (Hashtbl.find toml "key2"));
 
       "Float key" >:: (fun () ->
-        let str = "key = 3.141595" in
+        let str = "key = 3.141595\nkey2=-3.141595" in
         let toml = To.parse str in
-        let var = Hashtbl.find toml "key" in
-        assert_equal var (TFloat 3.141595));
+        assert_equal (Hashtbl.find toml "key") (TFloat 3.141595);
+        assert_equal (Hashtbl.find toml "key2") (TFloat (-3.141595)));
 
       "Bool key" >:: (fun () ->
         let str = "key = true" in
