@@ -15,7 +15,7 @@ echo '** INSTALLING OPAM'
 
 # install opam
 pushd /tmp
-curl https://codeload.github.com/ocaml/opam/tar.gz/${OPAM_VERSION} | tar xz /tmp/opam-${OPAM_VERSION}
+curl https://codeload.github.com/ocaml/opam/tar.gz/${OPAM_VERSION} | tar xz
 pushd /tmp/opam-${OPAM_VERSION}
 ./configure > /dev/null
 make 2> /dev/null
