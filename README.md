@@ -6,7 +6,7 @@ Ocaml parser for TOML (Tom's Obvious Minimal Language) (https://github.com/mojom
 
 ## Dependencies
 
-Compiled with **ocamlbuild** because it makes life easier for everyone.
+To.ml need Ocaml 4.0 at least. Check your local installation with `ocamlc -v`.
 
 This project use **ocamllex** and **menhir** parsing features. In order to
 compile tests you will also need **OUnit**.
