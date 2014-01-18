@@ -13,6 +13,9 @@ sudo add-apt-repository ppa:avsm/ppa -y
 sudo apt-get update -qq
 sudo apt-get install -qq ocaml opam
 
+opam init -a
+eval `opam  config -env`
+
 echo '** INSTALING DEPENDENCIES'
 
 # install packages from opam
