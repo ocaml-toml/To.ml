@@ -11,71 +11,63 @@ let current_group = ref ""
 %token <bool> BOOL
 %token <int> INTEGER
 %token <float> FLOAT
-%token <string> STRING
+%token <string> STRING DATE
 %token <string> KEY
-%token LBRACK RBRACK EQUAL EOF COLON
+%token LBRACK RBRACK EQUAL EOF COMMA
 
 %start toml
+
 %type <TypeTo.toml> toml
 %type <unit> group
 %type <(string * tomlValue)> keyValue
-%type <tomlNodeArray> array
-
-%type <bool list> bool_chunk
-%type <int list> int_chunk
-%type <float list> float_chunk
-%type <string list> string_chunk
+%type <tomlNodeArray> array_start
 
 %%
 /* Grammar rules */
 toml:
-  group toml { $2 }
+    group toml { $2 }
   | keyValue toml { let (group,value) = $1 in
                        TypeTo.add $2 ((!current_group^group), value);
                     $2
                   }
-  | error toml { $2 }
   | EOF { TypeTo.init () }
+
+
+(*
+  should fail instead of continue parsing ?
+  | error toml { $2 }
+ *)
 
 group:
   LBRACK KEY RBRACK { current_group := ($2^".") }
 
 keyValue:
-    KEY EQUAL BOOL { ($1, TBool($3)) }
-  | KEY EQUAL INTEGER { ($1, TInt($3)) }
-  | KEY EQUAL FLOAT { ($1, TFloat($3)) }
-  | KEY EQUAL STRING { ($1, TString($3)) }
-  | KEY EQUAL LBRACK array RBRACK { ($1, TArray($4)) }
+    KEY EQUAL value { ($1, $3) }
 
-array:
-  /* Empty */ { NodeBool([]) }
-  | bool_chunk { NodeBool($1) }
-  | int_chunk  { NodeInt($1) }
-  | float_chunk { NodeFloat($1) }
-  | string_chunk { NodeString($1) }
-  | LBRACK RBRACK { NodeArray([NodeBool([])]) }
-  | LBRACK array RBRACK { NodeArray([$2]) }
-  | LBRACK array_chunk { NodeArray($2) }
+value:
+    BOOL { TBool($1) }
+  | INTEGER { TInt($1) }
+  | FLOAT { TFloat($1) }
+  | STRING { TString($1) }
+  | DATE { TDate $1 }
+  | LBRACK array_start { TArray($2) }
 
-array_chunk:
-    array RBRACK { [$1] }
-  | array COLON array_chunk { $1::$3 }
+array_start:
+    RBRACK { NodeBool([]) }
+  | BOOL array_end(BOOL) { NodeBool($1 :: $2) }
+  | INTEGER array_end(INTEGER) { NodeInt($1 :: $2) }
+  | FLOAT array_end(FLOAT) { NodeFloat($1 :: $2) }
+  | STRING array_end(STRING) { NodeString($1 :: $2) }
+  | DATE array_end(DATE) { NodeDate($1 :: $2) }
+  | LBRACK array_start nested_array_end { NodeArray($2 :: $3) }
 
-bool_chunk:
-    BOOL { [$1] }
-  | BOOL COLON bool_chunk { $1::$3 }
+array_end(param):
+    COMMA param array_end(param) { $2 :: $3 }
+  | COMMA? RBRACK { [] }
 
-int_chunk:
-    INTEGER { [$1] }
-  | INTEGER COLON int_chunk { $1::$3 }
-
-float_chunk:
-    FLOAT { [$1] }
-  | FLOAT COLON float_chunk { $1::$3 }
-
-string_chunk:
-    STRING { [$1] }
-  | STRING COLON string_chunk { $1::$3 }
+nested_array_end:
+    COMMA LBRACK array_start nested_array_end { $3 :: $4 }
+  | COMMA? RBRACK { [] }
 
 %%
 

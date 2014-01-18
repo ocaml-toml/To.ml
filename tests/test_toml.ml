@@ -4,9 +4,10 @@
 
 open OUnit
 open TypeTo
-
+open Pprint
 
 let _ =
+  let assert_equal = assert_equal ~printer:string_of_toml in
   let suite = "Main tests" >:::
   [
     "Rache Methodology Approved" >::: [
@@ -24,24 +25,68 @@ let _ =
         assert_equal var (TString "VaLUe42");
         assert_equal var2 (TInt 42));
 
-      "Float key" >:: (fun () ->
-        let str = "key = 3.141595" in
+      "Int" >:: (fun () ->
+        let str = "key = 42\nkey2=-42" in
         let toml = To.parse str in
-        let var = Hashtbl.find toml "key" in
-        assert_equal var (TFloat 3.141595));
+        assert_equal (TInt 42) (Hashtbl.find toml "key");
+        assert_equal (TInt (-42)) (Hashtbl.find toml "key2"));
+
+      "Float key" >:: (fun () ->
+        let str = "key = 3.141595\nkey2=-3.141595" in
+        let toml = To.parse str in
+        assert_equal (TFloat 3.141595) (Hashtbl.find toml "key");
+        assert_equal (TFloat (-3.141595)) (Hashtbl.find toml "key2"));
 
       "Bool key" >:: (fun () ->
-        let str = "key = true" in
+        let str = "key = true\nkey2=false" in
         let toml = To.parse str in
-        let var = Hashtbl.find toml "key" in
-        assert_equal var (TBool true));
+        assert_equal (TBool true) (Hashtbl.find toml "key");
+        assert_equal (TBool false) (Hashtbl.find toml "key2"));
+
+      "String" >:: (fun () ->
+         assert_equal
+           (TString "\b")
+           (Hashtbl.find (To.parse "key=\"\\b\"") "key");
+         assert_equal
+           (TString "\t")
+           (Hashtbl.find (To.parse "key=\"\\t\"") "key");
+         assert_equal
+           (TString "\n")
+           (Hashtbl.find (To.parse "key=\"\\n\"") "key");
+         assert_equal
+           (TString "\r")
+           (Hashtbl.find (To.parse "key=\"\\r\"") "key");
+         assert_equal
+           (TString "\"")
+           (Hashtbl.find (To.parse "key=\"\\\"\"") "key");
+         assert_equal
+           (TString "\\")
+           (Hashtbl.find (To.parse "key=\"\\\\\"") "key");
+         assert_equal
+           (TString "\\")
+           (Hashtbl.find (To.parse "key=\"\\\\\"") "key");
+         assert_raises
+           (Failure "Forbidden escaped char")
+           (fun () -> To.parse "key=\"\\j\""));
 
       "Array key" >:: (fun () ->
         let str = "key = [true, true, false, true]" in
         let toml = To.parse str in
         let var = Hashtbl.find toml "key" in
-        assert_equal var (TArray(NodeBool([true; true; false; true]))));
+        assert_equal var (TArray(NodeBool([true; true; false; true])));
+        let str = "key = [true, true,]" in
+        let toml = To.parse str in
+        let var = Hashtbl.find toml "key" in
+        assert_equal var (TArray(NodeBool([true; true]))));
 
+      "Nested Arrays" >:: (fun () ->
+        let str ="key=[[1,2],[\"a\",\"b\",\"c\",\"d\"]]" in
+        let toml = To.parse str in
+        assert_equal
+          (TArray(NodeArray([NodeInt([1; 2]);
+                             NodeString(["a";"b";"c";"d"])])))
+          (Hashtbl.find toml "key"));
+    
       "Grouped key" >:: (fun () ->
         let str = "[group1]\nkey = true\nkey2 = 1337" in
         let toml = To.parse str in
@@ -49,6 +94,19 @@ let _ =
         assert_equal var (TBool true);
         assert_raises Not_found (fun () -> Hashtbl.find toml "key");
         assert_equal (TInt 1337) (Hashtbl.find toml "group1.key2"));
+
+      "Comment" >:: (fun () ->
+        let str = "[group1]\nkey = true # this is comment" in
+        let toml = To.parse str in
+        let var = Hashtbl.find toml "group1.key" in
+        assert_equal var (TBool true));
+
+      "Date" >:: (fun () ->
+        let str = "[group1]\nkey = 1979-05-27T07:32:00Z" in
+        let toml = To.parse str in
+        let var = Hashtbl.find toml "group1.key" in
+         assert_equal (TDate "1979-05-27T07:32:00Z") var);
+
   ];
     (* "Lexer" >:::                                                 *)
     (* [                                                            *)
