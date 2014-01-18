@@ -8,22 +8,10 @@ export OPAM_PACKAGES='ocamlfind ounit menhir'
 echo '** INSTALLING OCAML'
 
 # install ocaml from apt
+sudo add-apt-repository ppa:mike-mcclurg/ocaml
+sudo add-apt-repository ppa:avsm/ppa
 sudo apt-get update -qq
-sudo apt-get install -qq ocaml
-
-echo '** INSTALLING OPAM'
-
-# install opam
-pushd /tmp
-curl https://codeload.github.com/ocaml/opam/tar.gz/${OPAM_VERSION} | tar xz
-pushd /tmp/opam-${OPAM_VERSION}
-./configure > /dev/null
-make 2> /dev/null
-sudo make install > /dev/null 2> /dev/null
-opam init -a
-eval `opam config -env`
-popd
-popd
+sudo apt-get install -qq ocaml opam
 
 echo '** INSTALING DEPENDENCIES'
 
