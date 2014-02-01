@@ -25,21 +25,14 @@ type tomlValue =
   | TArray of tomlNodeArray
 
 (** A Toml configuration
-  * That's basically an Hashtable of pairs (Key * Value)
-  *
-  * Values are prefixed by their groups, so in
-  * <code TOML>
-  * [group1]
-  * key1 = value1
-  * [group2.subgroup1]
-  * key2 = value2
-  * </code>
-  *
-  * Reference key1 with "group1.key1" and key2 with "group2.subgroup1.key2"
-  * All keys are in the same hashtable, that's why we need prefixes
+  * A table is a list of key/value and a list of subtables
   *)
-type toml = (string, tomlValue) Hashtbl.t
+type tomlEntrie =
+  | TValue of tomlValue
+  | TTable of tomlTable
 
-let init () = Hashtbl.create 13
-let add toml (str, node) = Hashtbl.add toml str node
+and tomlTable = (string, tomlEntrie) Hashtbl.t
 
+let get_table toml tbl = match Hashtbl.find toml tbl with
+  | TTable(tbl) -> tbl
+  | _ -> failwith (tbl ^ " is a value")

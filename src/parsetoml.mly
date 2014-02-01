@@ -2,8 +2,23 @@
 (** Header *)
 open TypeTo
 
-(** We keep the last group we met, that will prefix all the key incomming *)
-let current_group = ref ""
+(** We keep the group we are in *)
+let current_path = ref []
+
+let to_path = Str.split (Str.regexp "\\.")
+
+let add (key, value) table =
+  let table =
+    List.fold_left
+      (fun tbl -> fun w -> try match Hashtbl.find tbl w with
+                               | TTable tbl -> tbl
+                               | _ -> failwith (w ^ " is a value")
+                           with Not_found ->
+                             let sub = Hashtbl.create 0 in
+                             Hashtbl.add tbl w (TTable sub); sub)
+      table !current_path in
+  try ignore(Hashtbl.find table key); failwith (key ^ " is already defined")
+  with Not_found -> Hashtbl.add table key (TValue value)
 
 %}
 
@@ -17,7 +32,7 @@ let current_group = ref ""
 
 %start toml
 
-%type <TypeTo.toml> toml
+%type <TypeTo.tomlTable> toml
 %type <unit> group
 %type <(string * tomlValue)> keyValue
 %type <tomlNodeArray> array_start
@@ -26,20 +41,11 @@ let current_group = ref ""
 /* Grammar rules */
 toml:
     group toml { $2 }
-  | keyValue toml { let (group,value) = $1 in
-                       TypeTo.add $2 ((!current_group^group), value);
-                    $2
-                  }
-  | EOF { TypeTo.init () }
-
-
-(*
-  should fail instead of continue parsing ?
-  | error toml { $2 }
- *)
+  | keyValue toml { add $1 $2; $2 }
+  | EOF { Hashtbl.create 0 }
 
 group:
-  LBRACK KEY RBRACK { current_group := ($2^".") }
+  LBRACK KEY RBRACK { current_path := to_path $2 }
 
 keyValue:
     KEY EQUAL value { ($1, $3) }

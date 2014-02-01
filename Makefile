@@ -1,5 +1,5 @@
 
-FLAGS := -use-ocamlfind -yaccflags --explain -use-menhir
+FLAGS := -use-ocamlfind -yaccflags --explain -use-menhir -lib str
 PKGS :=
 INC := -I src
 
