@@ -2,12 +2,9 @@
 (** Header *)
 open TypeTo
 
-(** We keep the group we are in *)
-let current_path = ref []
+let to_path str : string list = Str.split (Str.regexp "\\.") str
 
-let to_path = Str.split (Str.regexp "\\.")
-
-let add (key, value) table =
+let add table path (key, value) =
   let table =
     List.fold_left
       (fun tbl -> fun w -> try match Hashtbl.find tbl w with
@@ -16,7 +13,7 @@ let add (key, value) table =
                            with Not_found ->
                              let sub = Hashtbl.create 0 in
                              Hashtbl.add tbl w (TTable sub); sub)
-      table !current_path in
+      table path in
   try ignore(Hashtbl.find table key); failwith (key ^ " is already defined")
   with Not_found -> Hashtbl.add table key (TValue value)
 
@@ -33,19 +30,21 @@ let add (key, value) table =
 %start toml
 
 %type <TypeTo.tomlTable> toml
-%type <unit> group
+%type <string list> group
 %type <(string * tomlValue)> keyValue
 %type <tomlNodeArray> array_start
 
 %%
 /* Grammar rules */
 toml:
-    group toml { $2 }
-  | keyValue toml { add $1 $2; $2 }
-  | EOF { Hashtbl.create 0 }
+ | keyValue* pair(group, keyValue*)* EOF
+   { let l = ([], $1) :: $2
+     and table = Hashtbl.create 0 in
+     List.iter (fun (g, v) -> List.iter (fun v -> add table g v) v) l;
+     table }
 
 group:
-  LBRACK KEY RBRACK { current_path := to_path $2 }
+  LBRACK KEY RBRACK { to_path $2 }
 
 keyValue:
     KEY EQUAL value { ($1, $3) }
