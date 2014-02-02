@@ -14,6 +14,8 @@ generate code coverage summary.
 
 ## Limitations
 
+Array of tables is not supported.
+
 Due to OCaml limits (regardless any external library):
 * No support for UTF-8
 * No support for date (parsed as string, even if typed as date)
