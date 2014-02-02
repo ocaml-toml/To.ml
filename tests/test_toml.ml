@@ -116,8 +116,18 @@ let _ =
           (TInt 1)
           (get_value toml "key");
         assert_equal
-          (TInt 1)
+          (TInt 2)
           (get_value (get_table toml "group") "key"));
+
+      "get_table/value failure" >:: (fun () ->
+        let str = "key1=1[group1]\nkey2 = 1" in
+        let toml = To.parse str in
+        assert_raises
+          (Failure "group1 is a table")
+          (fun () -> get_value toml "group1");
+        assert_raises
+          (Failure "key1 is a value")
+          (fun () -> get_table toml "key1"));
 
   ];
     (* "Lexer" >:::                                                 *)
