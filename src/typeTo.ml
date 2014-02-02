@@ -25,7 +25,7 @@ type tomlValue =
   | TArray of tomlNodeArray
 
 (** A Toml configuration
-  * A table is a list of key/value and a list of subtables
+  * A toml table is a list (actually a Hashtbl) of (key * value/subtable)
   *)
 type tomlEntrie =
   | TValue of tomlValue
@@ -33,6 +33,11 @@ type tomlEntrie =
 
 and tomlTable = (string, tomlEntrie) Hashtbl.t
 
-let get_table toml tbl = match Hashtbl.find toml tbl with
+let get_table toml key = match Hashtbl.find toml key with
   | TTable(tbl) -> tbl
-  | _ -> failwith (tbl ^ " is a value")
+  | _ -> failwith (key ^ " is a value")
+
+let get_value toml key = match Hashtbl.find toml key with
+  | TValue(v) -> v
+  | _ -> failwith (key ^ " is a table")
+
