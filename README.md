@@ -9,7 +9,8 @@ Ocaml parser for TOML (Tom's Obvious Minimal Language) (https://github.com/mojom
 To.ml need Ocaml 4.0 at least. Check your local installation with `ocamlc -v`.
 
 This project use **ocamllex** and **menhir** parsing features. In order to
-compile tests you will also need **OUnit**.
+compile tests you will also need **OUnit** and **bisect** is required to 
+generate code coverage summary.
 
 ## Limitations
 
