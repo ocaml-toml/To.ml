@@ -109,6 +109,16 @@ let _ =
          assert_equal
            (TDate "1979-05-27T07:32:00Z") (get_value group1 "key"));
 
+      "Same key, different group" >:: (fun () ->
+        let str = "key=1[group]\nkey = 2" in
+        let toml = To.parse str in
+        assert_equal
+          (TInt 1)
+          (get_value toml "key");
+        assert_equal
+          (TInt 1)
+          (get_value (get_table toml "group") "key"));
+
   ];
     (* "Lexer" >:::                                                 *)
     (* [                                                            *)
