@@ -15,18 +15,20 @@ all: to.ml.cmxa
 to.ml.cmxa:
 	ocamlbuild $(FLAGS) -pkgs $(PKGS) -I $(INC) $@
 
-test: test_toml.native official_example.native
+test: test_toml.native official_example.native official_hard_example.native
 	@echo '*******************************************************************'
 	@./test_toml.native
 	@./official_example.native
+	@./official_hard_example.native
 
-test_toml.native official_example.native:
+test_toml.native official_example.native official_hard_example.native:
 	ocamlbuild $(TESTS_FLAGS) -pkgs $(TESTS_PKGS) -Is $(TESTS_INC) $@
 
 coverage:
-	ocamlbuild $(COVERAGE_FLAGS) -pkgs $(TESTS_PKGS) -tags $(COVERAGE_TAGS) -Is $(COVERAGE_INC) test_toml.byte official_example.byte
+	ocamlbuild $(COVERAGE_FLAGS) -pkgs $(TESTS_PKGS) -tags $(COVERAGE_TAGS) -Is $(COVERAGE_INC) test_toml.byte official_example.byte official_hard_example.byte
 	BISECT_FILE=_build/coverage ./test_toml.byte
 	BISECT_FILE=_build/coverage ./official_example.byte
+	BISECT_FILE=_build/coverage ./official_hard_example.byte
 	cd _build && bisect-report -verbose -html report coverage*.out
 
 clean:
