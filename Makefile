@@ -24,8 +24,9 @@ test_toml.native official_example.native:
 	ocamlbuild $(TESTS_FLAGS) -pkgs $(TESTS_PKGS) -Is $(TESTS_INC) $@
 
 coverage:
-	ocamlbuild $(COVERAGE_FLAGS) -pkgs $(TESTS_PKGS) -tags $(COVERAGE_TAGS) -Is $(COVERAGE_INC) test_toml.byte
+	ocamlbuild $(COVERAGE_FLAGS) -pkgs $(TESTS_PKGS) -tags $(COVERAGE_TAGS) -Is $(COVERAGE_INC) test_toml.byte official_example.byte
 	BISECT_FILE=_build/coverage ./test_toml.byte
+	BISECT_FILE=_build/coverage ./official_example.byte
 	cd _build && bisect-report -verbose -html report coverage*.out
 
 clean:
