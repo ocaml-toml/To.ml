@@ -1,14 +1,13 @@
 (**
   * Here is the main file of testing
-  * FIXME: printer is broken
   *)
 
 open OUnit
 open TypeTo
-(* open Pprint *)
+open Pprint
 
 let _ =
-  let assert_equal = OUnit.assert_equal (*~printer:string_of_entrie*) in
+  let assert_equal = OUnit.assert_equal ~printer:string_of_val in
   let suite = "Main tests" >:::
   [
     "Rache Methodology Approved" >::: [
