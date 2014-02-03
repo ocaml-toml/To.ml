@@ -27,16 +27,18 @@ test_string = \"You'll hate me after this - #\"          # \" Annoying, isn't it
 
 # Each of the following keygroups/key value pairs should produce an error. Uncomment to them to test
 
-#[error]   if you didn't catch this, your parser is broken
-#string = \"Anything other than tabs, spaces and newline after a keygroup or key value pair has ended should produce an error unless it is a comment\"   like this
-#array = [
-#         \"This might most likely happen in multiline arrays\",
-#         Like here,
-#         \"or here,
-#         and here\"
-#         ]     End of array comment, forgot the #
-#number = 3.14  pi <--again forgot the #         
 "
+
+let error1 ="string = \"Anything other than tabs, spaces and newline after a keygroup or key value pair has ended should produce an error unless it is a comment\"   like this"
+
+let error2 ="array = [
+         \"This might most likely happen in multiline arrays\",
+         Like here,
+         \"or here,
+         and here\"
+         ]     End of array comment, forgot the #"
+
+let error3 ="number = 3.14  pi <--again forgot the #"
 
 let get_value_list tbl =
   Hashtbl.fold
@@ -76,6 +78,17 @@ let test = "Official example.toml file" >:::
        ("multi_line_array", TArray (NodeString ["]"]))]
       (get_table (get_table (get_table toml "the") "hard") "bit#"
        |> get_value_list));
+
+    "Error" >:: (fun () ->
+      assert_raises
+        (Parsetoml.Error)
+        (fun () -> ignore(To.parse error1));
+      assert_raises
+        (Parsetoml.Error)
+        (fun () -> ignore(To.parse error2));
+      assert_raises
+        (Parsetoml.Error)
+        (fun () -> ignore(To.parse error3)))
 
   ]
 
