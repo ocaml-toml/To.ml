@@ -1,8 +1,3 @@
-(**
-  * Types of To.ml goes here to avoid circular dependency
-  * All type manipulation goes here
-  *)
-
 (** Toml arrays
   * - They are implemented as lists the spirit of TOML simplicity
   * - They are typed, but can change the type if you nest them
@@ -33,6 +28,11 @@ type tomlEntrie =
 
 and tomlTable = (string, tomlEntrie) Hashtbl.t
 
+(**
+ * Basic functions to get tomlTable and tomlValue from a tomlTable
+ * According to its key
+ *)
+
 let get_table toml key = match Hashtbl.find toml key with
   | TTable(tbl) -> tbl
   | _ -> failwith (key ^ " is a value")
@@ -40,4 +40,3 @@ let get_table toml key = match Hashtbl.find toml key with
 let get_value toml key = match Hashtbl.find toml key with
   | TValue(v) -> v
   | _ -> failwith (key ^ " is a table")
-
