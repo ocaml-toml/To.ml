@@ -1,5 +1,4 @@
-FLAGS=-use-ocamlfind -yaccflags --explain -use-menhir -lib str
-PKGS=
+FLAGS=-use-ocamlfind -yaccflags --explain -use-menhir -package str
 INC=src
 
 TESTS_FLAGS=$(FLAGS)
@@ -13,7 +12,7 @@ COVERAGE_INC=$(TESTS_INC)
 all: to.ml.cmxa
 
 to.ml.cmxa:
-	ocamlbuild $(FLAGS) -pkgs $(PKGS) -I $(INC) $@
+	ocamlbuild $(FLAGS) -I $(INC) $@
 
 test: test_toml.native official_example.native official_hard_example.native
 	@echo '*******************************************************************'
