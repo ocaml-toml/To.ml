@@ -9,9 +9,15 @@ COVERAGE_FLAGS=$(TESTS_FLAGS)
 COVERAGE_TAGS=package\(bisect\),syntax\(camlp4o\),syntax\(bisect_pp\)
 COVERAGE_INC=$(TESTS_INC)
 
-all: to.ml.cmxa
+build: toml.cmxa toml.cma
 
-to.ml.cmxa:
+install:
+	ocamlfind install toml META _build/src/toml.cmxa _build/src/toml.cma
+
+uninstall:
+	ocamlfind remove toml
+
+toml.cmxa toml.cma:
 	ocamlbuild $(FLAGS) -I $(INC) $@
 
 test: test_toml.native official_example.native official_hard_example.native
