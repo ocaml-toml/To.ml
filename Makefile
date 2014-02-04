@@ -12,7 +12,7 @@ COVERAGE_INC=$(TESTS_INC)
 build: toml.cmxa toml.cma
 
 install:
-	ocamlfind install toml META _build/src/toml.cmxa _build/src/toml.cma
+	ocamlfind install toml META _build/src/toml.cmxa _build/src/toml.cma _build/src/toml.cmi
 
 uninstall:
 	ocamlfind remove toml
