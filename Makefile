@@ -5,7 +5,7 @@ TESTS_FLAGS=$(FLAGS)
 TESTS_PKGS=oUnit
 TESTS_INC=$(INC),tests
 TEST_FILES=\
-test_toml.ml \
+parser_test.ml \
 official_example.ml \
 official_hard_example.ml \
 helper_test.ml
