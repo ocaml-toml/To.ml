@@ -3,8 +3,9 @@
   *)
 
 open OUnit
-open TypeTo
-open Pprint
+open TomlType
+open TomlPprint
+open Toml
 
 let _ =
   let assert_equal = OUnit.assert_equal ~printer:string_of_val in

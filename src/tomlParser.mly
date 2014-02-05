@@ -1,6 +1,5 @@
 %{
-(** Header *)
-open TypeTo
+open TomlType
 
 let to_path str : string list = Str.split (Str.regexp "\\.") str
 
@@ -29,10 +28,10 @@ let add table path (key, value) =
 
 %start toml
 
-%type <TypeTo.tomlTable> toml
+%type <TomlType.tomlTable> toml
 %type <string list> group
-%type <(string * tomlValue)> keyValue
-%type <tomlNodeArray> array_start
+%type <(string * TomlType.tomlValue)> keyValue
+%type <TomlType.tomlNodeArray> array_start
 
 %%
 /* Grammar rules */

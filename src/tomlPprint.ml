@@ -1,4 +1,4 @@
-open TypeTo
+open TomlType
 
 let string_of_list (stringifier : 'a -> string) (els : 'a list)  =
   String.concat "; " @@ List.map stringifier els

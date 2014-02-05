@@ -1,6 +1,7 @@
 open OUnit
-open TypeTo
-open Pprint
+open TomlType
+open TomlPprint
+open Toml
 
 let input =
 "# This is a TOML document. Boom.

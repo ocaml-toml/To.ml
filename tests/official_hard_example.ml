@@ -1,6 +1,7 @@
 open OUnit
-open TypeTo
-open Pprint
+open TomlType
+open TomlPprint
+open Toml
 
 let input =
 "# Test file for TOML
@@ -81,13 +82,13 @@ let test = "Official example.toml file" >:::
 
     "Error" >:: (fun () ->
       assert_raises
-        (Parsetoml.Error)
+        (TomlParser.Error)
         (fun () -> ignore(Toml.parse error1));
       assert_raises
-        (Parsetoml.Error)
+        (TomlParser.Error)
         (fun () -> ignore(Toml.parse error2));
       assert_raises
-        (Parsetoml.Error)
+        (TomlParser.Error)
         (fun () -> ignore(Toml.parse error3)))
 
   ]
