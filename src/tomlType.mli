@@ -27,16 +27,3 @@ type tomlEntrie =
   | TTable of tomlTable
 
 and tomlTable = (string, tomlEntrie) Hashtbl.t
-
-(**
- * Basic functions to get tomlTable and tomlValue from a tomlTable
- * According to its key
- *)
-
-let get_table toml key = match Hashtbl.find toml key with
-  | TTable(tbl) -> tbl
-  | _ -> failwith (key ^ " is a value")
-
-let get_value toml key = match Hashtbl.find toml key with
-  | TValue(v) -> v
-  | _ -> failwith (key ^ " is a table")

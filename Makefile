@@ -20,13 +20,14 @@ uninstall:
 toml.cmxa toml.cma:
 	ocamlbuild $(FLAGS) -I $(INC) $@
 
-test: test_toml.native official_example.native official_hard_example.native
+test: test_toml.native official_example.native official_hard_example.native helper_test.native
 	@echo '*******************************************************************'
 	@./test_toml.native
 	@./official_example.native
 	@./official_hard_example.native
+	@./helper_test.native
 
-test_toml.native official_example.native official_hard_example.native:
+test_toml.native official_example.native official_hard_example.native helper_test.native:
 	ocamlbuild $(TESTS_FLAGS) -pkgs $(TESTS_PKGS) -Is $(TESTS_INC) $@
 
 coverage:

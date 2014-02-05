@@ -58,7 +58,7 @@ let get_value_list tbl =
   Hashtbl.fold
     (fun k v acc -> match v with TValue (v) -> (k, v) :: acc | _ -> acc) tbl []
 
-let toml = Toml.parse input
+let toml = Toml.from_string input
 
 let printer li =
   "[" ^ (String.concat "; "

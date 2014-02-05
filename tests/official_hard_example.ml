@@ -45,7 +45,7 @@ let get_value_list tbl =
   Hashtbl.fold
     (fun k v acc -> match v with TValue (v) -> (k, v) :: acc | _ -> acc) tbl []
 
-let toml = Toml.parse input
+let toml = Toml.from_string input
 
 let printer li =
   "[" ^ (String.concat ";\n"
@@ -83,13 +83,13 @@ let test = "Official example.toml file" >:::
     "Error" >:: (fun () ->
       assert_raises
         (TomlParser.Error)
-        (fun () -> ignore(Toml.parse error1));
+        (fun () -> ignore(Toml.from_string error1));
       assert_raises
         (TomlParser.Error)
-        (fun () -> ignore(Toml.parse error2));
+        (fun () -> ignore(Toml.from_string error2));
       assert_raises
         (TomlParser.Error)
-        (fun () -> ignore(Toml.parse error3)))
+        (fun () -> ignore(Toml.from_string error3)))
 
   ]
 
