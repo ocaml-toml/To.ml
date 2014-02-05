@@ -15,6 +15,7 @@ COVERAGE_TAGS=package\(bisect\),syntax\(camlp4o\),syntax\(bisect_pp\)
 COVERAGE_INC=$(TESTS_INC)
 
 LIB_FILES=\
+toml.a \
 toml.cmxa \
 toml.cma \
 toml.cmi \
