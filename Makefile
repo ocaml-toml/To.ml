@@ -4,6 +4,11 @@ INC=src
 TESTS_FLAGS=$(FLAGS)
 TESTS_PKGS=oUnit
 TESTS_INC=$(INC),tests
+TEST_FILES=\
+test_toml.ml \
+official_example.ml \
+official_hard_example.ml \
+helper_test.ml
 
 COVERAGE_FLAGS=$(TESTS_FLAGS)
 COVERAGE_TAGS=package\(bisect\),syntax\(camlp4o\),syntax\(bisect_pp\)
@@ -20,21 +25,16 @@ uninstall:
 toml.cmxa toml.cma:
 	ocamlbuild $(FLAGS) -I $(INC) $@
 
-test: test_toml.native official_example.native official_hard_example.native helper_test.native
+test: $(TEST_FILES:.ml=.native)
 	@echo '*******************************************************************'
-	@./test_toml.native
-	@./official_example.native
-	@./official_hard_example.native
-	@./helper_test.native
+	@$(foreach file, $^, ./$(file);)
 
-test_toml.native official_example.native official_hard_example.native helper_test.native:
+$(TEST_FILES:.ml=.native):
 	ocamlbuild $(TESTS_FLAGS) -pkgs $(TESTS_PKGS) -Is $(TESTS_INC) $@
 
 coverage:
-	ocamlbuild $(COVERAGE_FLAGS) -pkgs $(TESTS_PKGS) -tags $(COVERAGE_TAGS) -Is $(COVERAGE_INC) test_toml.byte official_example.byte official_hard_example.byte
-	BISECT_FILE=_build/coverage ./test_toml.byte
-	BISECT_FILE=_build/coverage ./official_example.byte
-	BISECT_FILE=_build/coverage ./official_hard_example.byte
+	ocamlbuild $(COVERAGE_FLAGS) -pkgs $(TESTS_PKGS) -tags $(COVERAGE_TAGS) -Is $(COVERAGE_INC) $(TEST_FILES:.ml=.byte)
+	@$(foreach file, $(TEST_FILES:.ml=.byte), BISECT_FILE=_build/coverage ./$(file);)
 	cd _build && bisect-report -verbose -html report coverage*.out
 
 clean:
