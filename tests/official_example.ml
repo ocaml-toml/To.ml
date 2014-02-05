@@ -41,10 +41,12 @@ hosts = [
   \"alpha\",
   \"omega\"
 ]
+"
 
-# Products (Not supported by To.ml)
+let table_array_input =
+"# Products (Not supported by To.ml)
 
-#  [[products]]
+  [[products]]
 #  name = \"Hammer\"
 #  sku = 738594937
 
@@ -105,7 +107,12 @@ let test = "Official example.toml file" >:::
       (get_table toml "clients" |> get_value_list)
       [("data", TArray (NodeArray [NodeString ["gamma"; "delta"];
                                    NodeInt [1; 2]]));
-       ("hosts", TArray (NodeString ["alpha"; "omega"]))])
+       ("hosts", TArray (NodeString ["alpha"; "omega"]))]);
+
+    "Array of table" >:: (fun () ->
+    assert_raises
+      (Failure "Array of tables is not supported")
+      (fun () -> ignore(Toml.from_string table_array_input)))
   ]
 
 let _ = OUnit.run_test_tt_main test

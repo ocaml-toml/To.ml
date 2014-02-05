@@ -33,6 +33,7 @@ rule tomlex = parse
   | t_date as value  { DATE value }
   | t_white+ { tomlex lexbuf }
   | t_eol+ { tomlex lexbuf }
+  | "[[" { failwith "Array of tables is not supported" }
   | '=' { EQUAL }
   | '[' { LBRACK }
   | ']' { RBRACK }

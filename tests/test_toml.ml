@@ -81,7 +81,7 @@ let _ =
         assert_equal (TArray(NodeBool([true; true]))) var);
 
       "Nested Arrays" >:: (fun () ->
-        let str ="key=[[1,2],[\"a\",\"b\",\"c\",\"d\"]]" in
+        let str ="key=[ [1,2],[\"a\",\"b\",\"c\",\"d\"] ]" in
         let toml = Toml.from_string str in
         assert_equal
           (TArray(NodeArray([NodeInt([1; 2]);
