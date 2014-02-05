@@ -48,7 +48,7 @@ and stringify buff = parse
     { Buffer.add_string buff (Scanf.unescaped value); stringify buff lexbuf }
   | '\\' { failwith "Forbidden escaped char" }
   (* no unterminated strings *)
-  | eof  { failwith "Unterminated string in file" } (* TODO line handling *)
+  | eof  { failwith "Unterminated string" }
   | '"'  { STRING (Buffer.contents buff) }
   | _ as c { Buffer.add_char buff c; stringify buff lexbuf }
 

@@ -68,7 +68,10 @@ let _ =
            (get_value (Toml.from_string "key=\"\\\\\"") "key");
          assert_raises
            (Failure "Forbidden escaped char")
-           (fun () -> Toml.from_string "key=\"\\j\""));
+           (fun () -> Toml.from_string "key=\"\\j\"");
+         assert_raises
+           (Failure "Unterminated string")
+           (fun () -> Toml.from_string "key=\"This string is not termin"));
 
       "Array key" >:: (fun () ->
         let str = "key = [true, true, false, true]" in
