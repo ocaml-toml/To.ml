@@ -14,10 +14,18 @@ COVERAGE_FLAGS=$(TESTS_FLAGS)
 COVERAGE_TAGS=package\(bisect\),syntax\(camlp4o\),syntax\(bisect_pp\)
 COVERAGE_INC=$(TESTS_INC)
 
+LIB_FILES=\
+toml.cmxa \
+toml.cma \
+toml.cmi \
+tomlType.cmi
+
 build: toml.cmxa toml.cma
 
 install:
-	ocamlfind install toml META _build/src/toml.cmxa _build/src/toml.cma _build/src/toml.cmi
+	ocamlfind install toml META $(addprefix _build/src/, $(LIB_FILES))
+
+#_build/src/toml.cmxa _build/src/toml.cma _build/src/toml.cmi 
 
 uninstall:
 	ocamlfind remove toml
