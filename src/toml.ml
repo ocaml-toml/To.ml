@@ -18,6 +18,18 @@ let parse lexbuf =
  * According to its key
  *)
 
+let get_tables toml =
+  Hashtbl.fold (fun k v acc ->
+                match k, v with
+                | _, TTable(v) -> (k, v) :: acc
+                |_ -> acc) toml []
+
+let get_values toml =
+  Hashtbl.fold (fun k v acc ->
+                match k, v with
+                | _, TValue(v) -> (k, v) :: acc
+                |_ -> acc) toml []
+
 let get_table toml key = match Hashtbl.find toml key with
   | TTable(tbl) -> tbl
   | _ -> failwith (key ^ " is a value")
