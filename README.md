@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/mackwic/To.ml.png?branch=master)](https://travis-ci.org/mackwic/To.ml)
 
-Ocaml parser for TOML (Tom's Obvious Minimal Language) (https://github.com/mojombo/toml)
+Ocaml parser for TOML [(Tom's Obvious Minimal Language)](https://github.com/mojombo/toml) v0.2.0.
 
 ## Dependencies
 
