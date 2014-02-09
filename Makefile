@@ -1,25 +1,51 @@
+FLAGS=-use-ocamlfind -yaccflags --explain -use-menhir -package str
+INC=src
 
-FLAGS := -use-ocamlfind -yaccflags --explain -use-menhir
-PKGS :=
-INC := -I src
+TESTS_FLAGS=$(FLAGS)
+TESTS_PKGS=oUnit
+TESTS_INC=$(INC),tests
+TEST_FILES=\
+parser_test.ml \
+official_example.ml \
+official_hard_example.ml \
+helper_test.ml
 
-TESTS_FLAGS := $(FLAGS)
-TESTS_PKGS := -pkgs oUnit
-TESTS_INC := -I tests $(INC)
+COVERAGE_FLAGS=$(TESTS_FLAGS)
+COVERAGE_TAGS=package\(bisect\),syntax\(camlp4o\),syntax\(bisect_pp\)
+COVERAGE_INC=$(TESTS_INC)
 
-all: to.ml.cmxa
+LIB_FILES=\
+toml.a \
+toml.cmxa \
+toml.cma \
+toml.cmi \
+tomlType.cmi
 
-to.ml.cmxa:
-	ocamlbuild $(FLAGS) $(PKGS) $(INC) to.ml.cmxa
+build: toml.cmxa toml.cma
 
-test: test_toml.native
+install:
+	ocamlfind install toml META $(addprefix _build/src/, $(LIB_FILES))
+
+#_build/src/toml.cmxa _build/src/toml.cma _build/src/toml.cmi 
+
+uninstall:
+	ocamlfind remove toml
+
+toml.cmxa toml.cma:
+	ocamlbuild $(FLAGS) -I $(INC) $@
+
+test: $(TEST_FILES:.ml=.native)
 	@echo '*******************************************************************'
-	@./test_toml.native
+	@$(foreach file, $^, ./$(file);)
 
-test_toml.native:
-	ocamlbuild $(TESTS_FLAGS) $(TESTS_PKGS) $(TESTS_INC) test_toml.native
+$(TEST_FILES:.ml=.native):
+	ocamlbuild $(TESTS_FLAGS) -pkgs $(TESTS_PKGS) -Is $(TESTS_INC) $@
 
+coverage:
+	ocamlbuild $(COVERAGE_FLAGS) -pkgs $(TESTS_PKGS) -tags $(COVERAGE_TAGS) -Is $(COVERAGE_INC) $(TEST_FILES:.ml=.byte)
+	@$(foreach file, $(TEST_FILES:.ml=.byte), BISECT_FILE=_build/coverage ./$(file);)
+	cd _build && bisect-report -verbose -html report coverage*.out
 
-clean::
+clean:
 	ocamlbuild -clean
 

@@ -1,5 +1,5 @@
 {
- open Parsetoml
+ open TomlParser
 }
 
 (** TODO:
@@ -33,6 +33,7 @@ rule tomlex = parse
   | t_date as value  { DATE value }
   | t_white+ { tomlex lexbuf }
   | t_eol+ { tomlex lexbuf }
+  | "[[" { failwith "Array of tables is not supported" }
   | '=' { EQUAL }
   | '[' { LBRACK }
   | ']' { RBRACK }
@@ -47,7 +48,7 @@ and stringify buff = parse
     { Buffer.add_string buff (Scanf.unescaped value); stringify buff lexbuf }
   | '\\' { failwith "Forbidden escaped char" }
   (* no unterminated strings *)
-  | eof  { failwith "Unterminated string in file" } (* TODO line handling *)
+  | eof  { failwith "Unterminated string" }
   | '"'  { STRING (Buffer.contents buff) }
   | _ as c { Buffer.add_char buff c; stringify buff lexbuf }
 

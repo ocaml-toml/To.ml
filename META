@@ -1,0 +1,6 @@
+name="toml"
+version="20140204"
+description="TOML parser."
+requires    ="str"
+archive(byte)      ="toml.cma"
+archive(native)    ="toml.cmxa"
