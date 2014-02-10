@@ -5,11 +5,7 @@ let string_of_list (stringifier : 'a -> string) (els : 'a list)  =
 
 let rec string_of_table tbl : string =
   Hashtbl.fold (fun k v acc -> (k, v) :: acc) tbl []
-  |> string_of_list (fun (k, v) -> k ^ "->" ^ string_of_entrie v)
-
-and string_of_entrie : tomlEntrie -> string = function
-  | TTable tbl -> "TTable(" ^ string_of_table tbl ^ ")"
-  | TValue v -> "TValue(" ^ string_of_val v ^ ")"
+  |> string_of_list (fun (k, v) -> k ^ "->" ^ string_of_val v)
 
 and string_of_node : tomlNodeArray -> string = function
   | NodeBool l -> string_of_list string_of_bool l
@@ -26,3 +22,4 @@ and string_of_val : tomlValue -> string = function
   | TString s -> "TString(" ^ s ^ ")"
   | TDate d -> "TDate(" ^ d ^ ")"
   | TArray arr -> "[" ^ string_of_node arr ^ "]"
+  | TTable tbl -> "TTable(" ^ string_of_table tbl ^ ")"

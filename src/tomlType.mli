@@ -11,19 +11,13 @@ type tomlNodeArray =
   | NodeArray of tomlNodeArray list (* this can have any type *)
 
 (** Toml values *)
-type tomlValue =
+and tomlValue =
   | TBool of bool
   | TInt of int
   | TFloat of float
   | TString of string
   | TDate of string
   | TArray of tomlNodeArray
-
-(** A Toml configuration
-  * A toml table is a list (actually a Hashtbl) of (key * value/subtable)
-  *)
-type tomlEntrie =
-  | TValue of tomlValue
   | TTable of tomlTable
 
-and tomlTable = (string, tomlEntrie) Hashtbl.t
+and tomlTable = (string, tomlValue) Hashtbl.t

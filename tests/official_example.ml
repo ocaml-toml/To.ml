@@ -56,10 +56,6 @@ let table_array_input =
 #  color = \"gray\"
 "
 
-let get_value_list tbl =
-  Hashtbl.fold
-    (fun k v acc -> match v with TValue (v) -> (k, v) :: acc | _ -> acc) tbl []
-
 let toml = Toml.from_string input
 
 let printer li =
@@ -73,12 +69,12 @@ let test = "Official example.toml file" >:::
   [
     "Root values" >:: (fun () ->
       assert_equal
-        (get_value_list toml)
+        (get_values toml)
         [("title", TString "TOML Example")]);
 
     "Owner table" >:: (fun () ->
     assert_equal
-      (get_table toml "owner" |> get_value_list)
+      (get_table toml "owner" |> get_values)
       [("name", TString "Tom Preston-Werner");
        ("organization", TString "GitHub");
        ("bio", TString "GitHub Cofounder & CEO\nLikes tater tots and beer.");
@@ -86,7 +82,7 @@ let test = "Official example.toml file" >:::
       
     "Database table" >:: (fun () ->
     assert_equal
-      (get_table toml "database" |> get_value_list)
+      (get_table toml "database" |> get_values)
       [("server", TString "192.168.1.1");
        ("ports", TArray (NodeInt [8001; 8001; 8002]));
        ("connection_max", TInt 5000);
@@ -94,17 +90,17 @@ let test = "Official example.toml file" >:::
     
     "Servers table" >:: (fun () ->
     assert_equal
-      ((get_table (get_table toml "servers") "alpha") |> get_value_list)
+      ((get_table (get_table toml "servers") "alpha") |> get_values)
       [("ip", TString "10.0.0.1");
        ("dc", TString "eqdc10")];
     assert_equal
-      ((get_table (get_table toml "servers") "beta") |> get_value_list)
+      ((get_table (get_table toml "servers") "beta") |> get_values)
       [("ip", TString "10.0.0.2");
        ("dc", TString "eqdc10")]);
 
     "Client table" >:: (fun () ->
     assert_equal
-      (get_table toml "clients" |> get_value_list)
+      (get_table toml "clients" |> get_values)
       [("data", TArray (NodeArray [NodeString ["gamma"; "delta"];
                                    NodeInt [1; 2]]));
        ("hosts", TArray (NodeString ["alpha"; "omega"]))]);
