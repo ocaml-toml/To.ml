@@ -15,57 +15,57 @@ let _ =
        "simple key value" >:: (fun () ->
         let str = "key = \"VaLUe42\"" in
         let toml = Toml.from_string str in
-        let var = get_value toml "key" in
+        let var = get toml "key" in
         assert_equal (TString"VaLUe42") var;
         assert_bool "Bad grammar" (var <> (TString("value42"))));
 
       "Two keys value" >:: (fun () ->
         let str = "key = \"VaLUe42\"\nkey2=42" in
         let toml = Toml.from_string str in
-        let var = get_value toml "key" and var2 = get_value toml "key2" in
+        let var = get toml "key" and var2 = get toml "key2" in
         assert_equal (TString "VaLUe42") var;
         assert_equal (TInt 42) var2);
 
       "Int" >:: (fun () ->
         let str = "key = 42\nkey2=-42" in
         let toml = Toml.from_string str in
-        assert_equal (TInt 42) (get_value toml "key");
-        assert_equal (TInt (-42)) (get_value toml "key2"));
+        assert_equal (TInt 42) (get toml "key");
+        assert_equal (TInt (-42)) (get toml "key2"));
 
       "Float key" >:: (fun () ->
         let str = "key = 3.141595\nkey2=-3.141595" in
         let toml = Toml.from_string str in
-        assert_equal (TFloat 3.141595) (get_value toml "key");
-        assert_equal (TFloat (-3.141595)) (get_value toml "key2"));
+        assert_equal (TFloat 3.141595) (get toml "key");
+        assert_equal (TFloat (-3.141595)) (get toml "key2"));
 
       "Bool key" >:: (fun () ->
         let str = "key = true\nkey2=false" in
         let toml = Toml.from_string str in
-        assert_equal (TBool true) (get_value toml "key");
-        assert_equal (TBool false) (get_value toml "key2"));
+        assert_equal (TBool true) (get toml "key");
+        assert_equal (TBool false) (get toml "key2"));
 
       "String" >:: (fun () ->
          assert_equal
            (TString "\b")
-           (get_value (Toml.from_string "key=\"\\b\"") "key");
+           (get (Toml.from_string "key=\"\\b\"") "key");
          assert_equal
            (TString "\t")
-           (get_value (Toml.from_string "key=\"\\t\"") "key");
+           (get (Toml.from_string "key=\"\\t\"") "key");
          assert_equal
            (TString "\n")
-           (get_value (Toml.from_string "key=\"\\n\"") "key");
+           (get (Toml.from_string "key=\"\\n\"") "key");
          assert_equal
            (TString "\r")
-           (get_value (Toml.from_string "key=\"\\r\"") "key");
+           (get (Toml.from_string "key=\"\\r\"") "key");
          assert_equal
            (TString "\"")
-           (get_value (Toml.from_string "key=\"\\\"\"") "key");
+           (get (Toml.from_string "key=\"\\\"\"") "key");
          assert_equal
            (TString "\\")
-           (get_value (Toml.from_string "key=\"\\\\\"") "key");
+           (get (Toml.from_string "key=\"\\\\\"") "key");
          assert_equal
            (TString "\\")
-           (get_value (Toml.from_string "key=\"\\\\\"") "key");
+           (get (Toml.from_string "key=\"\\\\\"") "key");
          assert_raises
            (Failure "Forbidden escaped char")
            (fun () -> Toml.from_string "key=\"\\j\"");
@@ -76,11 +76,11 @@ let _ =
       "Array key" >:: (fun () ->
         let str = "key = [true, true, false, true]" in
         let toml = Toml.from_string str in
-        let var = get_value toml "key" in
+        let var = get toml "key" in
         assert_equal (TArray(NodeBool([true; true; false; true]))) var;
         let str = "key = [true, true,]" in
         let toml = Toml.from_string str in
-        let var = get_value toml "key" in
+        let var = get toml "key" in
         assert_equal (TArray(NodeBool([true; true]))) var);
 
       "Nested Arrays" >:: (fun () ->
@@ -89,38 +89,38 @@ let _ =
         assert_equal
           (TArray(NodeArray([NodeInt([1; 2]);
                              NodeString(["a";"b";"c";"d"])])))
-          (get_value toml "key"));
+          (get toml "key"));
     
       "Grouped key" >:: (fun () ->
         let str = "[group1]\nkey = true\nkey2 = 1337" in
         let toml = Toml.from_string str in
-        assert_raises Not_found (fun () -> get_value toml "key");
+        assert_raises Not_found (fun () -> get toml "key");
         let group1 = get_table toml "group1" in
-        assert_equal (TBool true) (get_value group1 "key");
-        assert_equal (TInt 1337) (get_value group1 "key2"));
+        assert_equal (TBool true) (get group1 "key");
+        assert_equal (TInt 1337) (get group1 "key2"));
 
       "Comment" >:: (fun () ->
         let str = "[group1]\nkey = true # this is comment" in
         let toml = Toml.from_string str in
         let group1 = get_table toml "group1" in
-        assert_equal (TBool true) (get_value group1 "key"));
+        assert_equal (TBool true) (get group1 "key"));
 
       "Date" >:: (fun () ->
         let str = "[group1]\nkey = 1979-05-27T07:32:00Z" in
         let toml = Toml.from_string str in
         let group1 = get_table toml "group1" in
          assert_equal
-           (TDate "1979-05-27T07:32:00Z") (get_value group1 "key"));
+           (TDate "1979-05-27T07:32:00Z") (get group1 "key"));
 
       "Same key, different group" >:: (fun () ->
         let str = "key=1[group]\nkey = 2" in
         let toml = Toml.from_string str in
         assert_equal
           (TInt 1)
-          (get_value toml "key");
+          (get toml "key");
         assert_equal
           (TInt 2)
-          (get_value (get_table toml "group") "key"));
+          (get (get_table toml "group") "key"));
 
   ];
     (* "Lexer" >:::                                                 *)

@@ -4,10 +4,10 @@ open TomlType
   @return (string, TomlValue) Hashtbl.t
 *)
 
-let parse lexbuf = TomlParser.toml |> TomlLexer.tomlex
-let from_string = parse |> Lexing.from_string
-let from_channel = parse |> Lexing.from_channel
-let from_filename = from_channel |> open_in
+let parse lexbuf = TomlParser.toml TomlLexer.tomlex lexbuf
+let from_string s = parse (Lexing.from_string s)
+let from_channel c = parse (Lexing.from_channel c)
+let from_filename f = from_channel (open_in f)
 
 (**
  * Functions to get the list of direct values / sub tables of a tomlTable
@@ -35,50 +35,50 @@ exception Bad_Type of (string * string)
  * Functions to retreive values of an expected type
  *)
 
-let get_table toml key = function get toml key
+let get_table toml key = match (get toml key) with
   | TTable(tbl) -> tbl
-  | _ -> raise (Bad_Type (key * "value"))
+  | _ -> raise (Bad_Type (key, "value"))
 
-let get_bool toml key = function get toml key
+let get_bool toml key = match get toml key with
   | TBool b -> b
-  | _ -> raise (Bad_Type (key * "boolean"))
+  | _ -> raise (Bad_Type (key, "boolean"))
 
-let get_int toml key = function get toml key
+let get_int toml key = match get toml key with
   | TInt i -> i
-  | _ -> raise (Bad_Type (key * "integer"))
+  | _ -> raise (Bad_Type (key, "integer"))
 
-let get_float toml key = function get toml key
+let get_float toml key = match get toml key with
   | TFloat f -> f
-  | _ -> raise (Bad_Type (key * "float"))
+  | _ -> raise (Bad_Type (key, "float"))
 
-let get_string toml key = function get toml key
+let get_string toml key = match get toml key with
   | TString s -> s
-  | _ -> raise (Bad_Type (key * "string"))
+  | _ -> raise (Bad_Type (key, "string"))
 
-let get_date toml key = function get toml key
+let get_date toml key = match get toml key with
   | TDate d -> d
-  | _ -> raise (Bad_Type (key * "date"))
+  | _ -> raise (Bad_Type (key, "date"))
 
 (**
  * Functions to retreive OCaml primitive type list
  *)
 
-let get_bool_list toml key = function get toml key
+let get_bool_list toml key = match get toml key with
   | TArray (NodeBool b) -> b
-  | _ -> raise (Bad_Type (key * "boolean array"))
+  | _ -> raise (Bad_Type (key, "boolean array"))
 
-let get_int_list toml key = function get toml key
+let get_int_list toml key = match get toml key with
   | TArray (NodeInt i) -> i
-  | _ -> raise (Bad_Type (key * "integer array"))
+  | _ -> raise (Bad_Type (key, "integer array"))
 
-let get_float_list toml key = function get toml key
+let get_float_list toml key = match get toml key with
   | TArray (NodeFloat f) -> f
-  | _ -> raise (Bad_Type (key * "float array"))
+  | _ -> raise (Bad_Type (key, "float array"))
 
-let get_string_list toml key = function get toml key
+let get_string_list toml key = match get toml key with
   | TArray (NodeString s) -> s
-  | _ -> raise (Bad_Type (key * "string array"))
+  | _ -> raise (Bad_Type (key, "string array"))
 
-let get_date_list toml key = function get toml key
+let get_date_list toml key = match get toml key with
   | TArray (NodeDate d) -> d
-  | _ -> raise (Bad_Type (key * "date array"))
+  | _ -> raise (Bad_Type (key, "date array"))
