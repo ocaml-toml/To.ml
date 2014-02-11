@@ -3,45 +3,7 @@ open TomlType
 open TomlPprint
 open Toml
 
-let input =
-"# This is a TOML document. Boom.
-
-title = \"TOML Example\"
-
-[owner]
-name = \"Tom Preston-Werner\"
-organization = \"GitHub\"
-bio = \"GitHub Cofounder & CEO\nLikes tater tots and beer.\"
-dob = 1979-05-27T07:32:00Z # First class dates? Why not?
-
-[database]
-server = \"192.168.1.1\"
-ports = [ 8001, 8001, 8002 ]
-connection_max = 5000
-enabled = true
-
-[servers]
-
-  # You can indent as you please. Tabs or spaces. TOML don't care.
-  [servers.alpha]
-  ip = \"10.0.0.1\"
-  dc = \"eqdc10\"
-
-  [servers.beta]
-  ip = \"10.0.0.2\"
-  dc = \"eqdc10\"
-#  country = \"中国\" # This should be parsed as UTF-8
-                    # but To.ml does not support it
-
-[clients]
-data = [ [\"gamma\", \"delta\"], [1, 2] ] # just an update to make sure parsers support it
-
-# Line breaks are OK when inside arrays
-hosts = [
-  \"alpha\",
-  \"omega\"
-]
-"
+(* This test file expects example.toml from official toml repo read *)
 
 let table_array_input =
 "# Products (Not supported by To.ml)
@@ -56,14 +18,15 @@ let table_array_input =
 #  color = \"gray\"
 "
 
-let toml = Toml.from_string input
+let toml = Toml.from_channel stdin
 
 let printer li =
   "[" ^ (String.concat "; "
         @@ List.map (fun (i, v) -> "\""^i^"\"->"^string_of_val v) li) ^ "]"
 
 let assert_equal x y =
-  OUnit.assert_equal ~printer:printer (List.stable_sort compare x) (List.stable_sort compare y)
+  OUnit.assert_equal ~printer:printer
+                     (List.stable_sort compare x) (List.stable_sort compare y)
 
 let test = "Official example.toml file" >:::
   [
