@@ -14,33 +14,32 @@ let parse lexbuf =
   TomlParser.toml TomlLexer.tomlex lexbuf
 
 (**
- * Basic functions to get tomlTable and tomlValue from a tomlTable
- * According to its key
+ * Functions to get the list of direct values / sub tables of a tomlTable
  *)
 
 let get_tables toml =
   Hashtbl.fold (fun k v acc ->
-                match k, v with
-                | _, TTable(v) -> (k, v) :: acc
-                |_ -> acc) toml []
+                match v with
+                | TTable v -> (k, v) :: acc
+                | _ -> acc) toml []
 
 let get_values toml =
   Hashtbl.fold (fun k v acc ->
-                match k, v with
-                | _, TValue(v) -> (k, v) :: acc
-                |_ -> acc) toml []
+                match v with
+                | TTable _ -> acc
+                | _ -> (k, v) :: acc) toml []
+
+(** Generic getter *)
+
+let get_value toml key = Hashtbl.find toml key
+
+(**
+ * Functions to retreive values of an expected type
+ *)
 
 let get_table toml key = match Hashtbl.find toml key with
   | TTable(tbl) -> tbl
   | _ -> failwith (key ^ " is a value")
-
-let get_value toml key = match Hashtbl.find toml key with
-  | TValue(v) -> v
-  | _ -> failwith (key ^ " is a table")
-
-(**
- * Functions to retreive OCaml primitive type
- *)
 
 let get_bool toml key = match get_value toml key with
   | TBool b -> b

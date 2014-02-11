@@ -41,10 +41,6 @@ let error2 ="array = [
 
 let error3 ="number = 3.14  pi <--again forgot the #"
 
-let get_value_list tbl =
-  Hashtbl.fold
-    (fun k v acc -> match v with TValue (v) -> (k, v) :: acc | _ -> acc) tbl []
-
 let toml = Toml.from_string input
 
 let printer li =
@@ -61,7 +57,7 @@ let test = "Official example.toml file" >:::
     "the" >:: (fun () ->
       assert_equal
         [("test_string", TString "You'll hate me after this - #")]
-        (get_table toml "the" |> get_value_list));
+        (get_table toml "the" |> get_values));
 
     "the.hard" >:: (fun () ->
       assert_equal
@@ -71,14 +67,14 @@ let test = "Official example.toml file" >:::
          ("another_test_string", TString " Same thing, but with a string #");
          ("harder_test_string",
           TString " And when \"'s are in the string, along with # \"")]
-        (get_table (get_table toml "the") "hard" |> get_value_list));
+        (get_table (get_table toml "the") "hard" |> get_values));
 
     "the.hard.bit#" >:: (fun () ->
       assert_equal
       [("what?", TString "You don't think some user won't do that?");
        ("multi_line_array", TArray (NodeString ["]"]))]
       (get_table (get_table (get_table toml "the") "hard") "bit#"
-       |> get_value_list));
+       |> get_values));
 
     "Error" >:: (fun () ->
       assert_raises

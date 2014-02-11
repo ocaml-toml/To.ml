@@ -6,15 +6,15 @@ let to_path str : string list = Str.split (Str.regexp "\\.") str
 let add table path (key, value) =
   let table =
     List.fold_left
-      (fun tbl -> fun w -> try match Hashtbl.find tbl w with
-                               | TTable tbl -> tbl
-                               | _ -> failwith (w ^ " is a value")
-                           with Not_found ->
-                             let sub = Hashtbl.create 0 in
-                             Hashtbl.add tbl w (TTable sub); sub)
+      (fun tbl w -> try match Hashtbl.find tbl w with
+                        | TTable tbl -> tbl
+                        | _ -> failwith (w ^ " is a value")
+                    with Not_found ->
+                      let sub = Hashtbl.create 0 in
+                      Hashtbl.add tbl w (TTable sub); sub)
       table path in
   try ignore(Hashtbl.find table key); failwith (key ^ " is already defined")
-  with Not_found -> Hashtbl.add table key (TValue value)
+  with Not_found -> Hashtbl.add table key value
 
 %}
 
