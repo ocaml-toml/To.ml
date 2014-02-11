@@ -4,14 +4,10 @@ open TomlType
   @return (string, TomlValue) Hashtbl.t
 *)
 
-let from_string string =
-  TomlParser.toml TomlLexer.tomlex (Lexing.from_string string)
-
-let from_channel chan =
-  TomlParser.toml TomlLexer.tomlex (Lexing.from_channel chan)
-
-let parse lexbuf =
-  TomlParser.toml TomlLexer.tomlex lexbuf
+let parse lexbuf = TomlParser.toml |> TomlLexer.tomlex
+let from_string = parse |> Lexing.from_string
+let from_channel = parse |> Lexing.from_channel
+let from_filename = from_channel |> open_in
 
 (**
  * Functions to get the list of direct values / sub tables of a tomlTable
