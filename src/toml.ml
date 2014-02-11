@@ -13,13 +13,15 @@ let from_filename = from_channel |> open_in
  * Functions to get the list of direct values / sub tables of a tomlTable
  *)
 
-let get_tables toml =
+let toml_to_list toml = Hashtbl.fold (fun k v acc -> (k, v)::acc) toml []
+
+let tables_to_list toml =
   Hashtbl.fold (fun k v acc ->
                 match v with
                 | TTable v -> (k, v) :: acc
                 | _ -> acc) toml []
 
-let get_values toml =
+let values_to_list toml =
   Hashtbl.fold (fun k v acc ->
                 match v with
                 | TTable _ -> acc
