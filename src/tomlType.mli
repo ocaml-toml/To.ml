@@ -3,6 +3,7 @@
   * - They are typed, but can change the type if you nest them
   *)
 type tomlNodeArray =
+  | NodeEmpty
   | NodeBool of bool list
   | NodeInt of int list
   | NodeFloat of float list

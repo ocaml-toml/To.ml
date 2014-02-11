@@ -81,14 +81,19 @@ let _ =
         let str = "key = [true, true,]" in
         let toml = Toml.from_string str in
         let var = get_value toml "key" in
-        assert_equal (TArray(NodeBool([true; true]))) var);
+        assert_equal (TArray(NodeBool([true; true]))) var;
+        let str = "key = []" in
+        let toml = Toml.from_string str in
+        let var = get_value toml "key" in
+        assert_equal (TArray(NodeEmpty)) var);
 
-      "Nested Arrays" >:: (fun () ->
-        let str ="key=[ [1,2],[\"a\",\"b\",\"c\",\"d\"] ]" in
+        "Nested Arrays" >:: (fun () ->
+        let str ="key=[ [1,2],[\"a\",\"b\",\"c\",\"d\"]\n,[] ]" in
         let toml = Toml.from_string str in
         assert_equal
           (TArray(NodeArray([NodeInt([1; 2]);
-                             NodeString(["a";"b";"c";"d"])])))
+                             NodeString(["a";"b";"c";"d"]);
+                             NodeEmpty])))
           (get_value toml "key"));
     
       "Grouped key" >:: (fun () ->

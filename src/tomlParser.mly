@@ -57,7 +57,7 @@ value:
   | LBRACK array_start { TArray($2) }
 
 array_start:
-    RBRACK { NodeBool([]) }
+    RBRACK { NodeEmpty }
   | BOOL array_end(BOOL) { NodeBool($1 :: $2) }
   | INTEGER array_end(INTEGER) { NodeInt($1 :: $2) }
   | FLOAT array_end(FLOAT) { NodeFloat($1 :: $2) }

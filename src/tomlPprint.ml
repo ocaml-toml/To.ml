@@ -8,6 +8,7 @@ let rec string_of_table tbl : string =
   |> string_of_list (fun (k, v) -> k ^ "->" ^ string_of_val v)
 
 and string_of_node : tomlNodeArray -> string = function
+  | NodeEmpty -> ""
   | NodeBool l -> string_of_list string_of_bool l
   | NodeInt l ->  string_of_list string_of_int l
   | NodeFloat l ->  string_of_list string_of_float l

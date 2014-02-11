@@ -67,20 +67,25 @@ let get_date toml key = match get_value toml key with
 
 let get_bool_list toml key = match get_value toml key with
   | TArray (NodeBool b) -> b
+  | TArray (NodeEmpty) -> []
   | _ -> failwith (key ^ " is not a boolean array")
 
 let get_int_list toml key = match get_value toml key with
   | TArray (NodeInt i) -> i
+  | TArray (NodeEmpty) -> []
   | _ -> failwith (key ^ " is not an integer array")
 
 let get_float_list toml key = match get_value toml key with
   | TArray (NodeFloat f) -> f
+  | TArray (NodeEmpty) -> []
   | _ -> failwith (key ^ " is not a float array")
 
 let get_string_list toml key = match get_value toml key with
   | TArray (NodeString s) -> s
+  | TArray (NodeEmpty) -> []
   | _ -> failwith (key ^ " is not a string array")
 
 let get_date_list toml key = match get_value toml key with
   | TArray (NodeDate d) -> d
+  | TArray (NodeEmpty) -> []
   | _ -> failwith (key ^ " is not a date array")
