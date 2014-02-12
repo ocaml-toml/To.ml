@@ -59,7 +59,8 @@ let test = "Official example.toml file" >:::
     assert_equal
       ((get_table (get_table toml "servers") "beta") |> values_to_list)
       [("ip", TString "10.0.0.2");
-       ("dc", TString "eqdc10")]);
+       ("dc", TString "eqdc10");
+       ("country", TString "中国")]);
 
     "Client table" >:: (fun () ->
     assert_equal
