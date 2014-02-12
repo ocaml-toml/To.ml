@@ -14,10 +14,10 @@ let bool _ =
     [true; true; false]
     (get_bool_list toml "bu");
   assert_raises
-    (Failure "foo is not a boolean")
+    (Bad_Type ("foo", "boolean"))
     (fun () -> get_bool toml "foo");
   assert_raises
-    (Failure "bar is not a boolean array")
+    (Bad_Type ("bar", "boolean array"))
     (fun () -> get_bool_list toml "bar")
 
 let int _ =
@@ -31,10 +31,10 @@ let int _ =
     [-1; 2; -3]
     (get_int_list toml "bu");
   assert_raises
-    (Failure "foo is not an integer")
+    (Bad_Type ("foo", "integer"))
     (fun () -> get_int toml "foo");
   assert_raises
-    (Failure "bar is not an integer array")
+    (Bad_Type ("bar", "integer array"))
     (fun () -> get_int_list toml "bar")
 
 let float _ =
@@ -48,10 +48,10 @@ let float _ =
     [-1.0; 2.0; -3.0]
     (get_float_list toml "bu");
   assert_raises
-    (Failure "foo is not a float")
+    (Bad_Type ("foo", "float"))
     (fun () -> get_float toml "foo");
   assert_raises
-    (Failure "bar is not a float array")
+    (Bad_Type ("bar", "float array"))
     (fun () -> get_float_list toml "bar")
 
 let string _ =
@@ -65,10 +65,10 @@ let string _ =
     ["foo"; "foo"; "bar"]
     (get_string_list toml "bu");
   assert_raises
-    (Failure "bar is not a string")
+    (Bad_Type ("bar", "string"))
     (fun () -> get_string toml "bar");
   assert_raises
-    (Failure "foo is not a string array")
+    (Bad_Type ("foo", "string array"))
     (fun () -> get_string_list toml "foo")
 
 let date _ =
@@ -82,10 +82,10 @@ let date _ =
     ["1979-05-27T07:32:00Z"; "1979-05-27T07:32:00Z"]
     (get_date_list toml "bu");
   assert_raises
-    (Failure "foo is not a date")
+    (Bad_Type ("foo", "date"))
     (fun () -> get_date toml "foo");
   assert_raises
-    (Failure "bar is not a date array")
+    (Bad_Type ("bar", "date array"))
     (fun () -> get_date_list toml "bar")
 
 let suite = 

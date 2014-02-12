@@ -32,12 +32,12 @@ let test = "Official example.toml file" >:::
   [
     "Root values" >:: (fun () ->
       assert_equal
-        (get_values toml)
+        (values_to_list toml)
         [("title", TString "TOML Example")]);
 
     "Owner table" >:: (fun () ->
     assert_equal
-      (get_table toml "owner" |> get_values)
+      (get_table toml "owner" |> values_to_list)
       [("name", TString "Tom Preston-Werner");
        ("organization", TString "GitHub");
        ("bio", TString "GitHub Cofounder & CEO\nLikes tater tots and beer.");
@@ -45,7 +45,7 @@ let test = "Official example.toml file" >:::
       
     "Database table" >:: (fun () ->
     assert_equal
-      (get_table toml "database" |> get_values)
+      (get_table toml "database" |> values_to_list)
       [("server", TString "192.168.1.1");
        ("ports", TArray (NodeInt [8001; 8001; 8002]));
        ("connection_max", TInt 5000);
@@ -53,17 +53,17 @@ let test = "Official example.toml file" >:::
     
     "Servers table" >:: (fun () ->
     assert_equal
-      ((get_table (get_table toml "servers") "alpha") |> get_values)
+      ((get_table (get_table toml "servers") "alpha") |> values_to_list)
       [("ip", TString "10.0.0.1");
        ("dc", TString "eqdc10")];
     assert_equal
-      ((get_table (get_table toml "servers") "beta") |> get_values)
+      ((get_table (get_table toml "servers") "beta") |> values_to_list)
       [("ip", TString "10.0.0.2");
        ("dc", TString "eqdc10")]);
 
     "Client table" >:: (fun () ->
     assert_equal
-      (get_table toml "clients" |> get_values)
+      (get_table toml "clients" |> values_to_list)
       [("data", TArray (NodeArray [NodeString ["gamma"; "delta"];
                                    NodeInt [1; 2]]));
        ("hosts", TArray (NodeString ["alpha"; "omega"]))]);

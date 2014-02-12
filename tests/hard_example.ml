@@ -30,7 +30,7 @@ let test = "Official example.toml file" >:::
     "the" >:: (fun () ->
       assert_equal
         [("test_string", TString "You'll hate me after this - #")]
-        (get_table toml "the" |> get_values));
+        (get_table toml "the" |> values_to_list));
 
     "the.hard" >:: (fun () ->
       assert_equal
@@ -40,14 +40,14 @@ let test = "Official example.toml file" >:::
          ("another_test_string", TString " Same thing, but with a string #");
          ("harder_test_string",
           TString " And when \"'s are in the string, along with # \"")]
-        (get_table (get_table toml "the") "hard" |> get_values));
+        (get_table (get_table toml "the") "hard" |> values_to_list));
 
     "the.hard.bit#" >:: (fun () ->
       assert_equal
       [("what?", TString "You don't think some user won't do that?");
        ("multi_line_array", TArray (NodeString ["]"]))]
       (get_table (get_table (get_table toml "the") "hard") "bit#"
-       |> get_values));
+       |> values_to_list));
 
     "Error" >:: (fun () ->
       assert_raises
