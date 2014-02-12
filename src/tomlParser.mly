@@ -22,7 +22,8 @@ let add table path (key, value) =
 %token <bool> BOOL
 %token <int> INTEGER
 %token <float> FLOAT
-%token <string> STRING DATE
+%token <string> STRING
+%token <Unix.tm> DATE
 %token <string> KEY
 %token LBRACK RBRACK EQUAL EOF COMMA
 

@@ -72,14 +72,17 @@ let string _ =
     (fun () -> get_string_list toml "foo")
 
 let date _ =
+  let date = {Unix.tm_year=79;Unix.tm_mon=04;Unix.tm_mday=27;
+              Unix.tm_hour=07;Unix.tm_min=32;Unix.tm_sec=0;
+              Unix.tm_wday=(-1);Unix.tm_yday=(-1);Unix.tm_isdst=true} in
   let toml = parse "foo=\"1979-05-27T07:32:00Z\"
                     bar=1979-05-27T07:32:00Z
                     bu=[1979-05-27T07:32:00Z, 1979-05-27T07:32:00Z ]" in
   assert_equal
-    "1979-05-27T07:32:00Z"
+    date
     (get_date toml "bar");
   assert_equal
-    ["1979-05-27T07:32:00Z"; "1979-05-27T07:32:00Z"]
+    [date;date]
     (get_date_list toml "bu");
   assert_raises
     (Bad_Type ("foo", "date"))

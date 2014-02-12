@@ -13,7 +13,7 @@ and string_of_node : tomlNodeArray -> string = function
   | NodeInt l ->  string_of_list string_of_int l
   | NodeFloat l ->  string_of_list string_of_float l
   | NodeString l ->  string_of_list (fun x -> x) l
-  | NodeDate l ->  string_of_list (fun x -> x) l
+  | NodeDate l ->  string_of_list string_of_date l
   | NodeArray l ->  string_of_list string_of_node l
 
 and string_of_val : tomlValue -> string = function
@@ -21,6 +21,16 @@ and string_of_val : tomlValue -> string = function
   | TInt i ->  "TInt(" ^ string_of_int i ^ ")"
   | TFloat f -> "TFloat(" ^ string_of_float f ^ ")"
   | TString s -> "TString(" ^ s ^ ")"
-  | TDate d -> "TDate(" ^ d ^ ")"
+  | TDate d -> "TDate(" ^ string_of_date d ^ ")"
   | TArray arr -> "[" ^ string_of_node arr ^ "]"
   | TTable tbl -> "TTable(" ^ string_of_table tbl ^ ")"
+
+and string_of_date (d : Unix.tm) : string =
+  "{"
+  ^ string_of_int d.Unix.tm_year
+  ^ "-" 
+  ^ string_of_int d.Unix.tm_mon
+  ^ "-" 
+  ^ string_of_int d.Unix.tm_mday
+  ^ "-" 
+  ^ "}"

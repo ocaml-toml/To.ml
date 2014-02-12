@@ -41,7 +41,10 @@ let test = "Official example.toml file" >:::
       [("name", TString "Tom Preston-Werner");
        ("organization", TString "GitHub");
        ("bio", TString "GitHub Cofounder & CEO\nLikes tater tots and beer.");
-       ("dob", TDate "1979-05-27T07:32:00Z")]);
+       ("dob", (TDate {Unix.tm_year=79;Unix.tm_mon=04;Unix.tm_mday=27;
+                       Unix.tm_hour=07;Unix.tm_min=32;Unix.tm_sec=0;
+                       Unix.tm_wday=(-1);Unix.tm_yday=(-1);
+                       Unix.tm_isdst=true}))]);
       
     "Database table" >:: (fun () ->
     assert_equal

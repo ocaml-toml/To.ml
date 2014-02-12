@@ -115,7 +115,11 @@ let _ =
         let toml = Toml.from_string str in
         let group1 = get_table toml "group1" in
          assert_equal
-           (TDate "1979-05-27T07:32:00Z") (Hashtbl.find group1 "key"));
+           (TDate {Unix.tm_year=79;Unix.tm_mon=04;Unix.tm_mday=27;
+                   Unix.tm_hour=07;Unix.tm_min=32;Unix.tm_sec=0;
+                   Unix.tm_wday=(-1);Unix.tm_yday=(-1);
+                   Unix.tm_isdst=true;})
+           (Hashtbl.find group1 "key"));
 
       "Same key, different group" >:: (fun () ->
         let str = "key=1[group]\nkey = 2" in

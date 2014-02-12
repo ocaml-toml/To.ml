@@ -34,8 +34,5 @@ ocamlbuild -use-ocamlfind -package toml foo.byte
 
 ## Limitations
 
-Array of tables is not supported.
-
-Due to OCaml limits (regardless any external library):
-* No support for date (parsed as string, even if typed as date)
-* No support for escaped unicode (`\uXXX`)
+* Array of tables is not supported.
+* Escaped unicode (`\uXXX`) is not supported.

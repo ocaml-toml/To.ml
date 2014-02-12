@@ -47,7 +47,7 @@ val get_bool : (string, TomlType.tomlValue) Hashtbl.t -> string -> bool
 val get_int : (string, TomlType.tomlValue) Hashtbl.t -> string -> int
 val get_float : (string, TomlType.tomlValue) Hashtbl.t -> string -> float
 val get_string : (string, TomlType.tomlValue) Hashtbl.t -> string -> string
-val get_date : (string, TomlType.tomlValue) Hashtbl.t -> string -> string
+val get_date : (string, TomlType.tomlValue) Hashtbl.t -> string -> Unix.tm
 
 (* Table getter *)
 val get_table :
@@ -63,4 +63,4 @@ val get_float_list :
 val get_string_list :
   (string, TomlType.tomlValue) Hashtbl.t -> string -> string list
 val get_date_list :
-  (string, TomlType.tomlValue) Hashtbl.t -> string -> string list
+  (string, TomlType.tomlValue) Hashtbl.t -> string -> Unix.tm list
