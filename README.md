@@ -35,4 +35,3 @@ ocamlbuild -use-ocamlfind -package toml foo.byte
 ## Limitations
 
 * Array of tables is not supported.
-* Escaped unicode (`\uXXX`) is not supported.

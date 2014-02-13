@@ -131,6 +131,16 @@ let _ =
           (TInt 2)
           (Hashtbl.find (get_table toml "group") "key"));
 
+      "Unicode" >:: (fun () ->
+        let str = "key=\"\\u03C9\"\nkey2=\"\\u4E2D\\u56FD\\u0021\"" in
+        let toml = Toml.from_string str in
+        assert_equal
+          (TString "ω")
+          (Hashtbl.find toml "key");
+        assert_equal
+          (TString "中国!")
+          (Hashtbl.find toml "key2"));
+
   ];
     (* "Lexer" >:::                                                 *)
     (* [                                                            *)

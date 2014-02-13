@@ -2,10 +2,6 @@
  open TomlParser
 }
 
-(** TODO:
-    - \uXXXX \f \/ escaped characters
- *)
-
 let t_white   = ['\t' ' ']
 (** Tab char or space char *)
 let t_eol     = ['\n' '\r']
@@ -29,6 +25,9 @@ let t_date    = (t_digit t_digit t_digit t_digit as year)
                 'Z'
 (** ISO8601 date of form 1979-05-27T07:32:00Z *)
 let t_escape  =  '\\' ['b' 't' 'n' 'f' 'r' '"' '/' '\\']
+let t_alpha   = ['A'-'Z' 'a'-'z']
+let t_alphanum= t_alpha | t_digit
+let t_unicode = t_alphanum t_alphanum t_alphanum t_alphanum
 
 rule tomlex = parse
   | t_int as value   { INTEGER (int_of_string value) }
@@ -59,6 +58,8 @@ rule tomlex = parse
 and stringify buff = parse
   | t_escape as value
     { Buffer.add_string buff (Scanf.unescaped value); stringify buff lexbuf }
+  | "\\u" (t_unicode as u)
+    { Buffer.add_string buff (TomlUnicode.to_utf8 u); stringify buff lexbuf }
   | '\\' { failwith "Forbidden escaped char" }
   (* no unterminated strings *)
   | eof  { failwith "Unterminated string" }
