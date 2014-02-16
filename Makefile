@@ -26,8 +26,6 @@ build: toml.cmxa toml.cma
 install:
 	ocamlfind install toml META $(addprefix _build/src/, $(LIB_FILES))
 
-#_build/src/toml.cmxa _build/src/toml.cma _build/src/toml.cmi 
-
 uninstall:
 	ocamlfind remove toml
 
@@ -51,6 +49,8 @@ coverage:
 	@BISECT_FILE=_build/coverage ./helper_test.byte
 	@BISECT_FILE=_build/coverage ./example.byte < tests/example.toml
 	@BISECT_FILE=_build/coverage./hard_example.byte < tests/example.toml
+
+report:
 	cd _build && bisect-report -verbose -html report coverage*.out
 
 clean:
