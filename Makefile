@@ -48,7 +48,7 @@ coverage:
 	@BISECT_FILE=_build/coverage ./parser_test.byte
 	@BISECT_FILE=_build/coverage ./helper_test.byte
 	@BISECT_FILE=_build/coverage ./example.byte < tests/example.toml
-	@BISECT_FILE=_build/coverage ./hard_example.byte < tests/example.toml
+	@BISECT_FILE=_build/coverage ./hard_example.byte < tests/hard_example.toml
 
 report: coverage
 	cd _build && bisect-report -verbose -html report coverage*.out
