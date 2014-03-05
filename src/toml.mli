@@ -35,12 +35,12 @@ val values_to_list :
  *
  * All the following functions have three behaviors:
  *  1. The key is found and the type is good. The primitive value is returned
- *  2. The key is not found: raise Not_Found
- *  3. The key is found but the type doesn't match: raise Bad_Type (key,
+ *  2. The key is not found: raise Not_found
+ *  3. The key is found but the type doesn't match: raise Bad_type (key,
  *  expected type)
  * *)
 
-exception Bad_Type of (string * string)
+exception Bad_type of (string * string)
 
 (* Primitive getters *)
 val get_bool : (string, TomlType.tomlValue) Hashtbl.t -> string -> bool

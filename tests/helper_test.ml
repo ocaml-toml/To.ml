@@ -14,10 +14,10 @@ let bool _ =
     [true; true; false]
     (get_bool_list toml "bu");
   assert_raises
-    (Bad_Type ("foo", "boolean"))
+    (Bad_type ("foo", "boolean"))
     (fun () -> get_bool toml "foo");
   assert_raises
-    (Bad_Type ("bar", "boolean array"))
+    (Bad_type ("bar", "boolean array"))
     (fun () -> get_bool_list toml "bar")
 
 let int _ =
@@ -31,10 +31,10 @@ let int _ =
     [-1; 2; -3]
     (get_int_list toml "bu");
   assert_raises
-    (Bad_Type ("foo", "integer"))
+    (Bad_type ("foo", "integer"))
     (fun () -> get_int toml "foo");
   assert_raises
-    (Bad_Type ("bar", "integer array"))
+    (Bad_type ("bar", "integer array"))
     (fun () -> get_int_list toml "bar")
 
 let float _ =
@@ -48,10 +48,10 @@ let float _ =
     [-1.0; 2.0; -3.0]
     (get_float_list toml "bu");
   assert_raises
-    (Bad_Type ("foo", "float"))
+    (Bad_type ("foo", "float"))
     (fun () -> get_float toml "foo");
   assert_raises
-    (Bad_Type ("bar", "float array"))
+    (Bad_type ("bar", "float array"))
     (fun () -> get_float_list toml "bar")
 
 let string _ =
@@ -65,10 +65,10 @@ let string _ =
     ["foo"; "foo"; "bar"]
     (get_string_list toml "bu");
   assert_raises
-    (Bad_Type ("bar", "string"))
+    (Bad_type ("bar", "string"))
     (fun () -> get_string toml "bar");
   assert_raises
-    (Bad_Type ("foo", "string array"))
+    (Bad_type ("foo", "string array"))
     (fun () -> get_string_list toml "foo")
 
 let date _ =
@@ -85,10 +85,10 @@ let date _ =
     [date;date]
     (get_date_list toml "bu");
   assert_raises
-    (Bad_Type ("foo", "date"))
+    (Bad_type ("foo", "date"))
     (fun () -> get_date toml "foo");
   assert_raises
-    (Bad_Type ("bar", "date array"))
+    (Bad_type ("bar", "date array"))
     (fun () -> get_date_list toml "bar")
 
 let suite = 

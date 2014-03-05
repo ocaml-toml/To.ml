@@ -29,7 +29,7 @@ let values_to_list toml =
 
 
 let get = Hashtbl.find
-exception Bad_Type of (string * string)
+exception Bad_type of (string * string)
 
 (**
  * Functions to retreive values of an expected type
@@ -37,27 +37,27 @@ exception Bad_Type of (string * string)
 
 let get_table toml key = match (get toml key) with
   | TTable(tbl) -> tbl
-  | _ -> raise (Bad_Type (key, "value"))
+  | _ -> raise (Bad_type (key, "value"))
 
 let get_bool toml key = match get toml key with
   | TBool b -> b
-  | _ -> raise (Bad_Type (key, "boolean"))
+  | _ -> raise (Bad_type (key, "boolean"))
 
 let get_int toml key = match get toml key with
   | TInt i -> i
-  | _ -> raise (Bad_Type (key, "integer"))
+  | _ -> raise (Bad_type (key, "integer"))
 
 let get_float toml key = match get toml key with
   | TFloat f -> f
-  | _ -> raise (Bad_Type (key, "float"))
+  | _ -> raise (Bad_type (key, "float"))
 
 let get_string toml key = match get toml key with
   | TString s -> s
-  | _ -> raise (Bad_Type (key, "string"))
+  | _ -> raise (Bad_type (key, "string"))
 
 let get_date toml key = match get toml key with
   | TDate d -> d
-  | _ -> raise (Bad_Type (key, "date"))
+  | _ -> raise (Bad_type (key, "date"))
 
 (**
  * Functions to retreive OCaml primitive type list
@@ -66,24 +66,24 @@ let get_date toml key = match get toml key with
 let get_bool_list toml key = match get toml key with
   | TArray (NodeBool b) -> b
   | TArray (NodeEmpty) -> []
-  | _ -> raise (Bad_Type (key, "boolean array"))
+  | _ -> raise (Bad_type (key, "boolean array"))
 
 let get_int_list toml key = match get toml key with
   | TArray (NodeInt i) -> i
   | TArray (NodeEmpty) -> []
-  | _ -> raise (Bad_Type (key, "integer array"))
+  | _ -> raise (Bad_type (key, "integer array"))
 
 let get_float_list toml key = match get toml key with
   | TArray (NodeFloat f) -> f
   | TArray (NodeEmpty) -> []
-  | _ -> raise (Bad_Type (key, "float array"))
+  | _ -> raise (Bad_type (key, "float array"))
 
 let get_string_list toml key = match get toml key with
   | TArray (NodeString s) -> s
   | TArray (NodeEmpty) -> []
-  | _ -> raise (Bad_Type (key, "string array"))
+  | _ -> raise (Bad_type (key, "string array"))
 
 let get_date_list toml key = match get toml key with
   | TArray (NodeDate d) -> d
   | TArray (NodeEmpty) -> []
-  | _ -> raise (Bad_Type (key, "date array"))
+  | _ -> raise (Bad_type (key, "date array"))
