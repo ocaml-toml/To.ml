@@ -1,59 +1,57 @@
-(*
- * The TOML parser interface
- * *)
+(** The TOML parser interface *)
 
-(***
- * These are the helpers used to parse a TOML input
- * 
- * @note:
- *   type TomlType.tomlTable = (string, TomlValue) Hashtbl.t
- * *)
+(** {2 Parsing functions } *)
+
 val parse : Lexing.lexbuf -> TomlType.tomlTable
 val from_string : string -> TomlType.tomlTable
 val from_channel : in_channel -> TomlType.tomlTable
 val from_filename : string -> TomlType.tomlTable
 
-(**
- * Use this if you want to extract the list of the sub values
- **)
+(** {2 Filter entries }
+    Use this if you want to filter entries of a table.
+    You can retreive all values, direct values, or subtables. 
+    All functions return a (key, value) list *)
 
-(* @param tomlTable
- * @return the list of all (key, value) contained in tomlTable *)
+(** No filter *)
 val toml_to_list :
   ('a, TomlType.tomlValue) Hashtbl.t -> ('a * TomlType.tomlValue) list
-(* @param tomlTable
- * @return the list of all the tables (key, table) contained in tomlTable *)
+
+(** Filter tables tables (skip direct values) *)
 val tables_to_list :
   ('a, TomlType.tomlValue) Hashtbl.t -> ('a * TomlType.tomlTable) list
-(* @param tomlTable
- * @return the list of all the non-tables (key, value) contained in tomlTable *)
+
+(** Filter direct values (skip tables) *)
 val values_to_list :
   ('a, TomlType.tomlValue) Hashtbl.t -> ('a * TomlType.tomlValue) list
 
-(**
- * Use this if you want to extract a specific value
- *
- * All the following functions have three behaviors:
- *  1. The key is found and the type is good. The primitive value is returned
- *  2. The key is not found: raise Not_found
- *  3. The key is found but the type doesn't match: raise Bad_type (key,
- *  expected type)
- * *)
+(** {2 Extract a specific value }
+    These functions take the toml table as first argument and the key of 
+    value as second one. They have three behaviors:{ul list}
+    - The key is found and the type is good. The primitive value is returned
+    - The key is not found: raise Not_found
+    - The key is found but the type doesn't match: raise Bad_type *)
 
+(** Bad_type expections carry (key, expected type) data *)
 exception Bad_type of (string * string)
 
-(* Primitive getters *)
+(** {3 Primitive getters }
+    Use these functions to get a single value of a known OCaml type *)
+
 val get_bool : (string, TomlType.tomlValue) Hashtbl.t -> string -> bool
 val get_int : (string, TomlType.tomlValue) Hashtbl.t -> string -> int
 val get_float : (string, TomlType.tomlValue) Hashtbl.t -> string -> float
 val get_string : (string, TomlType.tomlValue) Hashtbl.t -> string -> string
 val get_date : (string, TomlType.tomlValue) Hashtbl.t -> string -> Unix.tm
 
-(* Table getter *)
+(** {3 Table getter }
+    Get a subtable *)
+
 val get_table :
   (string, TomlType.tomlValue) Hashtbl.t -> string -> TomlType.tomlTable
 
-(* Array getters *)
+(** {3 Array getters}
+    Arrays contents are returned as lists *)
+
 val get_bool_list :
   (string, TomlType.tomlValue) Hashtbl.t -> string -> bool list
 val get_int_list :

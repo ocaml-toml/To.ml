@@ -50,6 +50,9 @@ coverage:
 	@BISECT_FILE=_build/coverage ./example.byte < tests/example.toml
 	@BISECT_FILE=_build/coverage ./hard_example.byte < tests/hard_example.toml
 
+doc:
+	ocamlbuild -I src toml.docdir/index.html
+
 report: coverage
 	cd _build && bisect-report -verbose -html report coverage*.out
 

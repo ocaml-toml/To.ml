@@ -1,8 +1,7 @@
-(** Toml arrays
-  * - They are implemented as lists the spirit of TOML simplicity
-  * - They are typed, but can change the type if you nest them
-  *)
+(** Toml types used by parser *)
 
+(** Toml arrays are mplemented as lists. Typed, but can contain multiple 
+    types if you nest tables *)
 type tomlNodeArray =
   | NodeEmpty
   | NodeBool of bool list
@@ -12,7 +11,7 @@ type tomlNodeArray =
   | NodeDate of Unix.tm list
   | NodeArray of tomlNodeArray list (* this can have any type *)
 
-(** Toml values *)
+(** Toml primitive values *)
 and tomlValue =
   | TBool of bool
   | TInt of int
@@ -22,4 +21,5 @@ and tomlValue =
   | TArray of tomlNodeArray
   | TTable of tomlTable
 
+(** Toml table. Implemented as hash table. *)
 and tomlTable = (string, tomlValue) Hashtbl.t
