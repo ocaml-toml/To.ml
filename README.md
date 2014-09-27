@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/mackwic/To.ml.png?branch=master)](https://travis-ci.org/mackwic/To.ml)
 
-Ocaml parser for TOML [(Tom's Obvious Minimal Language)](https://github.com/mojombo/toml) v0.2.0.
+OCaml parser for TOML [(Tom's Obvious Minimal Language)](https://github.com/mojombo/toml) v0.2.0.
 
 ## Dependencies
 
-Toml need Ocaml 4.0 at least. Check your local installation with `ocamlc -v`.
+Toml need OCaml 4.0 at least. Check your local installation with `ocamlc -v`.
 
 This project use **ocamllex** and **menhir** parsing features. In order to
 compile tests you will also need **OUnit** and **bisect** is required to 
