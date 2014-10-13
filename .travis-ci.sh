@@ -17,13 +17,13 @@ echo "yes" | sudo add-apt-repository ppa:$ppa
 sudo apt-get update -qq
 sudo apt-get install -qq ocaml ocaml-native-compilers camlp4-extra opam
 export OPAMYES=1
-opam init 
+opam init
 opam install ${OPAM_DEPENDS}
 eval `opam config env`
 
 # install patched bisect library since it is not updated on opam yet
 echo '** INSTALLING PATCHED BISECT LIBRARY'
-wget http://sagotch.fr/Bisect.tar.gz
+wget http://bisect.sagotch.fr/ -O Bisect.tar.gz
 tar -xvf Bisect.tar.gz
 cd Bisect
 chmod +x configure
