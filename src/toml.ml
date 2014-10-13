@@ -1,89 +1,82 @@
 open TomlType
 
-(** Parsing functions a TOML file
-  @return (string, TomlValue) Hashtbl.t
-*)
+module Map = Map.Make(String)
+type table = TomlType.table
+type array = TomlType.array
+type value = TomlType.value
 
-let parse lexbuf = TomlParser.toml TomlLexer.tomlex lexbuf
-let from_string s = parse (Lexing.from_string s)
-let from_channel c = parse (Lexing.from_channel c)
-let from_filename f = from_channel (open_in f)
+module Parser = struct
+  let parse lexbuf = TomlParser.toml TomlLexer.tomlex lexbuf
+  let from_string s = parse (Lexing.from_string s)
+  let from_channel c = parse (Lexing.from_channel c)
+  let from_filename f = from_channel (open_in f)
+end
 
-(**
- * Functions to get the list of direct values / sub tables of a tomlTable
- *)
+module Table = struct
 
-let toml_to_list toml = Hashtbl.fold (fun k v acc -> (k, v)::acc) toml []
+  let empty = Map.empty
 
-let tables_to_list toml =
-  Hashtbl.fold (fun k v acc ->
-                match v with
-                | TTable v -> (k, v) :: acc
-                | _ -> acc) toml []
+  let find = Map.find
 
-let values_to_list toml =
-  Hashtbl.fold (fun k v acc ->
-                match v with
-                | TTable _ -> acc
-                | _ -> (k, v) :: acc) toml []
+  let add = Map.add
 
+end
 
-let get = Hashtbl.find
-exception Bad_type of (string * string)
+module Value = struct
 
-(**
- * Functions to retreive values of an expected type
- *)
+  module To = struct
 
-let get_table toml key = match (get toml key) with
-  | TTable(tbl) -> tbl
-  | _ -> raise (Bad_type (key, "value"))
+    exception Bad_type of string
 
-let get_bool toml key = match get toml key with
-  | TBool b -> b
-  | _ -> raise (Bad_type (key, "boolean"))
+    let exn t = raise (Bad_type t)
 
-let get_int toml key = match get toml key with
-  | TInt i -> i
-  | _ -> raise (Bad_type (key, "integer"))
+    let bool   = function TBool b   -> b | _ -> exn "bool"
+    let int    = function TInt i    -> i | _ -> exn "int"
+    let float  = function TFloat f  -> f | _ -> exn "float"
+    let string = function TString s -> s | _ -> exn "string"
+    let date   = function TDate d   -> d | _ -> exn "date"
+    let table  = function TTable t  -> t | _ -> exn "table"
+    let array  = function TArray a  -> a | _ -> exn "array"
 
-let get_float toml key = match get toml key with
-  | TFloat f -> f
-  | _ -> raise (Bad_type (key, "float"))
+    module Array = struct
 
-let get_string toml key = match get toml key with
-  | TString s -> s
-  | _ -> raise (Bad_type (key, "string"))
+      let maybe_empty fn = function NodeEmpty -> [] | a -> fn a
 
-let get_date toml key = match get toml key with
-  | TDate d -> d
-  | _ -> raise (Bad_type (key, "date"))
+      let bool = maybe_empty
+          (function NodeBool b   -> b | _ -> exn "bool array")
+      let int = maybe_empty
+          (function NodeInt i    -> i | _ -> exn "int array")
+      let float = maybe_empty
+          (function NodeFloat f  -> f | _ -> exn "float array")
+      let string = maybe_empty
+          (function NodeString s -> s | _ -> exn "string array")
+      let date = maybe_empty
+          (function NodeDate d   -> d | _ -> exn "date array")
+      let array = maybe_empty
+          (function NodeArray a  -> a | _ -> exn "array array")
+    end
 
-(**
- * Functions to retreive OCaml primitive type list
- *)
+  end
 
-let get_bool_list toml key = match get toml key with
-  | TArray (NodeBool b) -> b
-  | TArray (NodeEmpty) -> []
-  | _ -> raise (Bad_type (key, "boolean array"))
+  module Of = struct
+    let bool b   = TBool b
+    let int i    = TInt i
+    let float f  = TFloat f
+    let string s = TString s
+    let date d   = TDate d
+    let table t  = TTable t
+    let array a  = TArray a
 
-let get_int_list toml key = match get toml key with
-  | TArray (NodeInt i) -> i
-  | TArray (NodeEmpty) -> []
-  | _ -> raise (Bad_type (key, "integer array"))
+    module Array = struct
+      let maybe_empty fn = function [] -> NodeEmpty | a -> fn a
 
-let get_float_list toml key = match get toml key with
-  | TArray (NodeFloat f) -> f
-  | TArray (NodeEmpty) -> []
-  | _ -> raise (Bad_type (key, "float array"))
+      let bool b   = maybe_empty (fun b -> NodeBool b) b
+      let int i    = maybe_empty (fun i -> NodeInt i) i
+      let float f  = maybe_empty (fun f -> NodeFloat f) f
+      let string s = maybe_empty (fun s -> NodeString s) s
+      let date d   = maybe_empty (fun d -> NodeDate d) d
+      let array a  = maybe_empty (fun a -> NodeArray a) a
+    end
+  end
 
-let get_string_list toml key = match get toml key with
-  | TArray (NodeString s) -> s
-  | TArray (NodeEmpty) -> []
-  | _ -> raise (Bad_type (key, "string array"))
-
-let get_date_list toml key = match get toml key with
-  | TArray (NodeDate d) -> d
-  | TArray (NodeEmpty) -> []
-  | _ -> raise (Bad_type (key, "date array"))
+end

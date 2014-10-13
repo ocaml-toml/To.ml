@@ -1,20 +1,30 @@
 %{
 open TomlType
 
+module Map = Map.Make(String)
+
 let to_path str : string list = Str.split (Str.regexp "\\.") str
 
-let add table path (key, value) =
-  let table =
-    List.fold_left
-      (fun tbl w -> try match Hashtbl.find tbl w with
-                        | TTable tbl -> tbl
-                        | _ -> failwith (w ^ " is a value")
-                    with Not_found ->
-                      let sub = Hashtbl.create 0 in
-                      Hashtbl.add tbl w (TTable sub); sub)
-      table path in
-  try ignore(Hashtbl.find table key); failwith (key ^ " is already defined")
-  with Not_found -> Hashtbl.add table key value
+type t = Value of value
+       | Table of (string, t) Hashtbl.t
+
+let add tbl path (key, value) =
+  let tbl = List.fold_left
+      (fun tbl w -> match Hashtbl.find tbl w with
+         | Table tbl -> tbl
+         | Value _   -> failwith (w ^ " is a value")
+         | exception Not_found ->
+           let sub = Hashtbl.create 0 in
+           Hashtbl.add tbl w (Table sub); sub)
+      tbl path in
+  if Hashtbl.mem tbl key then failwith (key ^ " is already defined")
+  else Hashtbl.add tbl key (Value value)
+
+let rec convert = function
+  | Table t ->
+    TTable (Hashtbl.fold
+              (fun k v map -> Map.add k (convert v) map) t Map.empty)
+  | Value v -> v
 
 %}
 
@@ -29,10 +39,10 @@ let add table path (key, value) =
 
 %start toml
 
-%type <TomlType.tomlTable> toml
+%type <TomlType.table> toml
 %type <string list> group
-%type <(string * TomlType.tomlValue)> keyValue
-%type <TomlType.tomlNodeArray> array_start
+%type <string * TomlType.value> keyValue
+%type <TomlType.array> array_start
 
 %%
 /* Grammar rules */
@@ -41,7 +51,9 @@ toml:
    { let l = ([], $1) :: $2
      and table = Hashtbl.create 0 in
      List.iter (fun (g, v) -> List.iter (fun v -> add table g v) v) l;
-     table }
+     match convert (Table table) with
+     | TTable t -> t
+     | _ -> assert false }
 
 group:
   LBRACK KEY RBRACK { to_path $2 }
@@ -75,4 +87,3 @@ nested_array_end:
   | COMMA? RBRACK { [] }
 
 %%
-

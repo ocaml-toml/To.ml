@@ -16,4 +16,4 @@ and value =
   | TArray of array
   | TTable of table
 
-and table = (string * value) list
+and table = value Map.Make(String).t
