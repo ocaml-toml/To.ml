@@ -1,9 +1,4 @@
-open TomlType
-
-module Map = Map.Make(String)
-type table = TomlType.table
-type array = TomlType.array
-type value = TomlType.value
+open TomlInternal.Type
 
 module Parser = struct
   let parse lexbuf = TomlParser.toml TomlLexer.tomlex lexbuf

@@ -1,7 +1,5 @@
 %{
-open TomlType
-
-module Map = Map.Make(String)
+open TomlInternal.Type
 
 let to_path str : string list = Str.split (Str.regexp "\\.") str
 
@@ -39,10 +37,10 @@ let rec convert = function
 
 %start toml
 
-%type <TomlType.table> toml
+%type <TomlInternal.Type.table> toml
 %type <string list> group
-%type <string * TomlType.value> keyValue
-%type <TomlType.array> array_start
+%type <string * TomlInternal.Type.value> keyValue
+%type <TomlInternal.Type.array> array_start
 
 %%
 /* Grammar rules */

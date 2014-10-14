@@ -1,8 +1,6 @@
 (** The TOML parser interface *)
 
-type table
-type value
-type array
+open TomlInternal.Type
 
 module Parser : sig
 
