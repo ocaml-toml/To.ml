@@ -4,11 +4,7 @@ INC=src
 TESTS_FLAGS=$(FLAGS)
 TESTS_PKGS=oUnit
 TESTS_INC=$(INC),tests
-TEST_FILES=\
-parser_test.ml \
-example.ml \
-hard_example.ml \
-helper_test.ml
+TEST_FILES=parser_test.ml example.ml hard_example.ml
 
 COVERAGE_FLAGS=$(TESTS_FLAGS)
 COVERAGE_TAGS=package\(bisect\),syntax\(camlp4o\),syntax\(bisect_pp\)
@@ -30,7 +26,6 @@ $(LIB_FILES):
 test: $(TEST_FILES:.ml=.native)
 	@echo '*******************************************************************'
 	@./parser_test.native
-	@./helper_test.native
 	@./example.native < tests/example.toml
 	@./hard_example.native < tests/hard_example.toml
 
@@ -41,7 +36,6 @@ $(TEST_FILES:.ml=.native):
 coverage:
 	ocamlbuild $(COVERAGE_FLAGS) -pkgs $(TESTS_PKGS) -tags $(COVERAGE_TAGS) -Is $(COVERAGE_INC) $(TEST_FILES:.ml=.byte)
 	@BISECT_FILE=_build/coverage ./parser_test.byte
-	@BISECT_FILE=_build/coverage ./helper_test.byte
 	@BISECT_FILE=_build/coverage ./example.byte < tests/example.toml
 	@BISECT_FILE=_build/coverage ./hard_example.byte < tests/hard_example.toml
 

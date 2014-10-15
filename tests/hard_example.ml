@@ -1,7 +1,7 @@
 open OUnit
-open TomlType
-open TomlPprint
 open Toml
+open TomlInternal
+open TomlInternal.Type
 
 let error1 ="string = \"Anything other than tabs, spaces and newline after a keygroup or key value pair has ended should produce an error unless it is a comment\"   like this"
 
@@ -14,51 +14,51 @@ let error2 ="array = [
 
 let error3 ="number = 3.14  pi <--again forgot the #"
 
-let toml = Toml.from_channel stdin
+let toml = Parser.from_channel stdin
 
-let printer li =
-  "[" ^ (String.concat ";\n"
-         @@ List.stable_sort compare
-         @@ List.map (fun (i, v) -> "\""^i^"\"->"^string_of_val v) li) ^ "]"
+let mk_table x =
+  TTable (List.fold_left (fun tbl (k,v) -> Table.add k v tbl) Table.empty x)
 
-let assert_equal x y =
-  OUnit.assert_equal ~printer:printer (List.stable_sort compare x) (List.stable_sort compare y)
+let assert_equal =
+  OUnit.assert_equal ~cmp:Equal.table ~printer:Dump.table
 
+let expected =
+  List.fold_left (fun tbl (k,v) -> Table.add k v tbl) Table.empty
+    [
+      "the", mk_table
+        [ "test_string", TString "You'll hate me after this - #" ;
 
-let test = "Official example.toml file" >:::
+          "hard", mk_table
+            [ "test_array", TArray (NodeString ["] "; " # " ]) ;
+              "test_array2", TArray (NodeString
+                                       ["Test #11 ]proved that" ;
+                                        "Experiment #9 was a success"]) ;
+              "another_test_string",
+              TString " Same thing, but with a string #" ;
+              "harder_test_string",
+              TString " And when \"'s are in the string, along with # \"" ;
+              "bit#", mk_table
+                ["what?", TString "You don't think some user won't do that?";
+                 "multi_line_array", TArray (NodeString ["]"])]
+            ]
+        ]
+    ]
+
+let test = "Official hard_example.toml file" >:::
   [
-    "the" >:: (fun () ->
-      assert_equal
-        [("test_string", TString "You'll hate me after this - #")]
-        (get_table toml "the" |> values_to_list));
 
-    "the.hard" >:: (fun () ->
-      assert_equal
-        [("test_array", TArray (NodeString ["] "; " # " ]));
-         ("test_array2", TArray (NodeString ["Test #11 ]proved that";
-                                             "Experiment #9 was a success"]));
-         ("another_test_string", TString " Same thing, but with a string #");
-         ("harder_test_string",
-          TString " And when \"'s are in the string, along with # \"")]
-        (get_table (get_table toml "the") "hard" |> values_to_list));
-
-    "the.hard.bit#" >:: (fun () ->
-      assert_equal
-      [("what?", TString "You don't think some user won't do that?");
-       ("multi_line_array", TArray (NodeString ["]"]))]
-      (get_table (get_table (get_table toml "the") "hard") "bit#"
-       |> values_to_list));
+    "Success" >:: (fun () -> assert_equal expected toml) ;
 
     "Error" >:: (fun () ->
       assert_raises
         (TomlParser.Error)
-        (fun () -> ignore(Toml.from_string error1));
+        (fun () -> ignore(Parser.from_string error1));
       assert_raises
         (TomlParser.Error)
-        (fun () -> ignore(Toml.from_string error2));
+        (fun () -> ignore(Parser.from_string error2));
       assert_raises
         (TomlParser.Error)
-        (fun () -> ignore(Toml.from_string error3)))
+        (fun () -> ignore(Parser.from_string error3)))
 
   ]
 

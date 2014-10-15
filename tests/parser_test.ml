@@ -3,143 +3,147 @@
   *)
 
 open OUnit
-open TomlType
-open TomlPprint
 open Toml
+open TomlInternal
+open TomlInternal.Type
+
+let get_table tbl key = match Table.find key tbl with
+  | TTable t -> t
+  | _ -> assert false
 
 let _ =
-  let assert_equal = OUnit.assert_equal ~printer:string_of_val in
+  let assert_equal = OUnit.assert_equal ~printer:Dump.value in
   let suite = "Main tests" >:::
   [
     "Rache Methodology Approved" >::: [
        "simple key value" >:: (fun () ->
         let str = "key = \"VaLUe42\"" in
-        let toml = Toml.from_string str in
-        let var = Hashtbl.find toml "key" in
+        let toml = Parser.from_string str in
+        let var = Table.find "key" toml in
         assert_equal (TString"VaLUe42") var;
         assert_bool "Bad grammar" (var <> (TString("value42"))));
 
       "Two keys value" >:: (fun () ->
         let str = "key = \"VaLUe42\"\nkey2=42" in
-        let toml = Toml.from_string str in
-        let var = Hashtbl.find toml "key" and var2 = Hashtbl.find toml "key2" in
+        let toml = Parser.from_string str in
+        let var = Table.find "key" toml and var2 = Table.find "key2" toml in
         assert_equal (TString "VaLUe42") var;
         assert_equal (TInt 42) var2);
 
       "Int" >:: (fun () ->
         let str = "key = 42\nkey2=-42" in
-        let toml = Toml.from_string str in
-        assert_equal (TInt 42) (Hashtbl.find toml "key");
-        assert_equal (TInt (-42)) (Hashtbl.find toml "key2"));
+        let toml = Parser.from_string str in
+        assert_equal (TInt 42) (Table.find "key" toml);
+        assert_equal (TInt (-42)) (Table.find "key2" toml));
 
       "Float key" >:: (fun () ->
         let str = "key = 3.141595\nkey2=-3.141595" in
-        let toml = Toml.from_string str in
-        assert_equal (TFloat 3.141595) (Hashtbl.find toml "key");
-        assert_equal (TFloat (-3.141595)) (Hashtbl.find toml "key2"));
+        let toml = Parser.from_string str in
+        assert_equal (TFloat 3.141595) (Table.find "key" toml);
+        assert_equal (TFloat (-3.141595)) (Table.find "key2" toml));
 
       "Bool key" >:: (fun () ->
         let str = "key = true\nkey2=false" in
-        let toml = Toml.from_string str in
-        assert_equal (TBool true) (Hashtbl.find toml "key");
-        assert_equal (TBool false) (Hashtbl.find toml "key2"));
+        let toml = Parser.from_string str in
+        assert_equal (TBool true) (Table.find "key" toml);
+        assert_equal (TBool false) (Table.find "key2" toml));
 
       "String" >:: (fun () ->
          assert_equal
            (TString "\b")
-           (Hashtbl.find (Toml.from_string "key=\"\\b\"") "key");
+           (Table.find "key" (Parser.from_string "key=\"\\b\""));
          assert_equal
            (TString "\t")
-           (Hashtbl.find (Toml.from_string "key=\"\\t\"") "key");
+           (Table.find "key" (Parser.from_string "key=\"\\t\""));
          assert_equal
            (TString "\n")
-           (Hashtbl.find (Toml.from_string "key=\"\\n\"") "key");
+           (Table.find "key" (Parser.from_string "key=\"\\n\""));
          assert_equal
            (TString "\r")
-           (Hashtbl.find (Toml.from_string "key=\"\\r\"") "key");
+           (Table.find "key" (Parser.from_string "key=\"\\r\""));
          assert_equal
            (TString "\"")
-           (Hashtbl.find (Toml.from_string "key=\"\\\"\"") "key");
+           (Table.find "key" (Parser.from_string "key=\"\\\"\""));
          assert_equal
            (TString "\\")
-           (Hashtbl.find (Toml.from_string "key=\"\\\\\"") "key");
+           (Table.find "key" (Parser.from_string "key=\"\\\\\""));
          assert_equal
            (TString "\\")
-           (Hashtbl.find (Toml.from_string "key=\"\\\\\"") "key");
+           (Table.find "key" (Parser.from_string "key=\"\\\\\""));
          assert_raises
            (Failure "Forbidden escaped char")
-           (fun () -> Toml.from_string "key=\"\\j\"");
+           (fun () -> Parser.from_string "key=\"\\j\"");
          assert_raises
            (Failure "Unterminated string")
-           (fun () -> Toml.from_string "key=\"This string is not termin"));
+           (fun () -> Parser.from_string "key=\"This string is not termin"));
 
       "Array key" >:: (fun () ->
         let str = "key = [true, true, false, true]" in
-        let toml = Toml.from_string str in
-        let var = Hashtbl.find toml "key" in
+        let toml = Parser.from_string str in
+        let var = Table.find "key" toml in
         assert_equal (TArray(NodeBool([true; true; false; true]))) var;
         let str = "key = []" in
-        let toml = Toml.from_string str in
-        let var = Hashtbl.find toml "key" in
+        let toml = Parser.from_string str in
+        let var = Table.find "key" toml in
         assert_equal (TArray(NodeEmpty)) var;
         let str = "key = [true, true,]" in
-        let toml = Toml.from_string str in
-        let var = Hashtbl.find toml "key" in
+        let toml = Parser.from_string str in
+        let var = Table.find "key" toml in
         assert_equal (TArray(NodeBool([true; true]))) var);
 
         "Nested Arrays" >:: (fun () ->
         let str ="key=[ [1,2],[\"a\",\"b\",\"c\",\"d\"]\n,[] ]" in
-        let toml = Toml.from_string str in
+        let toml = Parser.from_string str in
         assert_equal
           (TArray(NodeArray([NodeInt([1; 2]);
                              NodeString(["a";"b";"c";"d"]);
                              NodeEmpty])))
-          (Hashtbl.find toml "key"));
-    
+          (Table.find "key" toml));
+
       "Grouped key" >:: (fun () ->
         let str = "[group1]\nkey = true\nkey2 = 1337" in
-        let toml = Toml.from_string str in
-        assert_raises Not_found (fun () -> Hashtbl.find toml "key");
+        let toml = Parser.from_string str in
+        assert_raises Not_found (fun () -> Table.find "key" toml);
         let group1 = get_table toml "group1" in
-        assert_equal (TBool true) (Hashtbl.find group1 "key");
-        assert_equal (TInt 1337) (Hashtbl.find group1 "key2"));
+        assert_equal (TBool true) (Table.find "key" group1);
+        assert_equal (TInt 1337) (Table.find "key2" group1));
 
       "Comment" >:: (fun () ->
         let str = "[group1]\nkey = true # this is comment" in
-        let toml = Toml.from_string str in
+        let toml = Parser.from_string str in
         let group1 = get_table toml "group1" in
-        assert_equal (TBool true) (Hashtbl.find group1 "key"));
+        assert_equal (TBool true) (Table.find "key" group1));
 
       "Date" >:: (fun () ->
         let str = "[group1]\nkey = 1979-05-27T07:32:00Z" in
-        let toml = Toml.from_string str in
+        let toml = Parser.from_string str in
         let group1 = get_table toml "group1" in
          assert_equal
            (TDate {Unix.tm_year=79;Unix.tm_mon=04;Unix.tm_mday=27;
                    Unix.tm_hour=07;Unix.tm_min=32;Unix.tm_sec=0;
                    Unix.tm_wday=(-1);Unix.tm_yday=(-1);
                    Unix.tm_isdst=true;})
-           (Hashtbl.find group1 "key"));
+           (Table.find "key" group1));
 
       "Same key, different group" >:: (fun () ->
         let str = "key=1[group]\nkey = 2" in
-        let toml = Toml.from_string str in
+        let toml = Parser.from_string str in
         assert_equal
           (TInt 1)
-          (Hashtbl.find toml "key");
+          (Table.find "key" toml);
         assert_equal
           (TInt 2)
-          (Hashtbl.find (get_table toml "group") "key"));
+          (Table.find "key" (get_table toml "group")));
 
       "Unicode" >:: (fun () ->
         let str = "key=\"\\u03C9\"\nkey2=\"\\u4E2D\\u56FD\\u0021\"" in
-        let toml = Toml.from_string str in
+        let toml = Parser.from_string str in
         assert_equal
           (TString "ω")
-          (Hashtbl.find toml "key");
+          (Table.find "key" toml);
         assert_equal
           (TString "中国!")
-          (Hashtbl.find toml "key2"));
+          (Table.find "key2" toml));
 
   ];
     (* "Lexer" >:::                                                 *)
