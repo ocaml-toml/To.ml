@@ -17,9 +17,9 @@ module Table : sig
   (** Create a empty TOML table *)
   val empty : table
 
-  val find : string -> table -> value
+  val find : Key.t -> table -> value
 
-  val add : string -> value -> table -> table
+  val add : Key.t -> value -> table -> table
 
 end
 

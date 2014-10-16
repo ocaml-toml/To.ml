@@ -21,7 +21,9 @@ let add tbl path (key, value) =
 let rec convert = function
   | Table t ->
     TTable (Hashtbl.fold
-              (fun k v map -> Map.add k (convert v) map) t Map.empty)
+              (fun k v map -> Map.add
+                  (Key.of_string k)
+                  (convert v) map) t Map.empty)
   | Value v -> v
 
 %}

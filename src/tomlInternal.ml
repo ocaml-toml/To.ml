@@ -3,7 +3,13 @@
 
 module Type = struct
 
-  module Map = Map.Make(String)
+  module Key = struct
+    type t = string
+    let compare = Pervasives.compare
+    let of_string s = s
+  end
+
+  module Map = Map.Make(Key)
 
   type array =
     | NodeEmpty
@@ -24,6 +30,8 @@ module Type = struct
     | TTable of table
 
   and table = value Map.t
+
+
 end
 
 module Dump = struct
