@@ -168,26 +168,25 @@ let test = "Printing values" >:::
           (NodeArray [NodeBool [true]])])));
 
     "mixed example" >:: (fun () ->
-      let level3_table = Toml.Table.empty in
-      let level3_table' = Toml.Table.add "is_deep" (TBool true) level3_table in
-      let level3_table'' = Toml.Table.add "location" (TString "basement") level3_table'
+      let level3_table =
+          Toml.Table.empty
+          |> Toml.Table.add "is_deep" (TBool true)
+          |> Toml.Table.add "location" (TString "basement")
       in
 
-      let level2_1_table = create_table "level3" (TTable level3_table'') in
+      let level2_1_table = create_table "level3" (TTable level3_table) in
       let level2_2_table = create_table "is_less_deep" (TBool true) in
 
-      let level1_table = Toml.Table.empty in
-      let level1_table' =
-          Toml.Table.add "level2_1" (TTable level2_1_table) level1_table
+      let level1_table =
+          Toml.Table.empty
+          |> Toml.Table.add "level2_1" (TTable level2_1_table)
+          |> Toml.Table.add "level2_2" (TTable level2_2_table)
       in
-      let level1_table'' =
-          Toml.Table.add "level2_2" (TTable level2_2_table) level1_table' in
 
-      let top_level_table = Toml.Table.empty in
-      let top_level_table' =
-          Toml.Table.add "toplevel" (TString "ocaml") top_level_table in
-      let top_level_table'' =
-          Toml.Table.add "level1" (TTable level1_table'') top_level_table'
+      let top_level_table =
+          Toml.Table.empty
+          |> Toml.Table.add "toplevel" (TString "ocaml")
+          |> Toml.Table.add "level1" (TTable level1_table)
       in
 
       assert_equal_str
@@ -199,7 +198,7 @@ let test = "Printing values" >:::
           "[level1.level2_2]";
           "is_less_deep = true";
         ])^"\n")
-        (top_level_table'' |> string_of_table));
+        (top_level_table |> string_of_table));
 
   ]
 
