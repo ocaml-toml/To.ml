@@ -65,11 +65,11 @@ let test = "Printing values" >:::
 
     "positive float" >:: (fun () ->
       assert_equal_str
-        "42.240000"
+        "42.24"
         (string_of_value (TFloat 42.24)));
     "negative float" >:: (fun () ->
       assert_equal_str
-        "-42.240000"
+        "-42.24"
         (string_of_value (TFloat (-42.24))));
 
     "date" >:: (fun () ->
