@@ -1,6 +1,7 @@
 open TomlInternal.Type
 
 module TomlMap = TomlInternal.Type.Map
+module TomlKey = TomlInternal.Type.Key
 
 let maybe_escape_char formatter ch =
   match ch with
@@ -84,10 +85,10 @@ and print_value_with_key formatter key toml_value sections =
        *)
       if not (TomlMap.for_all is_table value)
       then Format.fprintf formatter "[%s]\n"
-          (String.concat "." sections_with_key) ;
+          (sections_with_key |> List.map TomlKey.to_string |> String.concat ".");
       (sections_with_key, false)
     | _             ->
-      Format.fprintf formatter "%s = " key;
+      Format.fprintf formatter "%s = " (TomlKey.to_string key);
       (sections, true)
   in
   print_value formatter toml_value sections';

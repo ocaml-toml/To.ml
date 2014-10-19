@@ -3,10 +3,30 @@
 
 module Type = struct
 
-  module Key = struct
+  module Key : sig
+    type t
+    exception Bad_key of string
+    val compare : t -> t -> int
+
+    val of_string : string -> t
+
+    val to_string : t -> string
+
+  end = struct
     type t = string
+
+    exception Bad_key of string
+
     let compare = Pervasives.compare
-    let of_string s = s
+
+    let of_string s =
+        String.iter (fun ch ->
+            if String.contains " \t\n\r.[]\"#" ch then
+                raise (Bad_key s)) s;
+        s
+
+    let to_string key = key
+
   end
 
   module Map = Map.Make(Key)
@@ -43,7 +63,7 @@ module Dump = struct
 
   let rec table (tbl : table) : string =
     Map.fold (fun k v acc -> (k, v) :: acc) tbl []
-    |> list (fun (k, v) -> k ^ "->" ^ value v)
+    |> list (fun (k, v) -> (Type.Key.to_string k) ^ "->" ^ value v)
 
   and array : array -> string = function
     | NodeEmpty -> ""

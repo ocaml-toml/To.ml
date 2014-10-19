@@ -1,5 +1,6 @@
 open OUnit
 open TomlInternal.Type
+module Toml_key = Toml.Table.Key
 
 let print_str str = str
 
@@ -7,7 +8,7 @@ let assert_equal_str x y = assert_equal ~printer:print_str x y
 
 let create_table key value =
     let table = Toml.Table.empty in
-    Toml.Table.add key value table
+    Toml.Table.add (Toml_key.of_string key) value table
 
 let string_of_table toml_table =
     let buffer = Buffer.create 100 in
@@ -170,8 +171,8 @@ let test = "Printing values" >:::
     "mixed example" >:: (fun () ->
       let level3_table =
           Toml.Table.empty
-          |> Toml.Table.add "is_deep" (TBool true)
-          |> Toml.Table.add "location" (TString "basement")
+          |> Toml.Table.add (Toml_key.of_string "is_deep") (TBool true)
+          |> Toml.Table.add (Toml_key.of_string "location") (TString "basement")
       in
 
       let level2_1_table = create_table "level3" (TTable level3_table) in
@@ -179,14 +180,14 @@ let test = "Printing values" >:::
 
       let level1_table =
           Toml.Table.empty
-          |> Toml.Table.add "level2_1" (TTable level2_1_table)
-          |> Toml.Table.add "level2_2" (TTable level2_2_table)
+          |> Toml.Table.add (Toml_key.of_string "level2_1") (TTable level2_1_table)
+          |> Toml.Table.add (Toml_key.of_string "level2_2") (TTable level2_2_table)
       in
 
       let top_level_table =
           Toml.Table.empty
-          |> Toml.Table.add "toplevel" (TString "ocaml")
-          |> Toml.Table.add "level1" (TTable level1_table)
+          |> Toml.Table.add (Toml_key.of_string "toplevel") (TString "ocaml")
+          |> Toml.Table.add (Toml_key.of_string "level1") (TTable level1_table)
       in
 
       assert_equal_str

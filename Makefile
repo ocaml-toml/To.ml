@@ -4,7 +4,7 @@ INC=src
 TESTS_FLAGS=$(FLAGS)
 TESTS_PKGS=oUnit
 TESTS_INC=$(INC),tests
-TEST_FILES=parser_test.ml example.ml hard_example.ml printer_test.ml
+TEST_FILES=parser_test.ml example.ml hard_example.ml printer_test.ml key_test.ml
 
 COVERAGE_FLAGS=$(TESTS_FLAGS)
 COVERAGE_TAGS=package\(bisect\),syntax\(camlp4o\),syntax\(bisect_pp\)
@@ -29,6 +29,7 @@ test: $(TEST_FILES:.ml=.native)
 	@./example.native < tests/example.toml
 	@./hard_example.native < tests/hard_example.toml
 	@./printer_test.native
+	@./key_test.native
 
 
 $(TEST_FILES:.ml=.native):
@@ -40,6 +41,7 @@ coverage:
 	@BISECT_FILE=_build/coverage ./example.byte < tests/example.toml
 	@BISECT_FILE=_build/coverage ./hard_example.byte < tests/hard_example.toml
 	@BISECT_FILE=_build/coverage ./printer_test.byte
+	@BISECT_FILE=_build/coverage ./key_test.byte
 
 doc:
 	ocamlbuild -I src toml.docdir/index.html

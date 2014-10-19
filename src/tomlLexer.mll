@@ -14,7 +14,7 @@ let t_float   = '-'?t_digit+'.'t_digit+
 (** digits are needed in both side of the dot *)
 let t_bool    = ("true"|"false")
 (** booleans are full undercase *)
-let t_key     = [^ '\t' '\n' ' ' '\r' '"' '=' '[' ',' ']']+
+let t_key     = [^ '\t' '\n' ' ' '\r' '"' '=' '[' ',' ']' '#']+
 (** keys begins with non blank char and end with the first blank *)
 let t_date    = (t_digit t_digit t_digit t_digit as year)
                 '-' (t_digit t_digit as mon)
