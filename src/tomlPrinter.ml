@@ -100,7 +100,7 @@ and print_value_with_key formatter key toml_value sections =
             else ();
             (sections_with_key, false)
         | _             ->
-            Format.fprintf formatter "%s = " (TomlInternal.Type.Key.of_string key);
+            Format.fprintf formatter "%s = " key;
             (sections, true)
     in
     print_value formatter toml_value sections';
