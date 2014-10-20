@@ -81,10 +81,10 @@ end
 
 module Printer : sig
 
-    val value : Format.formatter -> TomlInternal.Type.value -> unit
+  val value : Format.formatter -> TomlInternal.Type.value -> unit
 
-    val table : Format.formatter -> TomlInternal.Type.table -> unit
+  val table : Format.formatter -> TomlInternal.Type.table -> unit
 
-    val array : Format.formatter -> TomlInternal.Type.array -> unit
+  val array : Format.formatter -> TomlInternal.Type.array -> unit
 
 end

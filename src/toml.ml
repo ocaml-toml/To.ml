@@ -78,10 +78,10 @@ end
 
 module Printer = struct
 
-    let value formatter toml_value = TomlPrinter.value formatter toml_value
+  let value formatter toml_value = TomlPrinter.value formatter toml_value
 
-    let table formatter toml_table = TomlPrinter.table formatter toml_table
+  let table formatter toml_table = TomlPrinter.table formatter toml_table
 
-    let array formatter toml_array = TomlPrinter.array formatter toml_array
+  let array formatter toml_array = TomlPrinter.array formatter toml_array
 
 end
