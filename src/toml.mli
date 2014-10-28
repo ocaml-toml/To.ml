@@ -14,19 +14,7 @@ end
 
 module Table : sig
 
-  module Key : sig
-
-    type t
-
-    exception Bad_key of string
-
-    val compare : t -> t -> int
-
-    val of_string : string -> t
-
-    val to_string : t -> string
-
-  end
+  module Key = TomlInternal.Type.Key
 
   (** Create a empty TOML table *)
   val empty : table

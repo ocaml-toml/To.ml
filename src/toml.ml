@@ -9,9 +9,7 @@ end
 
 module Table = struct
 
-  module Key = struct
-    include TomlInternal.Type.Key
-  end
+  module Key = TomlInternal.Type.Key
 
   let empty = Map.empty
 
