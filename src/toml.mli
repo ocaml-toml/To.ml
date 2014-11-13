@@ -14,14 +14,9 @@ end
 
 module Table : sig
 
+  include module type of TomlInternal.Type.Map
+
   module Key = TomlInternal.Type.Key
-
-  (** Create a empty TOML table *)
-  val empty : table
-
-  val find : Key.t -> table -> value
-
-  val add : Key.t -> value -> table -> table
 
 end
 

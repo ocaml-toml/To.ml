@@ -9,15 +9,12 @@ end
 
 module Table = struct
 
+  include TomlInternal.Type.Map
+
   module Key = TomlInternal.Type.Key
 
-  let empty = Map.empty
-
-  let find = Map.find
-
-  let add = Map.add
-
 end
+
 
 module Value = struct
 
