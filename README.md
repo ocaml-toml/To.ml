@@ -66,3 +66,4 @@ utop # Buffer.contents buffer;;
 ## Limitations
 
 * Array of tables is not supported.
+* Keys don't quite follow the Toml standard. Both section keys (eg, `[key1.key2]`) and ordinary keys (`key=...`) may not contain the following characters: space, '\t', '\n', '\r', '.', '[', ']', '"' and '#'.
