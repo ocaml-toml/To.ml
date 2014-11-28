@@ -1,18 +1,59 @@
-(** The TOML parser interface *)
+(** The TOML module interface *)
 
 open TomlInternal.Type
 
-module Parser : sig
+(** {2 Parser} *)
+(** Simple parsing functions. *)
 
-  (** {2 Parsing functions } *)
+module Parser : sig
+  (** Parses raw data into Toml data structures *)
+
+  (**
+   Given a lexer buffer, returns a Toml table.
+
+   @raise TomlParser.Error if the buffer is not valid Toml.
+   *)
   val parse : Lexing.lexbuf -> table
+
+  (**
+   Given an UTF-8 string, returns a Toml table.
+
+   @raise TomlParser.Error if the string is not valid Toml.
+  *)
   val from_string : string -> table
+
+  (**
+   Given an input channel, returns a Toml table.
+
+   @raise TomlParser.Error if the data in the channel is not valid Toml.
+  *)
   val from_channel : in_channel -> table
+
+  (**
+   Given a filename, returns a Toml table.
+
+   @raise TomlParser.Error if the data in the file is not valid Toml.
+   @raise Pervasives.Sys_error if the file could not be opened.
+  *)
   val from_filename : string -> table
 
 end
 
+(** {2 Data types} *)
+(**
+ Data types returned by the parser, can be used to build a Toml structure
+ from scratch.
+
+ You should use the {!Toml.Value.To} and {!Toml.Value.Of} modules to navigate between
+ plain OCaml data structures and Toml data structures.
+*)
+
 module Table : sig
+  (**
+   The type of a Toml table. Toml tables implement the {!Map} interface.
+   Their keys are of type {!TomlInternal.Type.Key.t}, and their values are of type
+   {!TomlInternal.Type.value}.
+   *)
 
   include module type of TomlInternal.Type.Map
 
@@ -24,10 +65,14 @@ module Value : sig
 
   module To : sig
 
-    (** Bad_type expections carry [expected type] data *)
+    (** Bad_type exceptions carry [expected type] data *)
     exception Bad_type of string
 
-    (** From Toml type to OCaml primitive. *)
+    (**
+     From Toml type to OCaml primitive. All conversion functions in this
+     module (and its [Array] submodule) may throw [Bad_type] if the Toml type is
+     incorrect (eg, using {!Toml.Value.To.string} on a Toml boolean).
+    *)
 
     val bool : value -> bool
     val int : value -> int
@@ -39,7 +84,7 @@ module Value : sig
 
     module Array : sig
 
-      (** Array functions. As TOML array mey nest types,
+      (** Array functions. As a TOML array may nest types,
           handling them needs a dedicated module. *)
       val bool : array -> bool list
       val int : array -> int list
@@ -53,7 +98,11 @@ module Value : sig
 
   module Of : sig
 
-    (** From OCaml primitive to Toml type. *)
+    (**
+     From OCaml primitive to Toml type.
+
+     OCaml strings should be valid UTF-8, and OCaml dates should be in UTC.
+    *)
 
     val bool : bool -> value
     val int : int -> value
@@ -76,12 +125,26 @@ module Value : sig
 
 end
 
+(** {2 Printing} *)
+
 module Printer : sig
 
+  (**
+   Given an Toml value and a formatter, inserts a valid Toml representation of
+   this value in the formatter.
+  *)
   val value : Format.formatter -> TomlInternal.Type.value -> unit
 
+  (**
+   Given an Toml table and a formatter, inserts a valid Toml representation of
+   this value in the formatter.
+  *)
   val table : Format.formatter -> TomlInternal.Type.table -> unit
 
+  (**
+   Given an Toml array and a formatter, inserts a valid Toml representation of
+   this value in the formatter.
+  *)
   val array : Format.formatter -> TomlInternal.Type.array -> unit
 
 end
