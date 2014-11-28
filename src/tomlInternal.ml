@@ -3,6 +3,8 @@
 
 module Type = struct
 
+  (** {2 Toml tables} *)
+
   module Key : sig
     type t
     exception Bad_key of string
@@ -13,23 +15,47 @@ module Type = struct
     val to_string : t -> string
 
   end = struct
+    (**
+     A strongly-typed key. Used for both section keys ([[key1.key2]]) and
+     plain keys ([key=...]).
+
+     Keys don't quite follow the Toml standard. They may not contain the
+     following characters: space, [\t], [\n], [\r], [.], [\[], [\]], double
+     quote and [#].
+    *)
     type t = string
 
+    (** Exception thrown when an invalid character is found in a key.*)
     exception Bad_key of string
 
+    (**
+     Compare x y returns 0 if x is equal to y, a negative integer if x is
+     less than y, and a positive integer if x is greater than y.
+    *)
     let compare = Pervasives.compare
 
+    (**
+     Builds a key from a plain string.
+
+     @raise TomlInternal.Type.Key.Bad_key if the key contains invalid
+     characters.
+    *)
     let of_string s =
         String.iter (fun ch ->
             if String.contains " \t\n\r.[]\"#" ch then
                 raise (Bad_key s)) s;
         s
 
+    (**
+     Returns the key as a plain string.
+    *)
     let to_string key = key
 
   end
 
   module Map = Map.Make(Key)
+
+  (** {2 Toml values} *)
 
   type array =
     | NodeEmpty
@@ -95,6 +121,8 @@ module Dump = struct
 end
 
 module Equal = struct
+
+  open Type
 
   let rec value (x : Type.value) (y : Type.value) = match x, y with
     | TArray x, TArray y -> array x y
