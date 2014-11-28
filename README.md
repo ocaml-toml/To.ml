@@ -9,7 +9,7 @@ Ocaml parser for TOML [(Tom's Obvious Minimal Language)](https://github.com/mojo
 Toml need Ocaml 4.0 at least. Check your local installation with `ocamlc -v`.
 
 This project use **ocamllex** and **menhir** parsing features. In order to
-compile tests you will also need **OUnit** and **bisect** is required to 
+compile tests you will also need **OUnit** and **bisect** is required to
 generate code coverage summary.
 
 ## Install
@@ -26,7 +26,7 @@ make install may need sudo.
 
 ## Usage
 
-`open Toml` in your file(s), and link toml library when compiling. For 
+`open Toml` in your file(s), and link toml library when compiling. For
 instance, using ocamlbuild:
 ```
 ocamlbuild -use-ocamlfind -package toml foo.byte
