@@ -122,6 +122,8 @@ end
 
 module Equal = struct
 
+  open Type
+
   let rec value (x : Type.value) (y : Type.value) = match x, y with
     | TArray x, TArray y -> array x y
     | TTable x, TTable y -> table x y
