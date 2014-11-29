@@ -1,5 +1,3 @@
-open TomlInternal.Type
-
 module Parser = struct
   let parse lexbuf = TomlParser.toml TomlLexer.tomlex lexbuf
   let from_string s = parse (Lexing.from_string s)
@@ -11,14 +9,21 @@ module Table = struct
 
   include TomlInternal.Type.Map
 
-  module Key = TomlInternal.Type.Key
+  module Key = struct
+    include TomlInternal.Type.Key
+  end
 
 end
 
-
 module Value = struct
 
+  type value = TomlInternal.Type.value
+  type array = TomlInternal.Type.array
+  type table = value Table.t
+
   module To = struct
+
+    open TomlInternal.Type
 
     exception Bad_type of string
 
@@ -53,6 +58,9 @@ module Value = struct
   end
 
   module Of = struct
+
+    open TomlInternal.Type
+
     let bool b   = TBool b
     let int i    = TInt i
     let float f  = TFloat f
@@ -74,6 +82,8 @@ module Value = struct
   end
 
 end
+
+module Equal = TomlInternal.Equal
 
 module Printer = struct
 
