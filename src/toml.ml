@@ -15,6 +15,8 @@ module Table = struct
 
 end
 
+let key = Table.Key.of_string
+
 module Value = struct
 
   type value = TomlInternal.Type.value
