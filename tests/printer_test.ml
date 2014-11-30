@@ -71,6 +71,10 @@ let test = "Printing values" >:::
       assert_equal_str
         "-42.24"
         (string_of_value (Toml.Value.Of.float (-42.24))));
+    "round float" >:: (fun () ->
+      assert_equal_str
+        "1.0"
+        (string_of_value (Toml.Value.Of.float (1.))));
 
     "date" >:: (fun () ->
       let open UnixLabels
