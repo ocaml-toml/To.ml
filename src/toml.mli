@@ -13,8 +13,7 @@ module Table : sig
 
   (**
    The type of a Toml table. Toml tables implement the {!Map} interface.
-   Their keys are of type {!TomlInternal.Type.Key.t}, and their values are of type
-   {!TomlInternal.Type.value}.
+   Their keys are of type {!Toml.Table.Key.t}.
    *)
 
   module Key : sig
@@ -28,8 +27,20 @@ end
 
 module Value : sig
 
+  (**
+   A Toml value. Covers Toml integers, floats, booleans, strings, dates. Also
+   has constructors for tables and arrays.
+   *)
   type value
+
+  (**
+   A Toml array. May contain any Toml data type except for tables.
+   *)
   type array
+
+  (**
+   A Toml table of {!Toml.Value.value}.
+   *)
   type table = value Table.t
 
   module To : sig
@@ -137,31 +148,36 @@ end
 module Printer : sig
 
   (**
-   Given an Toml value and a formatter, inserts a valid Toml representation of
+   Given a Toml value and a formatter, inserts a valid Toml representation of
    this value in the formatter.
   *)
   val value : Format.formatter -> Value.value -> unit
 
   (**
-   Given an Toml table and a formatter, inserts a valid Toml representation of
+   Given a Toml table and a formatter, inserts a valid Toml representation of
    this value in the formatter.
   *)
   val table : Format.formatter -> Value.table -> unit
 
   (**
-   Given an Toml array and a formatter, inserts a valid Toml representation of
+   Given a Toml array and a formatter, inserts a valid Toml representation of
    this value in the formatter.
   *)
   val array : Format.formatter -> Value.array -> unit
 
 end
 
+(** {2 Equality} *)
+
 module Equal : sig
 
+  (** Given two Toml values, return [true] if they are equal *)
   val value : Value.value -> Value.value -> bool
 
+  (** Given two Toml arrays, return [true] if they are equal *)
   val array : Value.array -> Value.array -> bool
 
+  (** Given two Toml tables, return [true] if they are equal *)
   val table : Value.table -> Value.table -> bool
 
 end
