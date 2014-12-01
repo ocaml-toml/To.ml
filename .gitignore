@@ -7,3 +7,5 @@
 *.cmx
 *.cmxs
 *.cmxa
+_build/
+toml.docdir
