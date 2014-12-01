@@ -173,17 +173,20 @@ module Printer : sig
 
 end
 
-(** {2 Equality} *)
+(** {2 Comparison} *)
 
-module Equal : sig
+module Compare : sig
 
-  (** Given two Toml values, return [true] if they are equal *)
-  val value : Value.value -> Value.value -> bool
+  (** Given two Toml values, return [-1], [0] or [1] depending on whether the
+   first is smaller, equal or greater than the second *)
+  val value : Value.value -> Value.value -> int
 
-  (** Given two Toml arrays, return [true] if they are equal *)
-  val array : Value.array -> Value.array -> bool
+  (** Given two Toml arrays, return [-1], [0] or [1] depending on whether the
+   first is smaller, equal or greater than the second *)
+  val array : Value.array -> Value.array -> int
 
-  (** Given two Toml tables, return [true] if they are equal *)
-  val table : Value.table -> Value.table -> bool
+  (** Given two Toml tables, return [-1], [0] or [1] depending on whether the
+   first is smaller, equal or greater than the second *)
+  val table : Value.table -> Value.table -> int
 
 end

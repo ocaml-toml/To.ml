@@ -85,7 +85,7 @@ module Value = struct
 
 end
 
-module Equal = TomlInternal.Equal
+module Compare = TomlInternal.Compare
 
 module Printer = struct
 

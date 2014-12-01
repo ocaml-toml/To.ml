@@ -23,7 +23,7 @@ let mk_table x =
   Toml.Value.Of.table (List.fold_left (fun tbl (k,v) -> Table.add (Toml_key.of_string k) v tbl) Table.empty x)
 
 let assert_equal =
-  OUnit.assert_equal ~cmp:Toml.Equal.table
+  OUnit.assert_equal ~cmp:(fun x y -> Compare.table x y == 0)
 
 let expected =
   List.fold_left (fun tbl (k,v) -> Table.add k v tbl) Table.empty
