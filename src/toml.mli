@@ -27,7 +27,7 @@ end
 
 (**
  Turns a string into a table key.
- @throws Toml.Table.Key.Bad_key if the key contains invalid characters.
+ @raise Toml.Table.Key.Bad_key if the key contains invalid characters.
 *)
 val key : string -> Table.Key.t
 
