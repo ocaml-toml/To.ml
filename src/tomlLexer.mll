@@ -1,10 +1,18 @@
 {
  open TomlParser
+ open Lexing
+
+ let update_loc lexbuf =
+   let pos = lexbuf.lex_curr_p in
+   lexbuf.lex_curr_p <- { pos with
+     pos_lnum = pos.pos_lnum + 1;
+     pos_bol = pos.pos_cnum;
+   }
 }
 
 let t_white   = ['\t' ' ']
 (** Tab char or space char *)
-let t_eol     = ['\n' '\r']
+let t_eol     = '\n'|'\r'|"\r\n"
 (** Cross platform end of lines *)
 let t_blank   = (t_white|t_eol)
 (** Blank characters as specified by the ref *)
@@ -44,14 +52,14 @@ rule tomlex = parse
                     Unix.tm_isdst = true (* ??? *)
             } }
   | t_white+ { tomlex lexbuf }
-  | t_eol+ { tomlex lexbuf }
+  | t_eol+ { update_loc lexbuf;tomlex lexbuf }
   | "[[" { failwith "Array of tables is not supported" }
   | '=' { EQUAL }
   | '[' { LBRACK }
   | ']' { RBRACK }
   | '"' { stringify (Buffer.create 13) lexbuf }
   | ',' { COMMA }
-  | '#' (_ # t_eol)* { tomlex lexbuf }
+  | '#' (_ # [ '\n' '\r' ] )* { tomlex lexbuf }
   | t_key as value { KEY (value) }
   | eof   { EOF }
 

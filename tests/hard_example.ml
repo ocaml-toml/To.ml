@@ -1,5 +1,6 @@
 open OUnit
 open Toml
+open Toml.Parser
 
 module Toml_key = Toml.Table.Key
 
@@ -52,15 +53,20 @@ let test = "Official hard_example.toml file" >:::
 
     "Error" >:: (fun () ->
       assert_raises
-        (TomlParser.Error)
+        (Toml.Parser.Error (
+          "Error in <string> at line 1 at column 159 (position 159)",
+          { source = "<string>"; line = 1; column = 159; position = 159; }))
         (fun () -> ignore(Parser.from_string error1));
       assert_raises
-        (TomlParser.Error)
+        (Toml.Parser.Error (
+          "Error in <string> at line 3 at column 13 (position 85)",
+          { source = "<string>"; line = 3; column = 13; position = 85; }))
         (fun () -> ignore(Parser.from_string error2));
       assert_raises
-        (TomlParser.Error)
+        (Toml.Parser.Error (
+          "Error in <string> at line 1 at column 26 (position 26)",
+          { source = "<string>"; line = 1; column = 26; position = 26; }))
         (fun () -> ignore(Parser.from_string error3)))
-
   ]
 
 let _ = OUnit.run_test_tt_main test

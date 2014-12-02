@@ -1,8 +1,34 @@
 module Parser = struct
-  let parse lexbuf = TomlParser.toml TomlLexer.tomlex lexbuf
-  let from_string s = parse (Lexing.from_string s)
-  let from_channel c = parse (Lexing.from_channel c)
-  let from_filename f = from_channel (open_in f)
+ 
+  open Lexing 
+
+  type location = {
+    source: string;
+    line: int;
+    column: int;
+    position: int;
+  }
+
+  exception Error of (string * location)
+
+  let parse lexbuf source =
+    try
+      TomlParser.toml TomlLexer.tomlex lexbuf
+    with TomlParser.Error ->
+      let location = {
+        source = source;
+        line = lexbuf.lex_curr_p.pos_lnum;
+        column = (lexbuf.lex_curr_p.pos_cnum - lexbuf.lex_curr_p.pos_bol);
+        position = lexbuf.lex_curr_p.pos_cnum;
+      } in
+      let msg =
+        Printf.sprintf "Error in %s at line %d at column %d (position %d)"
+          source location.line location.column location.position
+      in
+      raise (Error (msg, location))
+  let from_string s = parse (Lexing.from_string s) "<string>"
+  let from_channel c = parse (Lexing.from_channel c) "<channel>"
+  let from_filename f = parse (open_in f |> Lexing.from_channel) f
 end
 
 module Table = struct

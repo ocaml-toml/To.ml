@@ -115,33 +115,51 @@ end
 (** Simple parsing functions. *)
 
 module Parser : sig
+
   (** Parses raw data into Toml data structures *)
 
   (**
-   Given a lexer buffer, returns a Toml table.
+   The location of an error. The [source] gives the source file of the error.
+   The other fields give the location of the error inside the source. They all
+   start from one. The [line] is the line number, the [column] is the number of
+   characters from the start of the line, and the [position] is the number of
+   characters from the start of the source.
+  *)
+  type location = {
+    source: string;
+    line: int;
+    column: int;
+    position: int;
+  }
 
-   @raise TomlParser.Error if the buffer is not valid Toml.
+  (** Exception raised when a parsing error occurs. Contains a (message, location) tuple. *)
+  exception Error of (string * location)
+
+  (**
+   Given a lexer buffer and a source (eg, a filename), returns a Toml table.
+
+   @raise Toml.Parser.Error if the buffer is not valid Toml.
    *)
-  val parse : Lexing.lexbuf -> Value.table
+  val parse : Lexing.lexbuf -> string -> Value.table
 
   (**
    Given an UTF-8 string, returns a Toml table.
 
-   @raise TomlParser.Error if the string is not valid Toml.
+   @raise Toml.Parser.Error if the string is not valid Toml.
   *)
   val from_string : string -> Value.table
 
   (**
    Given an input channel, returns a Toml table.
 
-   @raise TomlParser.Error if the data in the channel is not valid Toml.
+   @raise Toml.Parser.Error if the data in the channel is not valid Toml.
   *)
   val from_channel : in_channel -> Value.table
 
   (**
    Given a filename, returns a Toml table.
 
-   @raise TomlParser.Error if the data in the file is not valid Toml.
+   @raise Toml.Parser.Error if the data in the file is not valid Toml.
    @raise Pervasives.Sys_error if the file could not be opened.
   *)
   val from_filename : string -> Value.table
