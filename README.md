@@ -36,10 +36,11 @@ ocamlbuild -use-ocamlfind -package toml foo.byte
 
 ```ocaml
 utop # let parsed_toml = Toml.Parser.from_string "key=[1,2]";;
-val parsed_toml : TomlInternal.Type.table = <abstr>
+val parsed_toml : Toml.Value.table = <abstr>
 
-utop # Toml.Table.find (Toml.Table.Key.of_string "key") parsed_toml;;
-- : TomlInternal.Type.value = TomlInternal.Type.TArray (TomlInternal.Type.NodeInt [1; 2])
+utop # Toml.Table.find (Toml.Table.Key.of_string "key") parsed_toml |>
+Toml.Value.To.array |> Toml.Value.To.Array.int;;
+- : int list = [1; 2]
 ```
 
 ### Writing Toml data
@@ -48,7 +49,7 @@ utop # Toml.Table.find (Toml.Table.Key.of_string "key") parsed_toml;;
 utop # let toml_data = Toml.Table.empty |> Toml.Table.add
 (Toml.Table.Key.of_string "key") (Toml.Value.Of.array (Toml.Value.Of.Array.int
 [1;2]));;
-val toml_data : TomlInternal.Type.value Toml.Table.t = <abstr>
+val toml_data : Toml.Value.value Toml.Table.t = <abstr>
 
 utop # let buffer = Buffer.create 100;;
 val buffer : Buffer.t = <abstr>

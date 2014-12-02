@@ -19,7 +19,13 @@ let print_bool formatter value = Format.pp_print_bool formatter value
 
 let print_int formatter value = Format.pp_print_int formatter value
 
-let print_float formatter value = Format.pp_print_float formatter value
+let print_float formatter value =
+  let fractional = abs_float (value -. (floor value)) in
+  (* Even 1.'s fractional value is not equal to 0. *)
+  if fractional <= epsilon_float then
+    Format.fprintf formatter "%.1f" value
+  else
+    Format.pp_print_float formatter value
 
 let print_string formatter value =
   Format.pp_print_char formatter '"' ;

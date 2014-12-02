@@ -120,20 +120,18 @@ module Dump = struct
     ^ "}"
 end
 
-module Equal = struct
+module Compare = struct
 
   open Type
 
   let rec value (x : Type.value) (y : Type.value) = match x, y with
     | TArray x, TArray y -> array x y
     | TTable x, TTable y -> table x y
-    | _, _               -> x = y
+    | _, _               -> compare x y
 
-  and array (x : Type.array) (y : Type.array) = match x, y with
-    | NodeArray x, NodeArray y -> List.for_all2 array x y
-    | _, _                     -> x = y
+  and array (x : Type.array) (y : Type.array) = compare x y
 
   and table (x : Type.table) (y : Type.table) =
-    Type.Map.equal value x y
+    Type.Map.compare value x y
 
 end
