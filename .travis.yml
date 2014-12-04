@@ -1,2 +1,14 @@
+# custom .travis.yml
+# based on http://anil.recoil.org/2013/09/30/travis-and-ocaml.html
+
 language: c
-script: bash travis-ci.sh
+
+script: bash -ex .travis-ci.sh
+
+env:
+  - OCAML_VERSION=4.02.0 OPAM_VERSION=1.2.0
+
+after_script: chmod +x ./.ocveralls.sh && cd _build && ../.ocveralls.sh coverage*.out
+
+notifications:
+  email: false

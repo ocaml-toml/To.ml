@@ -1,66 +1,210 @@
-(*
- * The TOML parser interface
- * *)
+(** The TOML module interface *)
 
-(***
- * These are the helpers used to parse a TOML input
- * 
- * @note:
- *   type TomlType.tomlTable = (string, TomlValue) Hashtbl.t
- * *)
-val parse : Lexing.lexbuf -> TomlType.tomlTable
-val from_string : string -> TomlType.tomlTable
-val from_channel : in_channel -> TomlType.tomlTable
-val from_filename : string -> TomlType.tomlTable
+(** {2 Data types} *)
+(**
+ Data types returned by the parser, can be used to build a Toml structure
+ from scratch.
+
+ You should use the {!Toml.Value.To} and {!Toml.Value.Of} modules to navigate between
+ plain OCaml data structures and Toml data structures.
+*)
+
+module Table : sig
+
+  (**
+   The type of a Toml table. Toml tables implement the {!Map} interface.
+   Their keys are of type {!Toml.Table.Key.t}.
+   *)
+
+  module Key : sig
+    include module type of TomlInternal.Type.Key
+  end
+
+  include Map.S
+      with type key = Key.t
+
+end
 
 (**
- * Use this if you want to extract the list of the sub values
- **)
+ Turns a string into a table key.
+ @raise Toml.Table.Key.Bad_key if the key contains invalid characters.
+*)
+val key : string -> Table.Key.t
 
-(* @param tomlTable
- * @return the list of all (key, value) contained in tomlTable *)
-val toml_to_list :
-  ('a, TomlType.tomlValue) Hashtbl.t -> ('a * TomlType.tomlValue) list
-(* @param tomlTable
- * @return the list of all the tables (key, table) contained in tomlTable *)
-val tables_to_list :
-  ('a, TomlType.tomlValue) Hashtbl.t -> ('a * TomlType.tomlTable) list
-(* @param tomlTable
- * @return the list of all the non-tables (key, value) contained in tomlTable *)
-val values_to_list :
-  ('a, TomlType.tomlValue) Hashtbl.t -> ('a * TomlType.tomlValue) list
+module Value : sig
 
-(**
- * Use this if you want to extract a specific value
- *
- * All the following functions have three behaviors:
- *  1. The key is found and the type is good. The primitive value is returned
- *  2. The key is not found: raise Not_Found
- *  3. The key is found but the type doesn't match: raise Bad_Type (key,
- *  expected type)
- * *)
+  (**
+   A Toml value. Covers Toml integers, floats, booleans, strings, dates. Also
+   has constructors for tables and arrays.
+   *)
+  type value
 
-exception Bad_Type of (string * string)
+  (**
+   A Toml array. May contain any Toml data type except for tables.
+   *)
+  type array
 
-(* Primitive getters *)
-val get_bool : (string, TomlType.tomlValue) Hashtbl.t -> string -> bool
-val get_int : (string, TomlType.tomlValue) Hashtbl.t -> string -> int
-val get_float : (string, TomlType.tomlValue) Hashtbl.t -> string -> float
-val get_string : (string, TomlType.tomlValue) Hashtbl.t -> string -> string
-val get_date : (string, TomlType.tomlValue) Hashtbl.t -> string -> string
+  (**
+   A Toml table of {!Toml.Value.value}.
+   *)
+  type table = value Table.t
 
-(* Table getter *)
-val get_table :
-  (string, TomlType.tomlValue) Hashtbl.t -> string -> TomlType.tomlTable
+  module To : sig
 
-(* Array getters *)
-val get_bool_list :
-  (string, TomlType.tomlValue) Hashtbl.t -> string -> bool list
-val get_int_list :
-  (string, TomlType.tomlValue) Hashtbl.t -> string -> int list
-val get_float_list :
-  (string, TomlType.tomlValue) Hashtbl.t -> string -> float list
-val get_string_list :
-  (string, TomlType.tomlValue) Hashtbl.t -> string -> string list
-val get_date_list :
-  (string, TomlType.tomlValue) Hashtbl.t -> string -> string list
+    (** Bad_type exceptions carry [expected type] data *)
+    exception Bad_type of string
+
+    (**
+     From Toml type to OCaml primitive. All conversion functions in this
+     module (and its [Array] submodule) may throw [Bad_type] if the Toml type is
+     incorrect (eg, using {!Toml.Value.To.string} on a Toml boolean).
+    *)
+
+    val bool : value -> bool
+    val int : value -> int
+    val float : value -> float
+    val string : value -> string
+    val date : value -> Unix.tm
+    val array : value -> array
+    val table : value -> table
+
+    module Array : sig
+
+      (** Array functions. As a TOML array may nest types,
+          handling them needs a dedicated module. *)
+      val bool : array -> bool list
+      val int : array -> int list
+      val float : array -> float list
+      val string : array -> string list
+      val date : array -> Unix.tm list
+      val array : array -> array list
+    end
+
+  end
+
+  module Of : sig
+
+    (**
+     From OCaml primitive to Toml type.
+
+     OCaml strings should be valid UTF-8, and OCaml dates should be in UTC.
+    *)
+
+    val bool : bool -> value
+    val int : int -> value
+    val float : float -> value
+    val string : string -> value
+    val date : Unix.tm -> value
+    val array : array -> value
+    val table : table -> value
+
+    module Array : sig
+      val bool : bool list -> array
+      val int : int list -> array
+      val float : float list -> array
+      val string : string list -> array
+      val date : Unix.tm list -> array
+      val array : array list -> array
+    end
+
+  end
+
+end
+
+(** {2 Parser} *)
+(** Simple parsing functions. *)
+
+module Parser : sig
+
+  (** Parses raw data into Toml data structures *)
+
+  (**
+   The location of an error. The [source] gives the source file of the error.
+   The other fields give the location of the error inside the source. They all
+   start from one. The [line] is the line number, the [column] is the number of
+   characters from the start of the line, and the [position] is the number of
+   characters from the start of the source.
+  *)
+  type location = {
+    source: string;
+    line: int;
+    column: int;
+    position: int;
+  }
+
+  (** Exception raised when a parsing error occurs. Contains a (message, location) tuple. *)
+  exception Error of (string * location)
+
+  (**
+   Given a lexer buffer and a source (eg, a filename), returns a Toml table.
+
+   @raise Toml.Parser.Error if the buffer is not valid Toml.
+   *)
+  val parse : Lexing.lexbuf -> string -> Value.table
+
+  (**
+   Given an UTF-8 string, returns a Toml table.
+
+   @raise Toml.Parser.Error if the string is not valid Toml.
+  *)
+  val from_string : string -> Value.table
+
+  (**
+   Given an input channel, returns a Toml table.
+
+   @raise Toml.Parser.Error if the data in the channel is not valid Toml.
+  *)
+  val from_channel : in_channel -> Value.table
+
+  (**
+   Given a filename, returns a Toml table.
+
+   @raise Toml.Parser.Error if the data in the file is not valid Toml.
+   @raise Pervasives.Sys_error if the file could not be opened.
+  *)
+  val from_filename : string -> Value.table
+
+end
+
+
+(** {2 Printing} *)
+
+module Printer : sig
+
+  (**
+   Given a Toml value and a formatter, inserts a valid Toml representation of
+   this value in the formatter.
+  *)
+  val value : Format.formatter -> Value.value -> unit
+
+  (**
+   Given a Toml table and a formatter, inserts a valid Toml representation of
+   this value in the formatter.
+  *)
+  val table : Format.formatter -> Value.table -> unit
+
+  (**
+   Given a Toml array and a formatter, inserts a valid Toml representation of
+   this value in the formatter.
+  *)
+  val array : Format.formatter -> Value.array -> unit
+
+end
+
+(** {2 Comparison} *)
+
+module Compare : sig
+
+  (** Given two Toml values, return [-1], [0] or [1] depending on whether the
+   first is smaller, equal or greater than the second *)
+  val value : Value.value -> Value.value -> int
+
+  (** Given two Toml arrays, return [-1], [0] or [1] depending on whether the
+   first is smaller, equal or greater than the second *)
+  val array : Value.array -> Value.array -> int
+
+  (** Given two Toml tables, return [-1], [0] or [1] depending on whether the
+   first is smaller, equal or greater than the second *)
+  val table : Value.table -> Value.table -> int
+
+end

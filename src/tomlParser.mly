@@ -1,20 +1,30 @@
 %{
-open TomlType
+open TomlInternal.Type
 
 let to_path str : string list = Str.split (Str.regexp "\\.") str
 
-let add table path (key, value) =
-  let table =
-    List.fold_left
-      (fun tbl w -> try match Hashtbl.find tbl w with
-                        | TTable tbl -> tbl
-                        | _ -> failwith (w ^ " is a value")
-                    with Not_found ->
-                      let sub = Hashtbl.create 0 in
-                      Hashtbl.add tbl w (TTable sub); sub)
-      table path in
-  try ignore(Hashtbl.find table key); failwith (key ^ " is already defined")
-  with Not_found -> Hashtbl.add table key value
+type t = Value of value
+       | Table of (string, t) Hashtbl.t
+
+let add tbl path (key, value) =
+  let tbl = List.fold_left
+      (fun tbl w -> match Hashtbl.find tbl w with
+         | Table tbl -> tbl
+         | Value _   -> failwith (w ^ " is a value")
+         | exception Not_found ->
+           let sub = Hashtbl.create 0 in
+           Hashtbl.add tbl w (Table sub); sub)
+      tbl path in
+  if Hashtbl.mem tbl key then failwith (key ^ " is already defined")
+  else Hashtbl.add tbl key (Value value)
+
+let rec convert = function
+  | Table t ->
+    TTable (Hashtbl.fold
+              (fun k v map -> Map.add
+                  (Key.of_string k)
+                  (convert v) map) t Map.empty)
+  | Value v -> v
 
 %}
 
@@ -22,16 +32,17 @@ let add table path (key, value) =
 %token <bool> BOOL
 %token <int> INTEGER
 %token <float> FLOAT
-%token <string> STRING DATE
+%token <string> STRING
+%token <Unix.tm> DATE
 %token <string> KEY
 %token LBRACK RBRACK EQUAL EOF COMMA
 
 %start toml
 
-%type <TomlType.tomlTable> toml
+%type <TomlInternal.Type.table> toml
 %type <string list> group
-%type <(string * TomlType.tomlValue)> keyValue
-%type <TomlType.tomlNodeArray> array_start
+%type <string * TomlInternal.Type.value> keyValue
+%type <TomlInternal.Type.array> array_start
 
 %%
 /* Grammar rules */
@@ -40,7 +51,9 @@ toml:
    { let l = ([], $1) :: $2
      and table = Hashtbl.create 0 in
      List.iter (fun (g, v) -> List.iter (fun v -> add table g v) v) l;
-     table }
+     match convert (Table table) with
+     | TTable t -> t
+     | _ -> assert false }
 
 group:
   LBRACK KEY RBRACK { to_path $2 }
@@ -57,7 +70,7 @@ value:
   | LBRACK array_start { TArray($2) }
 
 array_start:
-    RBRACK { NodeBool([]) }
+    RBRACK { NodeEmpty }
   | BOOL array_end(BOOL) { NodeBool($1 :: $2) }
   | INTEGER array_end(INTEGER) { NodeInt($1 :: $2) }
   | FLOAT array_end(FLOAT) { NodeFloat($1 :: $2) }
@@ -74,4 +87,3 @@ nested_array_end:
   | COMMA? RBRACK { [] }
 
 %%
-

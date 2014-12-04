@@ -4,48 +4,50 @@ INC=src
 TESTS_FLAGS=$(FLAGS)
 TESTS_PKGS=oUnit
 TESTS_INC=$(INC),tests
-TEST_FILES=\
-parser_test.ml \
-official_example.ml \
-official_hard_example.ml \
-helper_test.ml
+TEST_FILES=parser_test.ml example.ml hard_example.ml printer_test.ml key_test.ml
 
 COVERAGE_FLAGS=$(TESTS_FLAGS)
 COVERAGE_TAGS=package\(bisect\),syntax\(camlp4o\),syntax\(bisect_pp\)
 COVERAGE_INC=$(TESTS_INC)
 
-LIB_FILES=\
-toml.a \
-toml.cmxa \
-toml.cma \
-toml.cmi \
-tomlType.cmi
+LIB_FILES=toml.a toml.cmxa toml.cma toml.cmi
 
-build: toml.cmxa toml.cma
+build: $(LIB_FILES)
 
 install:
 	ocamlfind install toml META $(addprefix _build/src/, $(LIB_FILES))
 
-#_build/src/toml.cmxa _build/src/toml.cma _build/src/toml.cmi 
-
 uninstall:
 	ocamlfind remove toml
 
-toml.cmxa toml.cma:
+$(LIB_FILES):
 	ocamlbuild $(FLAGS) -I $(INC) $@
 
 test: $(TEST_FILES:.ml=.native)
 	@echo '*******************************************************************'
-	@$(foreach file, $^, ./$(file);)
+	@./parser_test.native
+	@./example.native < tests/example.toml
+	@./hard_example.native < tests/hard_example.toml
+	@./printer_test.native
+	@./key_test.native
+
 
 $(TEST_FILES:.ml=.native):
 	ocamlbuild $(TESTS_FLAGS) -pkgs $(TESTS_PKGS) -Is $(TESTS_INC) $@
 
 coverage:
 	ocamlbuild $(COVERAGE_FLAGS) -pkgs $(TESTS_PKGS) -tags $(COVERAGE_TAGS) -Is $(COVERAGE_INC) $(TEST_FILES:.ml=.byte)
-	@$(foreach file, $(TEST_FILES:.ml=.byte), BISECT_FILE=_build/coverage ./$(file);)
+	@BISECT_FILE=_build/coverage ./parser_test.byte
+	@BISECT_FILE=_build/coverage ./example.byte < tests/example.toml
+	@BISECT_FILE=_build/coverage ./hard_example.byte < tests/hard_example.toml
+	@BISECT_FILE=_build/coverage ./printer_test.byte
+	@BISECT_FILE=_build/coverage ./key_test.byte
+
+doc:
+	ocamlbuild -I src toml.docdir/index.html
+
+report: coverage
 	cd _build && bisect-report -verbose -html report coverage*.out
 
 clean:
 	ocamlbuild -clean
-
