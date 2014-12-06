@@ -38,29 +38,27 @@ ocamlbuild -use-ocamlfind -package toml foo.byte
 utop # let parsed_toml = Toml.Parser.from_string "key=[1,2]";;
 val parsed_toml : Toml.Value.table = <abstr>
 
-utop # Toml.Table.find (Toml.Table.Key.of_string "key") parsed_toml |>
-Toml.Value.To.array |> Toml.Value.To.Array.int;;
+utop # Toml.to_int_array (Toml.key "key") parsed_toml;;
 - : int list = [1; 2]
 ```
 
 ### Writing Toml data
 
 ```ocaml
-utop # let toml_data = Toml.Table.empty |> Toml.Table.add
-(Toml.Table.Key.of_string "key") (Toml.Value.Of.array (Toml.Value.Of.Array.int
-[1;2]));;
+# let toml_data = Toml.Table.empty |> Toml.Table.add
+  (Toml.key "key") (Toml.of_int_array [1;2]);;
 val toml_data : Toml.Value.value Toml.Table.t = <abstr>
 
-utop # let buffer = Buffer.create 100;;
+# let buffer = Buffer.create 100;;
 val buffer : Buffer.t = <abstr>
 
-utop # let formatter = Format.formatter_of_buffer buffer;;
+# let formatter = Format.formatter_of_buffer buffer;;
 val formatter : Format.formatter = <abstr>
 
-utop # Toml.Printer.table formatter toml_data;;
+# Toml.Printer.table formatter toml_data;;
 - : unit = ()
 
-utop # Buffer.contents buffer;;
+# Buffer.contents buffer;;
 - : bytes = "key = [1, 2]\n"
 ```
 

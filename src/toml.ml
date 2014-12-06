@@ -111,6 +111,48 @@ module Value = struct
 
 end
 
+let to_bool = Value.To.bool
+let to_int = Value.To.int
+let to_float = Value.To.float
+let to_string = Value.To.string
+let to_date = Value.To.date
+let to_table = Value.To.table
+
+let to_bool_array value = Value.To.array value |> Value.To.Array.bool
+let to_int_array value = Value.To.array value |> Value.To.Array.int
+let to_float_array value = Value.To.array value |> Value.To.Array.float
+let to_string_array value = Value.To.array value |> Value.To.Array.string
+let to_date_array value = Value.To.array value |> Value.To.Array.date
+let to_array_array value = Value.To.array value |> Value.To.Array.array
+
+let get_bool key table = Table.find key table |> to_bool
+let get_int key table = Table.find key table |> to_int
+let get_float key table = Table.find key table |> to_float
+let get_string key table = Table.find key table |> to_string
+let get_date key table = Table.find key table |> to_date
+let get_table key table = Table.find key table |> to_table
+
+let get_bool_array key table = Table.find key table |> to_bool_array
+let get_int_array key table = Table.find key table |> to_int_array
+let get_float_array key table = Table.find key table |> to_float_array
+let get_string_array key table = Table.find key table |> to_string_array
+let get_date_array key table = Table.find key table |> to_date_array
+let get_array_array key table = Table.find key table |> to_array_array
+
+let of_bool = Value.Of.bool
+let of_int = Value.Of.int
+let of_float = Value.Of.float
+let of_string = Value.Of.string
+let of_date = Value.Of.date
+let of_table = Value.Of.table
+
+let of_bool_array value = Value.Of.Array.bool value |> Value.Of.array
+let of_int_array value = Value.Of.Array.int value |> Value.Of.array
+let of_float_array value = Value.Of.Array.float value |> Value.Of.array
+let of_string_array value = Value.Of.Array.string value |> Value.Of.array
+let of_date_array value = Value.Of.Array.date value |> Value.Of.array
+let of_array_array value = Value.Of.Array.array value |> Value.Of.array
+
 module Compare = TomlInternal.Compare
 
 module Printer = struct
