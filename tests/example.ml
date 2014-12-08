@@ -1,5 +1,6 @@
 open OUnit
 open Toml
+open Toml.Parser
 module Toml_key = Toml.Table.Key
 
 (* This test file expects example.toml from official toml repo read *)
@@ -61,8 +62,10 @@ let test = "Official example.toml file" >:::
              "example.toml parsing" >::
              (fun () -> assert_equal toml expected) ;
              "Array of table" >:: (fun () ->
-                 assert_raises
-                   (Failure "Array of tables is not supported")
+                 assert_raises (Parser.Error (
+                   "Error in <string> at line 2 at column 4 (position 41): " ^
+                   "Array of tables is not supported",
+                   {source = "<string>"; line = 2; column = 4; position = 41}))
                    (fun () -> ignore(Parser.from_string table_array_input)))
            ]
 let _ = OUnit.run_test_tt_main test

@@ -75,11 +75,15 @@ let _ =
          assert_equal
            (Toml.Value.Of.string "\\")
            (table_find "key" (Parser.from_string "key=\"\\\\\""));
-         assert_raises
-           (Failure "Forbidden escaped char")
+         assert_raises (Parser.Error (
+           "Error in <string> at line 1 at column 6 (position 6): " ^
+           "Forbidden escaped char",
+           {source = "<string>"; line = 1; column = 6; position = 6}))
            (fun () -> Parser.from_string "key=\"\\j\"");
-         assert_raises
-           (Failure "Unterminated string")
+         assert_raises (Parser.Error(
+           "Error in <string> at line 1 at column 30 (position 30): " ^
+           "Unterminated string",
+           {source = "<string>"; line = 1; column = 30; position = 30}))
            (fun () -> Parser.from_string "key=\"This string is not termin"));
 
       "Array key" >:: (fun () ->
