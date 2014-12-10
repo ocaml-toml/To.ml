@@ -111,6 +111,162 @@ module Value : sig
 
 end
 
+(**
+ {2 Convenience functions}
+
+ Toml offers a number of convenience function, to access and find values with a
+ minimum of typing.
+*)
+
+(**
+ {3 From Toml values to OCaml values}
+
+ Given a Toml value (of type {!Toml.Value.value}), returns an OCaml value.
+
+ Example:
+
+ {v
+  # let table = Toml.Table.empty
+    |> Toml.Table.add (Toml.key "foo") (Toml.Value.Of.string "bar");;
+  val table : Toml.Value.value Toml.Table.t = <abstr>
+
+  # let bar = Toml.Table.find (Toml.key "foo") table
+    |> Toml.Value.To.string;;
+  val bar : bytes = "bar" 
+
+  # let table = Toml.Table.empty
+    |> Toml.Table.add (Toml.key "fortytwos")
+         (Toml.Value.Of.Array.int [42;42] |> Toml.Value.Of.array);;
+  val table : Toml.Value.value Toml.Table.t = <abstr>
+
+  # let fortytwos = Toml.Table.find (Toml.key "fortytwos") table
+    |> Toml.to_int_array;;
+  val fortytwos : int list = [42; 42]
+ v}
+
+ All conversion functions raise {!Toml.Value.To.Bad_type} if the type is wrong.
+*)
+
+val to_bool : Value.value -> bool
+
+val to_int : Value.value -> int
+
+val to_float : Value.value -> float
+
+val to_string : Value.value -> string
+
+val to_date : Value.value -> Unix.tm
+
+val to_table : Value.value -> Value.value Table.t
+
+val to_bool_array : Value.value -> bool list
+
+val to_int_array : Value.value -> int list
+
+val to_float_array : Value.value -> float list
+
+val to_string_array : Value.value -> string list
+
+val to_date_array : Value.value -> Unix.tm list
+
+val to_array_array : Value.value -> Value.array list
+
+(**
+ {3 Getting OCaml values from a table}
+
+ These functions take a Toml key, a Toml table, and return a plain OCaml value
+ if the key was found in the table.
+
+ Example:
+
+ {v
+  # let table = Toml.Table.empty
+    |> Toml.Table.add (Toml.key "foo") (Toml.of_string "bar");;
+  val table : Toml.Value.value Toml.Table.t = <abstr>
+
+  # let bar = Toml.get_string (Toml.key "foo") table;;
+  val bar : bytes = "bar" 
+
+  # let table = Toml.Table.empty
+    |> Toml.Table.add (Toml.key "fortytwos")
+         (Toml.of_int_array [42;42]);;
+  val table : Toml.Value.value Toml.Table.t = <abstr>
+
+  # let fortytwos = Toml.get_int_array (Toml.key "fortytwos") table;;
+  val fortytwos : int list = [42; 42]
+ v}
+
+
+ All retrieval functions raise {!Not_found} if the value was not found in the
+ table, and {!Toml.Value.To.Bad_type} if the type is wrong.
+
+*)
+
+val get_bool : Table.Key.t -> Value.value Table.t -> bool
+
+val get_int : Table.Key.t -> Value.value Table.t -> int
+
+val get_float : Table.Key.t -> Value.value Table.t -> float
+
+val get_string : Table.Key.t -> Value.value Table.t -> string
+
+val get_date : Table.Key.t -> Value.value Table.t -> Unix.tm
+
+val get_table : Table.Key.t -> Value.value Table.t -> Value.value Table.t
+
+val get_bool_array : Table.Key.t -> Value.value Table.t -> bool list
+
+val get_int_array : Table.Key.t -> Value.value Table.t -> int list
+
+val get_float_array : Table.Key.t -> Value.value Table.t -> float list
+
+val get_string_array : Table.Key.t -> Value.value Table.t -> string list
+
+val get_date_array : Table.Key.t -> Value.value Table.t -> Unix.tm list
+
+val get_array_array : Table.Key.t -> Value.value Table.t -> Value.array list
+
+(**
+ {3 From OCaml values to Toml values}
+
+ These shorthand functions take an OCaml value and turn them into the
+ appropriate Toml value.
+
+ Example:
+
+ {v
+  # let table = Toml.Table.empty
+    |> Toml.Table.add (Toml.key "fortytwos")
+         (Toml.of_int_array [42;42]);;
+  val table : Toml.Value.value Toml.Table.t = <abstr>
+ v}
+
+*)
+
+val of_bool : bool -> Value.value
+
+val of_int : int -> Value.value
+
+val of_float : float -> Value.value
+
+val of_string : string -> Value.value
+
+val of_date : Unix.tm -> Value.value
+
+val of_table : Value.table -> Value.value
+
+val of_bool_array : bool list -> Value.value
+
+val of_int_array : int list -> Value.value
+
+val of_float_array : float list -> Value.value
+
+val of_string_array : string list -> Value.value
+
+val of_date_array : Unix.tm list -> Value.value
+
+val of_array_array : Value.array list -> Value.value
+
 (** {2 Parser} *)
 (** Simple parsing functions. *)
 
