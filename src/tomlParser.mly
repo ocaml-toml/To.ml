@@ -8,12 +8,12 @@ type t = Value of value
 
 let add tbl path (key, value) =
   let tbl = List.fold_left
-      (fun tbl w -> match Hashtbl.find tbl w with
+      (fun tbl w -> try match Hashtbl.find tbl w with
          | Table tbl -> tbl
          | Value _   -> failwith (w ^ " is a value")
-         | exception Not_found ->
-           let sub = Hashtbl.create 0 in
-           Hashtbl.add tbl w (Table sub); sub)
+      with Not_found ->
+        let sub = Hashtbl.create 0 in
+        Hashtbl.add tbl w (Table sub); sub)
       tbl path in
   if Hashtbl.mem tbl key then failwith (key ^ " is already defined")
   else Hashtbl.add tbl key (Value value)

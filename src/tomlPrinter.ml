@@ -39,12 +39,23 @@ let print_date formatter d =
     (1900 + d.tm_year) (d.tm_mon + 1) d.tm_mday
     d.tm_hour d.tm_min d.tm_sec
 
+(*
+* This function is a shim for Format.pp_print_list from ocaml 4.02
+*)
+let pp_print_list ~pp_sep print_item_func formatter values =
+  match values with
+  | []    -> ()
+  | e::[] -> print_item_func formatter e
+  | e::l  ->
+    print_item_func formatter e;
+    List.iter (fun v -> pp_sep formatter (); print_item_func formatter v) l
+
 let rec print_array formatter toml_array =
   let print_list values ~f:print_item_func =
     let pp_sep formatter () = Format.pp_print_string formatter ", "
     in
     Format.pp_print_char formatter '[';
-    Format.pp_print_list ~pp_sep print_item_func formatter values;
+    pp_print_list ~pp_sep print_item_func formatter values;
     Format.pp_print_char formatter ']'
   in
   match toml_array with
