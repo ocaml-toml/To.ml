@@ -14,7 +14,11 @@ module Parser = struct
   let parse lexbuf source =
     try
       TomlParser.toml TomlLexer.tomlex lexbuf
-    with TomlParser.Error ->
+    with (TomlParser.Error | Failure _) as error ->
+      let formatted_error_msg = match error with
+      | Failure failure_msg -> Printf.sprintf ": %s" failure_msg
+      | _                   -> ""
+      in
       let location = {
         source = source;
         line = lexbuf.lex_curr_p.pos_lnum;
@@ -22,8 +26,8 @@ module Parser = struct
         position = lexbuf.lex_curr_p.pos_cnum;
       } in
       let msg =
-        Printf.sprintf "Error in %s at line %d at column %d (position %d)"
-          source location.line location.column location.position
+        Printf.sprintf "Error in %s at line %d at column %d (position %d)%s"
+          source location.line location.column location.position formatted_error_msg
       in
       raise (Error (msg, location))
   let from_string s = parse (Lexing.from_string s) "<string>"

@@ -14,6 +14,8 @@ let get_table tbl key =
   with exn ->
     assert false
 
+open Toml.Parser
+
 let _ =
   let assert_equal = OUnit.assert_equal in
   let suite = "Main tests" >:::
@@ -73,11 +75,15 @@ let _ =
          assert_equal
            (Toml.Value.Of.string "\\")
            (table_find "key" (Parser.from_string "key=\"\\\\\""));
-         assert_raises
-           (Failure "Forbidden escaped char")
+         assert_raises (Parser.Error (
+           "Error in <string> at line 1 at column 6 (position 6): " ^
+           "Forbidden escaped char",
+           {source = "<string>"; line = 1; column = 6; position = 6}))
            (fun () -> Parser.from_string "key=\"\\j\"");
-         assert_raises
-           (Failure "Unterminated string")
+         assert_raises (Parser.Error(
+           "Error in <string> at line 1 at column 30 (position 30): " ^
+           "Unterminated string",
+           {source = "<string>"; line = 1; column = 30; position = 30}))
            (fun () -> Parser.from_string "key=\"This string is not termin"));
 
       "Array key" >:: (fun () ->
@@ -151,6 +157,17 @@ let _ =
         assert_equal
           (Toml.Value.Of.string "中国!")
           (table_find "key2" toml));
+
+      "Error location when endlines in strings" >:: (fun () ->
+        let str =
+          "\na = [\"b\"]\nb = \"error here\n\nc = \"should not be reached\""
+        in
+        assert_raises
+          (Parser.Error (
+            "Error in <string> at line 5 at column 15 (position 43)",
+            { source = "<string>"; line = 5; column = 15; position = 43; }))
+          (fun () -> ignore(Parser.from_string str));
+        );
 
   ];
     (* "Lexer" >:::                                                 *)
