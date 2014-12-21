@@ -18,6 +18,10 @@ let add tbl path (key, value) =
   if Hashtbl.mem tbl key then failwith (key ^ " is already defined")
   else Hashtbl.add tbl key (Value value)
 
+let add_group root_table group_names key_values =
+  List.iter (fun key_value ->
+         add root_table group_names key_value) key_values
+
 let rec convert = function
   | Table t ->
     TTable (Hashtbl.fold
@@ -51,8 +55,7 @@ toml:
    { let groups = ([], $1) :: $2
      and table = Hashtbl.create 0 in
      List.iter (fun (group_names, key_values) ->
-       List.iter (fun key_value ->
-         add table group_names key_value) key_values) groups;
+       add_group table group_names key_values) groups;
      match convert (Table table) with
      | TTable t -> t
      | _ -> assert false }
