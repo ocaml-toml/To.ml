@@ -48,9 +48,11 @@ let rec convert = function
 /* Grammar rules */
 toml:
  | keyValue* pair(group, keyValue*)* EOF
-   { let l = ([], $1) :: $2
+   { let groups = ([], $1) :: $2
      and table = Hashtbl.create 0 in
-     List.iter (fun (g, v) -> List.iter (fun v -> add table g v) v) l;
+     List.iter (fun (group_names, key_values) ->
+       List.iter (fun key_value ->
+         add table group_names key_value) key_values) groups;
      match convert (Table table) with
      | TTable t -> t
      | _ -> assert false }
