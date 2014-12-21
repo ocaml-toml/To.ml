@@ -5,23 +5,15 @@ module Toml_key = Toml.Table.Key
 
 (* This test file expects example.toml from official toml repo read *)
 
-let table_array_input =
-"# Products (Not supported by To.ml)
-
-  [[products]]
-#  name = \"Hammer\"
-#  sku = 738594937
-
-#  [[products]]
-#  name = \"Nail\"
-#  sku = 284758393
-#  color = \"gray\"
-"
-
 let toml = Parser.from_channel stdin
 
+let mk_raw_table x =
+  List.fold_left (fun tbl (k,v) ->
+    Table.add (Toml_key.of_string k) v tbl)
+  Table.empty x
+
 let mk_table x =
-  Toml.Value.Of.table (List.fold_left (fun tbl (k,v) -> Table.add (Toml_key.of_string k) v tbl) Table.empty x)
+  mk_raw_table x |> Toml.Value.Of.table
 
 let assert_equal =
   OUnit.assert_equal ~cmp:(fun x y -> Compare.table x y == 0)
@@ -53,7 +45,15 @@ let expected =
         ["data", Toml.Value.Of.array (Toml.Value.Of.Array.array [
           Toml.Value.Of.Array.string ["gamma"; "delta"];
                                      Toml.Value.Of.Array.int [1; 2] ]);
-         "hosts", Toml.Value.Of.array (Toml.Value.Of.Array.string ["alpha"; "omega"]) ]
+         "hosts", Toml.Value.Of.array (Toml.Value.Of.Array.string ["alpha"; "omega"]) ];
+      Toml_key.of_string "products", Toml.Value.Of.Array.table [
+        mk_raw_table [
+          "name", Toml.Value.Of.string "Hammer";
+          "sku", Toml.Value.Of.int 738594937];
+        mk_raw_table [
+          "name", Toml.Value.Of.string "Nail";
+          "sku", Toml.Value.Of.int 284758393;
+          "color", Toml.Value.Of.string "gray"]] |> Toml.Value.Of.array;
     ]
 
 
@@ -61,12 +61,6 @@ let test = "Official example.toml file" >:::
            [
              "example.toml parsing" >::
              (fun () -> assert_equal toml expected) ;
-             "Array of table" >:: (fun () ->
-                 assert_raises (Parser.Error (
-                   "Error in <string> at line 2 at column 4 (position 41): " ^
-                   "Array of tables is not supported",
-                   {source = "<string>"; line = 2; column = 4; position = 41}))
-                   (fun () -> ignore(Parser.from_string table_array_input)))
            ]
 let _ = OUnit.run_test_tt_main test
 

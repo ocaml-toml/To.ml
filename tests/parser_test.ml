@@ -14,6 +14,11 @@ let get_table tbl key =
   with exn ->
     assert false
 
+let mk_raw_table x =
+  List.fold_left (fun tbl (k,v) ->
+    Table.add (Toml_key.of_string k) v tbl)
+  Table.empty x
+
 open Toml.Parser
 
 let _ =
@@ -138,6 +143,149 @@ let _ =
                    Unix.tm_isdst=true;})
            (table_find "key" group1));
 
+      "Array of tables" >:: (fun () ->
+        let str = [
+            "[[a.b.c]]";
+            "field1 = 1";
+            "field2 = 2";
+
+            "[[a.b.c]]";
+            "field1 = 10";
+            "field2 = 20";
+          ] |> String.concat "\n"
+        in
+        let toml = Parser.from_string str in
+        let c = Toml.Value.Of.Array.table [
+          mk_raw_table [
+            "field1", Toml.Value.Of.int 1;
+            "field2", Toml.Value.Of.int 2;
+          ];
+          mk_raw_table [
+            "field1", Toml.Value.Of.int 10;
+            "field2", Toml.Value.Of.int 20;
+          ];
+          ] |> Toml.Value.Of.array
+        in
+        let b = Toml.Table.empty |> Toml.Table.add (Toml.key "c") c |> Toml.Value.Of.table in
+        let a = Toml.Table.empty |> Toml.Table.add (Toml.key "b") b |> Toml.Value.Of.table in
+        let expected = Toml.Table.empty |> Toml.Table.add (Toml.key "a") a in
+        assert_equal expected toml;
+      );
+      "Nested array of tables, official example" >:: (fun () ->
+        let str = [
+          "[[fruit]]";
+          "  name = \"apple\"";
+          "  [fruit.physical]";
+          "    color = \"red\"";
+          "    shape = \"round\"";
+          "  [[fruit.variety]]";
+          "    name = \"red delicious\"";
+          "  [[fruit.variety]]";
+          "    name = \"granny smith\"";
+          "[[fruit]]";
+          "  name = \"banana\"";
+          "  [[fruit.variety]]";
+          "  name = \"plantain\"";
+        ] |> String.concat "\n"
+        in
+        let toml = Parser.from_string str in
+
+        let test = Toml.Table.find (Toml.key "fruit") toml |>
+        Toml.Value.To.array |> Toml.Value.To.Array.table
+        |>List.hd|>Toml.Table.find (Toml.key
+        "variety")|>Toml.Value.To.array|>Toml.Value.To.Array.table|>List.rev|>List.hd|>Toml.Table.find
+        (Toml.key "name")|>Toml.Value.To.string in
+
+        assert_equal 1 (Toml.Table.cardinal toml);
+        assert_equal true (Toml.Table.mem (Toml.key "fruit") toml);
+        let fruits = Toml.Table.find (Toml.key "fruit") toml
+          |> Toml.Value.To.array |> Toml.Value.To.Array.table
+        in
+        assert_equal 2 (List.length fruits);
+        let apple = List.hd fruits in
+        assert_equal 3 (Toml.Table.cardinal apple);
+        assert_equal "apple" (
+          Toml.Table.find (Toml.key "name") apple |> Toml.Value.To.string);
+        let physical =
+          Toml.Table.find (Toml.key "physical") apple |> Toml.Value.To.table in
+        let expected_physical = mk_raw_table [
+          "color", Toml.Value.Of.string "red";
+          "shape", Toml.Value.Of.string "round";
+        ] in
+        assert_equal expected_physical physical;
+        let apple_varieties =
+          Toml.Table.find (Toml.key "variety") apple
+          |> Toml.Value.To.array |> Toml.Value.To.Array.table
+        in
+        assert_equal 2 (List.length apple_varieties);
+        let expected_red_delicious = mk_raw_table [
+          "name", Toml.Value.Of.string "red delicious";
+        ] in
+        assert_equal expected_red_delicious (List.hd apple_varieties);
+        let expected_granny_smith = mk_raw_table [
+          "name", Toml.Value.Of.string "granny smith";
+        ] in
+        assert_equal expected_granny_smith (List.rev apple_varieties |> List.hd);
+        let banana = List.rev fruits |> List.hd in
+        assert_equal 2 (Toml.Table.cardinal banana);
+        assert_equal "banana" (
+          Toml.Table.find (Toml.key "name") banana |> Toml.Value.To.string);
+        let banana_varieties =
+          Toml.Table.find (Toml.key "variety") banana
+          |> Toml.Value.To.array |> Toml.Value.To.Array.table
+        in
+        assert_equal 1 (List.length banana_varieties);
+        let expected_plantain = mk_raw_table [
+          "name", Toml.Value.Of.string "plantain";
+        ] in
+        assert_equal expected_plantain (List.hd banana_varieties);
+      );
+      "Array of tables expected, got table" >:: (fun () ->
+        let str = [
+            "[a.b.c]";
+            "field1 = 1";
+            "field2 = 2";
+
+            "[[a.b.c]]";
+            "field1 = 10";
+            "field2 = 20";
+          ] |> String.concat "\n"
+        in
+        assert_raises
+          (Parser.Error (
+            "Error in <string> at line 6 at column 11 (position 63): c is a table, not an array of tables",
+            { source = "<string>"; line = 6; column = 11; position = 63; }))
+          (fun () -> ignore(Parser.from_string str));
+      );
+      "Nested array of table, initially empty" >:: (fun () ->
+        let str = [
+          "[[fruit]]";
+          "[vegetable]";
+          "name=\"lettuce\"";
+          "[[fruit]]";
+          "name=\"apple\"";
+        ] |> String.concat "\n" in
+        let toml = Parser.from_string str in
+        assert_equal 2 (Toml.Table.cardinal toml);
+        let expected_vegetable = mk_raw_table [
+          "name", Toml.Value.Of.string "lettuce";
+        ] in
+        let vegetable =
+          Toml.Table.find (Toml.key "vegetable") toml
+          |> Toml.Value.To.table
+        in
+        assert_equal expected_vegetable vegetable;
+        let fruits =
+          Toml.Table.find (Toml.key "fruit") toml
+          |> Toml.Value.To.array
+          |> Toml.Value.To.Array.table
+        in
+        assert_equal 1 (List.length fruits);
+        let expected_fruit = mk_raw_table [
+          "name", Toml.Value.Of.string "apple";
+        ] in
+        assert_equal expected_fruit (List.hd fruits);
+      );
       "Same key, different group" >:: (fun () ->
         let str = "key=1[group]\nkey = 2" in
         let toml = Parser.from_string str in

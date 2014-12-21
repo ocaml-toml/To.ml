@@ -65,6 +65,7 @@ let rec print_array formatter toml_array =
   | NodeString values -> print_list values ~f:print_string
   | NodeDate values   -> print_list values ~f:print_date
   | NodeArray values  -> print_list values ~f:print_array
+  | NodeTable values  -> failwith "Printing of array of tables is not supported"
   | NodeEmpty         -> Format.pp_print_string formatter "[]"
 
 let is_table = fun _ -> function TTable _ -> true | _ -> false

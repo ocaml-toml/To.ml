@@ -85,6 +85,8 @@ module Value = struct
           (function NodeDate d   -> d | _ -> exn "date array")
       let array = maybe_empty
           (function NodeArray a  -> a | _ -> exn "array array")
+      let table = maybe_empty
+          (function NodeTable a  -> a | _ -> exn "table array")
     end
 
   end
@@ -110,6 +112,7 @@ module Value = struct
       let string s = maybe_empty (fun s -> NodeString s) s
       let date d   = maybe_empty (fun d -> NodeDate d) d
       let array a  = maybe_empty (fun a -> NodeArray a) a
+      let table t  = NodeTable t
     end
   end
 

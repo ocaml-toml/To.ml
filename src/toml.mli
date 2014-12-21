@@ -78,6 +78,7 @@ module Value : sig
       val string : array -> string list
       val date : array -> Unix.tm list
       val array : array -> array list
+      val table : array -> table list
     end
 
   end
@@ -105,6 +106,7 @@ module Value : sig
       val string : string list -> array
       val date : Unix.tm list -> array
       val array : array list -> array
+      val table : table list -> array
     end
 
   end
