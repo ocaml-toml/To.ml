@@ -6,21 +6,23 @@ let to_path str : string list = Str.split (Str.regexp "\\.") str
 type t = Value of value
        | Table of (string, t) Hashtbl.t
 
-let add tbl path (key, value) =
-  let tbl = List.fold_left
+let ensure_group_table_exists root_table group_names =
+  List.fold_left
       (fun tbl w -> try match Hashtbl.find tbl w with
          | Table tbl -> tbl
          | Value _   -> failwith (w ^ " is a value")
       with Not_found ->
         let sub = Hashtbl.create 0 in
         Hashtbl.add tbl w (Table sub); sub)
-      tbl path in
-  if Hashtbl.mem tbl key then failwith (key ^ " is already defined")
-  else Hashtbl.add tbl key (Value value)
+      root_table group_names
+
+let add_value group_table key value =
+  if Hashtbl.mem group_table key then failwith (key ^ " is already defined")
+  else Hashtbl.add group_table key (Value value)
 
 let add_group root_table group_names key_values =
-  List.iter (fun key_value ->
-         add root_table group_names key_value) key_values
+  let group_table = ensure_group_table_exists root_table group_names in
+  List.iter (fun (key, value) -> add_value group_table key value) key_values
 
 let rec convert = function
   | Table t ->
