@@ -173,6 +173,8 @@ val to_date_array : Value.value -> Unix.tm list
 
 val to_array_array : Value.value -> Value.array list
 
+val to_table_array : Value.value -> Value.table list
+
 (**
  {3 Getting OCaml values from a table}
 
@@ -228,6 +230,8 @@ val get_date_array : Table.Key.t -> Value.value Table.t -> Unix.tm list
 
 val get_array_array : Table.Key.t -> Value.value Table.t -> Value.array list
 
+val get_table_array : Table.Key.t -> Value.value Table.t -> (Value.value Table.t) list
+
 (**
  {3 From OCaml values to Toml values}
 
@@ -268,6 +272,8 @@ val of_string_array : string list -> Value.value
 val of_date_array : Unix.tm list -> Value.value
 
 val of_array_array : Value.array list -> Value.value
+
+val of_table_array : Value.table list -> Value.value
 
 (** {2 Parser} *)
 (** Simple parsing functions. *)

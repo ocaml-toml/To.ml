@@ -131,6 +131,7 @@ let to_float_array value = Value.To.array value |> Value.To.Array.float
 let to_string_array value = Value.To.array value |> Value.To.Array.string
 let to_date_array value = Value.To.array value |> Value.To.Array.date
 let to_array_array value = Value.To.array value |> Value.To.Array.array
+let to_table_array value = Value.To.array value |> Value.To.Array.table
 
 let get_bool key table = Table.find key table |> to_bool
 let get_int key table = Table.find key table |> to_int
@@ -145,6 +146,7 @@ let get_float_array key table = Table.find key table |> to_float_array
 let get_string_array key table = Table.find key table |> to_string_array
 let get_date_array key table = Table.find key table |> to_date_array
 let get_array_array key table = Table.find key table |> to_array_array
+let get_table_array key table = Table.find key table |> to_table_array
 
 let of_bool = Value.Of.bool
 let of_int = Value.Of.int
@@ -159,6 +161,7 @@ let of_float_array value = Value.Of.Array.float value |> Value.Of.array
 let of_string_array value = Value.Of.Array.string value |> Value.Of.array
 let of_date_array value = Value.Of.Array.date value |> Value.Of.array
 let of_array_array value = Value.Of.Array.array value |> Value.Of.array
+let of_table_array value = Value.Of.Array.table value |> Value.Of.array
 
 module Compare = TomlInternal.Compare
 
