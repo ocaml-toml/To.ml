@@ -344,6 +344,7 @@ module Printer : sig
   (**
    Given a Toml array and a formatter, inserts a valid Toml representation of
    this value in the formatter.
+   @raise Failure if the array is an array of tables
   *)
   val array : Format.formatter -> Value.array -> unit
 

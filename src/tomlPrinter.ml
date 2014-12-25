@@ -50,7 +50,11 @@ let pp_print_list ~pp_sep print_item_func formatter values =
     print_item_func formatter e;
     List.iter (fun v -> pp_sep formatter (); print_item_func formatter v) l
 
-let rec print_array formatter toml_array =
+let is_table = fun _ -> function TTable _ -> true | _ -> false
+
+let is_array_of_table = fun _ -> function TArray (NodeTable _) -> true | _ -> false
+
+let rec print_array formatter toml_array sections =
   let print_list values ~f:print_item_func =
     let pp_sep formatter () = Format.pp_print_string formatter ", "
     in
@@ -64,13 +68,20 @@ let rec print_array formatter toml_array =
   | NodeFloat values  -> print_list values ~f:print_float
   | NodeString values -> print_list values ~f:print_string
   | NodeDate values   -> print_list values ~f:print_date
-  | NodeArray values  -> print_list values ~f:print_array
-  | NodeTable values  -> failwith "Printing of array of tables is not supported"
+  | NodeArray values  ->
+      print_list values ~f:(fun formatter arr -> print_array formatter arr sections)
+  | NodeTable values  ->
+      List.iter (fun tbl ->
+        (*
+         * Don't print the intermediate sections, if all values are arrays of tables,
+         * print [[x.y.z]] as appropriate instead of [[x]][[y]][[z]]
+         *)
+        if not (TomlMap.for_all is_array_of_table tbl)
+        then Format.fprintf formatter "[[%s]]\n"
+            (sections |> List.map TomlKey.to_string |> String.concat ".");
+        print_table formatter tbl sections) values
   | NodeEmpty         -> Format.pp_print_string formatter "[]"
-
-let is_table = fun _ -> function TTable _ -> true | _ -> false
-
-let rec print_table formatter toml_table sections =
+and print_table formatter toml_table sections =
     (*
      * We need to print non-table values first, otherwise we risk including
      * top-level values in a section by accident
@@ -91,7 +102,7 @@ and print_value formatter toml_value sections =
   | TFloat value  -> print_float formatter value
   | TString value -> print_string formatter value
   | TDate value   -> print_date formatter value
-  | TArray value  -> print_array formatter value
+  | TArray value  -> print_array formatter value sections
   | TTable value  -> print_table formatter value sections
 and print_value_with_key formatter key toml_value sections =
   let sections', add_linebreak = match toml_value with
@@ -104,6 +115,9 @@ and print_value_with_key formatter key toml_value sections =
       if not (TomlMap.for_all is_table value)
       then Format.fprintf formatter "[%s]\n"
           (sections_with_key |> List.map TomlKey.to_string |> String.concat ".");
+      (sections_with_key, false)
+    | TArray (NodeTable tables) ->
+      let sections_with_key = sections @ [key] in
       (sections_with_key, false)
     | _             ->
       Format.fprintf formatter "%s = " (TomlKey.to_string key);
@@ -118,8 +132,14 @@ let value formatter toml_value =
   Format.pp_print_flush formatter ()
 
 let array formatter toml_array =
-  print_array formatter toml_array;
-  Format.pp_print_flush formatter ()
+  match toml_array with
+  | NodeTable t ->
+    (* We need the parent section for printing an array of table correctly,
+     otheriwise the header contains [[]] *)
+    failwith "Cannot format array of tables, use Toml.Printer.table"
+  | _           ->
+    print_array formatter toml_array [];
+    Format.pp_print_flush formatter ()
 
 let table formatter toml_table =
   print_table formatter toml_table [];
