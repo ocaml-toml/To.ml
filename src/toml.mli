@@ -144,6 +144,20 @@ end
   # let fortytwos = Toml.Table.find (Toml.key "fortytwos") table
     |> Toml.to_int_array;;
   val fortytwos : int list = [42; 42]
+
+  # let table = Toml.Table.empty
+    |> Toml.Table.add (Toml.key "tables")
+         ([
+           Toml.Table.empty
+           |> Toml.Table.add (Toml.key "foo") (Toml.of_string "foofoo");
+           Toml.Table.empty
+           |> Toml.Table.add (Toml.key "bar") (Toml.of_string "barbar");
+          ] |> Toml.of_table_array);;
+    val table : Toml.Value.value Toml.Table.t = <abstr>
+
+ # let array_of_tables = Toml.Table.find (Toml.key "tables") table
+   |> Toml.to_table_array;;
+ val array_of_tables : Toml.Value.table list = [<abstr>; <abstr>]
  v}
 
  All conversion functions raise {!Toml.Value.To.Bad_type} if the type is wrong.
