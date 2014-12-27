@@ -136,7 +136,7 @@ let array formatter toml_array =
   | NodeTable t ->
     (* We need the parent section for printing an array of table correctly,
      otheriwise the header contains [[]] *)
-    failwith "Cannot format array of tables, use Toml.Printer.table"
+    invalid_arg "Cannot format array of tables, use Toml.Printer.table"
   | _           ->
     print_array formatter toml_array [];
     Format.pp_print_flush formatter ()

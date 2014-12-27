@@ -217,12 +217,12 @@ let test = "Printing values" >:::
           (Toml.Value.Of.Array.array [Toml.Value.Of.Array.bool [true]])])));
     "empty array of tables" >:: (fun () ->
       assert_raises
-        (Failure "Cannot format array of tables, use Toml.Printer.table")
+        (Invalid_argument "Cannot format array of tables, use Toml.Printer.table")
         (fun () -> ignore(string_of_array ([] |> Toml.Value.Of.Array.table)))
     );
     "array of tables" >:: (fun () ->
       assert_raises
-        (Failure "Cannot format array of tables, use Toml.Printer.table")
+        (Invalid_argument "Cannot format array of tables, use Toml.Printer.table")
         (fun () -> ignore(string_of_array ([
             create_table ["number", Toml.Value.Of.int 1];
             create_table ["number", Toml.Value.Of.int 2];
