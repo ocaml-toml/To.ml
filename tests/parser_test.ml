@@ -190,12 +190,6 @@ let _ =
         in
         let toml = Parser.from_string str in
 
-        let test = Toml.Table.find (Toml.key "fruit") toml |>
-        Toml.Value.To.array |> Toml.Value.To.Array.table
-        |>List.hd|>Toml.Table.find (Toml.key
-        "variety")|>Toml.Value.To.array|>Toml.Value.To.Array.table|>List.rev|>List.hd|>Toml.Table.find
-        (Toml.key "name")|>Toml.Value.To.string in
-
         assert_equal 1 (Toml.Table.cardinal toml);
         assert_equal true (Toml.Table.mem (Toml.key "fruit") toml);
         let fruits = Toml.Table.find (Toml.key "fruit") toml
