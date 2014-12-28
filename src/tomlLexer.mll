@@ -53,7 +53,6 @@ rule tomlex = parse
             } }
   | t_white+ { tomlex lexbuf }
   | t_eol+ { update_loc lexbuf;tomlex lexbuf }
-  | "[[" { failwith "Array of tables is not supported" }
   | '=' { EQUAL }
   | '[' { LBRACK }
   | ']' { RBRACK }
