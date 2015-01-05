@@ -17,9 +17,10 @@ let t_eol     = '\n'|'\r'|"\r\n"
 let t_blank   = (t_white|t_eol)
 (** Blank characters as specified by the ref *)
 let t_digit   = ['0'-'9']
-let t_int     = ['-''+']?t_digit+
-let t_float   = '-'?t_digit+'.'t_digit+
-(** digits are needed in both side of the dot *)
+let t_int     = ['-''+']? t_digit+
+let t_frac    = '.' t_digit+
+let t_exp     = ['E''e'] t_int
+let t_float   = t_int ((t_frac t_exp) | t_frac | t_exp)
 let t_bool    = ("true"|"false")
 (** booleans are full undercase *)
 let t_key     = [^ '\t' '\n' ' ' '\r' '"' '=' '[' ',' ']' '#']+

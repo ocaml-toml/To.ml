@@ -47,10 +47,17 @@ let suite =
         assert_equal (Toml.Value.Of.int 42) (table_find "key3" toml));
 
       "Float key" >:: (fun () ->
-        let str = "key = 3.141595\nkey2=-3.141595" in
-        let toml = Parser.from_string str in
-        assert_equal (Toml.Value.Of.float 3.141595) (table_find "key" toml);
-        assert_equal (Toml.Value.Of.float (-3.141595)) (table_find "key2" toml));
+	let test str =
+	  let toml = Parser.from_string ("key=" ^ str) in
+	  assert_equal (Toml.Value.Of.float (float_of_string str))
+		       (table_find "key" toml) in
+	test "+1.0" ;
+	test "3.1415" ;
+	test "-0.01" ;
+	test "5e+22" ;
+	test "1e6" ;
+	test "-2E-2" ;
+	test "6.626e-34" ) ;
 
       "Bool key" >:: (fun () ->
         let str = "key = true\nkey2=false" in
