@@ -144,10 +144,11 @@ let suite =
         let toml = Parser.from_string str in
         let group1 = get_table toml "group1" in
          assert_equal
-           (Toml.Value.Of.date {Unix.tm_year=79;Unix.tm_mon=04;Unix.tm_mday=27;
-                   Unix.tm_hour=07;Unix.tm_min=32;Unix.tm_sec=0;
-                   Unix.tm_wday=(-1);Unix.tm_yday=(-1);
-                   Unix.tm_isdst=true;})
+           (Toml.Value.Of.date
+	      (Unix.mktime {Unix.tm_year=79; tm_mon=04; tm_mday=27;
+			    tm_hour=07; tm_min=32; tm_sec=0;
+			    tm_wday=(-1);tm_yday=(-1);tm_isdst=true;}
+	       |> snd))
            (table_find "key" group1));
 
       "Array of tables" >:: (fun () ->

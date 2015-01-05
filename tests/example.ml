@@ -17,6 +17,10 @@ let mk_table x =
 
 let assert_equal =
   OUnit.assert_equal ~cmp:(fun x y -> Compare.table x y == 0)
+		     ~printer:(fun x -> let buf = Buffer.create 42 in
+					Printer.table
+					  (Format.formatter_of_buffer buf) x;
+					Buffer.contents buf)
 
 let expected =
   List.fold_left (fun tbl (k,v) -> Table.add k v tbl) Table.empty
@@ -27,9 +31,11 @@ let expected =
          "organization", Toml.Value.Of.string "GitHub";
          "bio", Toml.Value.Of.string "GitHub Cofounder & CEO\n\
                          Likes tater tots and beer.";
-         "dob", Toml.Value.Of.date { Unix.tm_year=79; tm_mon=04; tm_mday=27;
-                        tm_hour=07; tm_min=32; tm_sec=0;
-                        tm_wday=(-1); tm_yday=(-1); tm_isdst=true }] ;
+         "dob", Toml.Value.Of.date
+		  (Unix.mktime { Unix.tm_year=79; tm_mon=04; tm_mday=27;
+				 tm_hour=07; tm_min=32; tm_sec=0;
+				 tm_wday=(-1); tm_yday=(-1); tm_isdst=true }
+		   |> snd)] ;
       Toml_key.of_string "database", mk_table
         ["server", Toml.Value.Of.string "192.168.1.1" ;
           "ports", Toml.Value.Of.array (Toml.Value.Of.Array.int [8001; 8001; 8002]) ;
@@ -62,4 +68,3 @@ let suite = "Official example.toml file" >:::
              "example.toml parsing" >::
              (fun () -> assert_equal toml expected) ;
            ]
-
