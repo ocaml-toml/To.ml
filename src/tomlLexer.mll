@@ -17,7 +17,7 @@ let t_eol     = '\n'|'\r'|"\r\n"
 let t_blank   = (t_white|t_eol)
 (** Blank characters as specified by the ref *)
 let t_digit   = ['0'-'9']
-let t_int     = '-'?t_digit+
+let t_int     = ['-''+']?t_digit+
 let t_float   = '-'?t_digit+'.'t_digit+
 (** digits are needed in both side of the dot *)
 let t_bool    = ("true"|"false")
@@ -38,7 +38,11 @@ let t_alphanum= t_alpha | t_digit
 let t_unicode = t_alphanum t_alphanum t_alphanum t_alphanum
 
 rule tomlex = parse
-  | t_int as value   { INTEGER (int_of_string value) }
+  | t_int as value   { let value =
+			 if value.[0] = '+'
+			 then String.sub value 1 (String.length value - 1)
+			 else value in
+		       INTEGER (int_of_string value) }
   | t_float as value { FLOAT (float_of_string value) }
   | t_bool as value  { BOOL (bool_of_string value) }
   | t_date { DATE { Unix.tm_sec = int_of_string sec;

@@ -40,10 +40,11 @@ let suite =
         assert_equal (Toml.Value.Of.int 42) var2);
 
       "Int" >:: (fun () ->
-        let str = "key = 42\nkey2=-42" in
+        let str = "key = 42\nkey2=-42 \n key3 = +42" in
         let toml = Parser.from_string str in
         assert_equal (Toml.Value.Of.int 42) (table_find "key" toml);
-        assert_equal (Toml.Value.Of.int (-42)) (table_find "key2" toml));
+        assert_equal (Toml.Value.Of.int (-42)) (table_find "key2" toml);
+        assert_equal (Toml.Value.Of.int 42) (table_find "key3" toml));
 
       "Float key" >:: (fun () ->
         let str = "key = 3.141595\nkey2=-3.141595" in
