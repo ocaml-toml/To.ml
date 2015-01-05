@@ -20,6 +20,15 @@ let mk_raw_table x =
     Table.add (Toml_key.of_string k) v tbl)
   Table.empty x
 
+let mk_printer p x =
+  let buf = Buffer.create 42 in
+  p (Format.formatter_of_buffer buf) x ;
+  Buffer.contents buf
+
+let table_printer = mk_printer Toml.Printer.table
+
+let value_printer = mk_printer Toml.Printer.value
+
 let suite =
   let assert_equal = OUnit.assert_equal in
   "Main tests" >:::
@@ -97,6 +106,14 @@ let suite =
            "Unterminated string",
            {source = "<string>"; line = 1; column = 30; position = 30}))
            (fun () -> Parser.from_string "key=\"This string is not termin"));
+
+      "Multi-lines string" >:: (fun () ->
+	let assert_equal = assert_equal ~printer:value_printer in
+	let str = "key1 = \"\"\"\nRoses are red\nViolets are blue\"\"\"" in
+	let toml = Parser.from_string str in
+	let var = table_find "key1" toml in
+	assert_equal (Toml.Value.Of.string "Roses are red\nViolets are blue")
+		     var) ;
 
       "Array key" >:: (fun () ->
         let str = "key = [true, true, false, true]" in
@@ -314,8 +331,8 @@ let suite =
         in
         assert_raises
           (Parser.Error (
-            "Error in <string> at line 5 at column 15 (position 43)",
-            { source = "<string>"; line = 5; column = 15; position = 43; }))
+               "Error in <string> at line 5 at column 15 (position 43)",
+               { source = "<string>"; line = 5; column = 15; position = 43; }))
           (fun () -> ignore(Parser.from_string str));
         );
 

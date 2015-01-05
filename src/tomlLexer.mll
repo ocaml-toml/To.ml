@@ -74,22 +74,48 @@ rule tomlex = parse
   | '=' { EQUAL }
   | '[' { LBRACK }
   | ']' { RBRACK }
-  | '"' { stringify (Buffer.create 13) lexbuf }
+  | '"' '"' '"' (t_eol? as eol) {
+	  if eol <> "" then update_loc lexbuf ;
+	  multiline_string (Buffer.create 13) lexbuf }
+  | '"' { basic_string (Buffer.create 13) lexbuf }
   | ',' { COMMA }
   | '#' (_ # [ '\n' '\r' ] )* { tomlex lexbuf }
   | t_key as value { KEY (value) }
   | eof   { EOF }
 
-and stringify buff = parse
-  | t_escape as value
-    { Buffer.add_string buff (Scanf.unescaped value); stringify buff lexbuf }
-  | "\\u" (t_unicode as u)
-    { Buffer.add_string buff (TomlUnicode.to_utf8 u); stringify buff lexbuf }
-  | '\\' { failwith "Forbidden escaped char" }
-  (* no unterminated strings *)
-  | eof  { failwith "Unterminated string" }
+and basic_string buff = parse
   | '"'  { STRING (Buffer.contents buff) }
-  | t_eol as eol { update_loc lexbuf; Buffer.add_string buff eol; stringify buff lexbuf }
-  | _ as c { Buffer.add_char buff c; stringify buff lexbuf }
+  | ""   { string_common basic_string buff lexbuf }
+
+and multiline_string buff = parse
+  | '"' '"' '"' { STRING (Buffer.contents buff) }
+  | '\\' t_eol { update_loc lexbuf;
+		 multiline_string_trim buff lexbuf }
+  | t_eol as eol { update_loc lexbuf;
+		   Buffer.add_string buff eol;
+		   multiline_string buff lexbuf }
+  | "" { string_common multiline_string buff lexbuf }
+
+and multiline_string_trim buff = parse
+  | t_eol as eol { update_loc lexbuf;
+		   multiline_string_trim buff lexbuf }
+  | t_white { multiline_string_trim buff lexbuf }
+  | "" { multiline_string buff lexbuf }
+
+and string_common next buff = parse
+  | t_escape as value { Buffer.add_string buff (Scanf.unescaped value);
+			next buff lexbuf }
+  | "\\u" (t_unicode as u)
+    { Buffer.add_string buff (TomlUnicode.to_utf8 u);
+      next buff lexbuf }
+  | '\\' { failwith "Forbidden escaped char" }
+  | eof  { failwith "Unterminated string" }
+  | _ as c { let code = Char.code c in
+	     if code < 16
+	     then failwith "Control characters (U+0000 to U+001F) \
+			    must be escaped";
+	     Buffer.add_char buff c;
+	     next buff lexbuf }
+
 
 {}
