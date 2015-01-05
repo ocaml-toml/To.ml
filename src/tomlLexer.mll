@@ -50,17 +50,25 @@ rule tomlex = parse
   | t_float as value { FLOAT (float_of_string value) }
   | t_bool as value  { BOOL (bool_of_string value) }
 
-  (* FIXME: Update with RFC 3339 *)
-  | t_date { DATE { Unix.tm_sec = int_of_string sec;
-                    Unix.tm_min = int_of_string min;
-                    Unix.tm_hour = int_of_string hour;
-                    Unix.tm_mday = int_of_string mday;
-                    Unix.tm_mon = int_of_string mon - 1;
-                    Unix.tm_year = int_of_string year - 1900;
-                    Unix.tm_wday = (-1);
-                    Unix.tm_yday = (-1);
-                    Unix.tm_isdst = true (* ??? *)
-            } }
+  | t_date { let (off_hour, off_min) = match offset with
+	       | "Z" | "z" -> (0, 0)
+	       | offset -> let sign = if offset.[0] = '+'
+				      then (fun x -> 0 + int_of_string x)
+				      else (fun x -> 0 - int_of_string x) in
+			   (sign (String.sub offset 1 2),
+			    sign (String.sub offset 4 2)) in
+	     DATE ( Unix.mktime
+		      { Unix.tm_sec = int_of_float (float_of_string sec);
+			Unix.tm_min = int_of_string min + off_min;
+			Unix.tm_hour = int_of_string hour + off_hour;
+			Unix.tm_mday = int_of_string mday;
+			Unix.tm_mon = int_of_string mon - 1;
+			Unix.tm_year = int_of_string year - 1900;
+			Unix.tm_wday = 0;
+			Unix.tm_yday = 0;
+			Unix.tm_isdst = false }
+		    |> snd )
+	   }
   | t_white+ { tomlex lexbuf }
   | t_eol+ { update_loc lexbuf;tomlex lexbuf }
   | '=' { EQUAL }
