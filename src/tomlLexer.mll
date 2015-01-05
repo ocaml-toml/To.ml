@@ -25,14 +25,17 @@ let t_bool    = ("true"|"false")
 (** booleans are full undercase *)
 let t_key     = [^ '\t' '\n' ' ' '\r' '"' '=' '[' ',' ']' '#']+
 (** keys begins with non blank char and end with the first blank *)
+
 let t_date    = (t_digit t_digit t_digit t_digit as year)
                 '-' (t_digit t_digit as mon)
                 '-' (t_digit t_digit as mday)
-                'T' (t_digit t_digit as hour)
+                ['T' 't'] (t_digit t_digit as hour)
                 ':' (t_digit t_digit as min)
-                ':' (t_digit t_digit as sec)
-                'Z'
-(** ISO8601 date of form 1979-05-27T07:32:00Z *)
+                ':' (t_digit t_digit ('.' t_digit+)? as sec)
+                (['Z' 'z'] | (['+' '-'] t_digit t_digit ':' t_digit t_digit)
+		 as offset)
+(** RFC 3339 date of form 1979-05-27T07:32:00.42+00:00 *)
+
 let t_escape  =  '\\' ['b' 't' 'n' 'f' 'r' '"' '/' '\\']
 let t_alpha   = ['A'-'Z' 'a'-'z']
 let t_alphanum= t_alpha | t_digit
@@ -46,6 +49,8 @@ rule tomlex = parse
 		       INTEGER (int_of_string value) }
   | t_float as value { FLOAT (float_of_string value) }
   | t_bool as value  { BOOL (bool_of_string value) }
+
+  (* FIXME: Update with RFC 3339 *)
   | t_date { DATE { Unix.tm_sec = int_of_string sec;
                     Unix.tm_min = int_of_string min;
                     Unix.tm_hour = int_of_string hour;
