@@ -78,6 +78,7 @@ module Value : sig
       val string : array -> string list
       val date : array -> Unix.tm list
       val array : array -> array list
+      (** @since 2.2.0 *)
       val table : array -> table list
     end
 
@@ -106,6 +107,7 @@ module Value : sig
       val string : string list -> array
       val date : Unix.tm list -> array
       val array : array list -> array
+      (** @since 2.2.0 *)
       val table : table list -> array
     end
 
@@ -163,30 +165,43 @@ end
  All conversion functions raise {!Toml.Value.To.Bad_type} if the type is wrong.
 *)
 
+(** @since 2.2.0 *)
 val to_bool : Value.value -> bool
 
+(** @since 2.2.0 *)
 val to_int : Value.value -> int
 
+(** @since 2.2.0 *)
 val to_float : Value.value -> float
 
+(** @since 2.2.0 *)
 val to_string : Value.value -> string
 
+(** @since 2.2.0 *)
 val to_date : Value.value -> Unix.tm
 
+(** @since 2.2.0 *)
 val to_table : Value.value -> Value.value Table.t
 
+(** @since 2.2.0 *)
 val to_bool_array : Value.value -> bool list
 
+(** @since 2.2.0 *)
 val to_int_array : Value.value -> int list
 
+(** @since 2.2.0 *)
 val to_float_array : Value.value -> float list
 
+(** @since 2.2.0 *)
 val to_string_array : Value.value -> string list
 
+(** @since 2.2.0 *)
 val to_date_array : Value.value -> Unix.tm list
 
+(** @since 2.2.0 *)
 val to_array_array : Value.value -> Value.array list
 
+(** @since 2.2.0 *)
 val to_table_array : Value.value -> Value.table list
 
 (**
@@ -220,30 +235,43 @@ val to_table_array : Value.value -> Value.table list
 
 *)
 
+(** @since 2.2.0 *)
 val get_bool : Table.Key.t -> Value.value Table.t -> bool
 
+(** @since 2.2.0 *)
 val get_int : Table.Key.t -> Value.value Table.t -> int
 
+(** @since 2.2.0 *)
 val get_float : Table.Key.t -> Value.value Table.t -> float
 
+(** @since 2.2.0 *)
 val get_string : Table.Key.t -> Value.value Table.t -> string
 
+(** @since 2.2.0 *)
 val get_date : Table.Key.t -> Value.value Table.t -> Unix.tm
 
+(** @since 2.2.0 *)
 val get_table : Table.Key.t -> Value.value Table.t -> Value.value Table.t
 
+(** @since 2.2.0 *)
 val get_bool_array : Table.Key.t -> Value.value Table.t -> bool list
 
+(** @since 2.2.0 *)
 val get_int_array : Table.Key.t -> Value.value Table.t -> int list
 
+(** @since 2.2.0 *)
 val get_float_array : Table.Key.t -> Value.value Table.t -> float list
 
+(** @since 2.2.0 *)
 val get_string_array : Table.Key.t -> Value.value Table.t -> string list
 
+(** @since 2.2.0 *)
 val get_date_array : Table.Key.t -> Value.value Table.t -> Unix.tm list
 
+(** @since 2.2.0 *)
 val get_array_array : Table.Key.t -> Value.value Table.t -> Value.array list
 
+(** @since 2.2.0 *)
 val get_table_array : Table.Key.t -> Value.value Table.t -> (Value.value Table.t) list
 
 (**
@@ -263,30 +291,43 @@ val get_table_array : Table.Key.t -> Value.value Table.t -> (Value.value Table.t
 
 *)
 
+(** @since 2.2.0 *)
 val of_bool : bool -> Value.value
 
+(** @since 2.2.0 *)
 val of_int : int -> Value.value
 
+(** @since 2.2.0 *)
 val of_float : float -> Value.value
 
+(** @since 2.2.0 *)
 val of_string : string -> Value.value
 
+(** @since 2.2.0 *)
 val of_date : Unix.tm -> Value.value
 
+(** @since 2.2.0 *)
 val of_table : Value.table -> Value.value
 
+(** @since 2.2.0 *)
 val of_bool_array : bool list -> Value.value
 
+(** @since 2.2.0 *)
 val of_int_array : int list -> Value.value
 
+(** @since 2.2.0 *)
 val of_float_array : float list -> Value.value
 
+(** @since 2.2.0 *)
 val of_string_array : string list -> Value.value
 
+(** @since 2.2.0 *)
 val of_date_array : Unix.tm list -> Value.value
 
+(** @since 2.2.0 *)
 val of_array_array : Value.array list -> Value.value
 
+(** @since 2.2.0 *)
 val of_table_array : Value.table list -> Value.value
 
 (** {2 Parser} *)
