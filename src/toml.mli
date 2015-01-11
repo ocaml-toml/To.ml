@@ -60,23 +60,37 @@ module Value : sig
      incorrect (eg, using {!Toml.Value.To.string} on a Toml boolean).
     *)
 
+    (* @since 2.0.0 *)
     val bool : value -> bool
+    (* @since 2.0.0 *)
     val int : value -> int
+    (* @since 2.0.0 *)
     val float : value -> float
+    (* @since 2.0.0 *)
     val string : value -> string
+    (* @since 2.0.0 *)
     val date : value -> Unix.tm
+    (* @since 2.0.0 *)
     val array : value -> array
+    (* @since 2.0.0 *)
     val table : value -> table
 
     module Array : sig
 
       (** Array functions. As a TOML array may nest types,
-          handling them needs a dedicated module. *)
+          handling them needs a dedicated module.
+          @since 2.0.0
+      *)
       val bool : array -> bool list
+      (* @since 2.0.0 *)
       val int : array -> int list
+      (* @since 2.0.0 *)
       val float : array -> float list
+      (* @since 2.0.0 *)
       val string : array -> string list
+      (* @since 2.0.0 *)
       val date : array -> Unix.tm list
+      (* @since 2.0.0 *)
       val array : array -> array list
       (** @since 2.2.0 *)
       val table : array -> table list
@@ -92,20 +106,33 @@ module Value : sig
      OCaml strings should be valid UTF-8, and OCaml dates should be in UTC.
     *)
 
+    (* @since 2.0.0 *)
     val bool : bool -> value
+    (* @since 2.0.0 *)
     val int : int -> value
+    (* @since 2.0.0 *)
     val float : float -> value
+    (* @since 2.0.0 *)
     val string : string -> value
+    (* @since 2.0.0 *)
     val date : Unix.tm -> value
+    (* @since 2.0.0 *)
     val array : array -> value
+    (* @since 2.0.0 *)
     val table : table -> value
 
     module Array : sig
+      (* @since 2.0.0 *)
       val bool : bool list -> array
+      (* @since 2.0.0 *)
       val int : int list -> array
+      (* @since 2.0.0 *)
       val float : float list -> array
+      (* @since 2.0.0 *)
       val string : string list -> array
+      (* @since 2.0.0 *)
       val date : Unix.tm list -> array
+      (* @since 2.0.0 *)
       val array : array list -> array
       (** @since 2.2.0 *)
       val table : table list -> array
@@ -358,6 +385,7 @@ module Parser : sig
    Given a lexer buffer and a source (eg, a filename), returns a Toml table.
 
    @raise Toml.Parser.Error if the buffer is not valid Toml.
+   @since 2.0.0
    *)
   val parse : Lexing.lexbuf -> string -> Value.table
 
@@ -365,6 +393,7 @@ module Parser : sig
    Given an UTF-8 string, returns a Toml table.
 
    @raise Toml.Parser.Error if the string is not valid Toml.
+   @since 2.0.0
   *)
   val from_string : string -> Value.table
 
@@ -372,6 +401,7 @@ module Parser : sig
    Given an input channel, returns a Toml table.
 
    @raise Toml.Parser.Error if the data in the channel is not valid Toml.
+   @since 2.0.0
   *)
   val from_channel : in_channel -> Value.table
 
@@ -380,6 +410,7 @@ module Parser : sig
 
    @raise Toml.Parser.Error if the data in the file is not valid Toml.
    @raise Pervasives.Sys_error if the file could not be opened.
+   @since 2.0.0
   *)
   val from_filename : string -> Value.table
 
@@ -393,19 +424,25 @@ module Printer : sig
   (**
    Given a Toml value and a formatter, inserts a valid Toml representation of
    this value in the formatter.
+
+   @since 2.0.0
   *)
   val value : Format.formatter -> Value.value -> unit
 
   (**
    Given a Toml table and a formatter, inserts a valid Toml representation of
    this value in the formatter.
+
+   @since 2.0.0
   *)
   val table : Format.formatter -> Value.table -> unit
 
   (**
    Given a Toml array and a formatter, inserts a valid Toml representation of
    this value in the formatter.
+
    @raise Invalid_argument if the array is an array of tables
+   @since 2.0.0
   *)
   val array : Format.formatter -> Value.array -> unit
 
@@ -416,15 +453,24 @@ end
 module Compare : sig
 
   (** Given two Toml values, return [-1], [0] or [1] depending on whether the
-   first is smaller, equal or greater than the second *)
+   first is smaller, equal or greater than the second
+
+   @since 2.0.0
+  *)
   val value : Value.value -> Value.value -> int
 
   (** Given two Toml arrays, return [-1], [0] or [1] depending on whether the
-   first is smaller, equal or greater than the second *)
+   first is smaller, equal or greater than the second
+  
+   @since 2.0.0
+  *)
   val array : Value.array -> Value.array -> int
 
   (** Given two Toml tables, return [-1], [0] or [1] depending on whether the
-   first is smaller, equal or greater than the second *)
+   first is smaller, equal or greater than the second
+
+   @since 2.0.0
+  *)
   val table : Value.table -> Value.table -> int
 
 end
