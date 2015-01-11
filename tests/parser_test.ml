@@ -5,6 +5,7 @@
 open OUnit
 open Toml
 module Toml_key = Toml.Table.Key
+open Toml.Parser
 
 let table_find key_string = Table.find (Toml_key.of_string key_string)
 
@@ -18,8 +19,6 @@ let mk_raw_table x =
   List.fold_left (fun tbl (k,v) ->
     Table.add (Toml_key.of_string k) v tbl)
   Table.empty x
-
-open Toml.Parser
 
 let suite =
   let assert_equal = OUnit.assert_equal in
