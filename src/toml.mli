@@ -78,6 +78,7 @@ module Value : sig
       val string : array -> string list
       val date : array -> Unix.tm list
       val array : array -> array list
+      val table : array -> table list
     end
 
   end
@@ -105,6 +106,7 @@ module Value : sig
       val string : string list -> array
       val date : Unix.tm list -> array
       val array : array list -> array
+      val table : table list -> array
     end
 
   end
@@ -142,6 +144,20 @@ end
   # let fortytwos = Toml.Table.find (Toml.key "fortytwos") table
     |> Toml.to_int_array;;
   val fortytwos : int list = [42; 42]
+
+  # let table = Toml.Table.empty
+    |> Toml.Table.add (Toml.key "tables")
+         ([
+           Toml.Table.empty
+           |> Toml.Table.add (Toml.key "foo") (Toml.of_string "foofoo");
+           Toml.Table.empty
+           |> Toml.Table.add (Toml.key "bar") (Toml.of_string "barbar");
+          ] |> Toml.of_table_array);;
+    val table : Toml.Value.value Toml.Table.t = <abstr>
+
+ # let array_of_tables = Toml.Table.find (Toml.key "tables") table
+   |> Toml.to_table_array;;
+ val array_of_tables : Toml.Value.table list = [<abstr>; <abstr>]
  v}
 
  All conversion functions raise {!Toml.Value.To.Bad_type} if the type is wrong.
@@ -170,6 +186,8 @@ val to_string_array : Value.value -> string list
 val to_date_array : Value.value -> Unix.tm list
 
 val to_array_array : Value.value -> Value.array list
+
+val to_table_array : Value.value -> Value.table list
 
 (**
  {3 Getting OCaml values from a table}
@@ -226,6 +244,8 @@ val get_date_array : Table.Key.t -> Value.value Table.t -> Unix.tm list
 
 val get_array_array : Table.Key.t -> Value.value Table.t -> Value.array list
 
+val get_table_array : Table.Key.t -> Value.value Table.t -> (Value.value Table.t) list
+
 (**
  {3 From OCaml values to Toml values}
 
@@ -266,6 +286,8 @@ val of_string_array : string list -> Value.value
 val of_date_array : Unix.tm list -> Value.value
 
 val of_array_array : Value.array list -> Value.value
+
+val of_table_array : Value.table list -> Value.value
 
 (** {2 Parser} *)
 (** Simple parsing functions. *)
@@ -342,6 +364,7 @@ module Printer : sig
   (**
    Given a Toml array and a formatter, inserts a valid Toml representation of
    this value in the formatter.
+   @raise Invalid_argument if the array is an array of tables
   *)
   val array : Format.formatter -> Value.array -> unit
 

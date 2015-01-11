@@ -65,6 +65,7 @@ module Type = struct
     | NodeString of string list
     | NodeDate of Unix.tm list
     | NodeArray of array list (* this can have any type *)
+    | NodeTable of table list
 
   and value =
     | TBool of bool
@@ -99,6 +100,7 @@ module Dump = struct
     | NodeString l ->  list (fun x -> x) l
     | NodeDate l ->  list date l
     | NodeArray l ->  list array l
+    | NodeTable l -> failwith "Dumping table of arrays not supported"
 
   and value : value -> string = function
     | TBool b -> "TBool(" ^ string_of_bool b ^ ")"

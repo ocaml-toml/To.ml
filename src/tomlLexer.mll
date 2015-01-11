@@ -53,7 +53,6 @@ rule tomlex = parse
             } }
   | t_white+ { tomlex lexbuf }
   | t_eol+ { update_loc lexbuf;tomlex lexbuf }
-  | "[[" { failwith "Array of tables is not supported" }
   | '=' { EQUAL }
   | '[' { LBRACK }
   | ']' { RBRACK }
@@ -72,6 +71,7 @@ and stringify buff = parse
   (* no unterminated strings *)
   | eof  { failwith "Unterminated string" }
   | '"'  { STRING (Buffer.contents buff) }
+  | t_eol as eol { update_loc lexbuf; Buffer.add_string buff eol; stringify buff lexbuf }
   | _ as c { Buffer.add_char buff c; stringify buff lexbuf }
 
 {}
