@@ -1,53 +1,41 @@
-FLAGS=-use-ocamlfind -yaccflags --explain -use-menhir -package str
-INC=src
+# OASIS_START
+# DO NOT EDIT (digest: a3c674b4239234cbbe53afe090018954)
 
-TESTS_FLAGS=$(FLAGS)
-TESTS_PKGS=oUnit
-TESTS_INC=$(INC),tests
-TEST_FILES=parser_test.ml example.ml hard_example.ml printer_test.ml key_test.ml
+SETUP = ocaml setup.ml
 
-COVERAGE_FLAGS=$(TESTS_FLAGS)
-COVERAGE_TAGS=package\(bisect\),syntax\(camlp4o\),syntax\(bisect_pp\)
-COVERAGE_INC=$(TESTS_INC)
+build: setup.data
+	$(SETUP) -build $(BUILDFLAGS)
 
-LIB_FILES=toml.a toml.cmxa toml.cma toml.cmi
+doc: setup.data build
+	$(SETUP) -doc $(DOCFLAGS)
 
-build: $(LIB_FILES)
+test: setup.data build
+	$(SETUP) -test $(TESTFLAGS)
 
-install:
-	ocamlfind install toml META $(addprefix _build/src/, $(LIB_FILES))
+all:
+	$(SETUP) -all $(ALLFLAGS)
 
-uninstall:
-	ocamlfind remove toml
+install: setup.data
+	$(SETUP) -install $(INSTALLFLAGS)
 
-$(LIB_FILES):
-	ocamlbuild $(FLAGS) -I $(INC) $@
+uninstall: setup.data
+	$(SETUP) -uninstall $(UNINSTALLFLAGS)
 
-test: $(TEST_FILES:.ml=.native)
-	@echo '*******************************************************************'
-	@./parser_test.native
-	@./example.native < tests/example.toml
-	@./hard_example.native < tests/hard_example.toml
-	@./printer_test.native
-	@./key_test.native
-
-
-$(TEST_FILES:.ml=.native):
-	ocamlbuild $(TESTS_FLAGS) -pkgs $(TESTS_PKGS) -Is $(TESTS_INC) $@
-
-coverage:
-	ocamlbuild $(COVERAGE_FLAGS) -pkgs $(TESTS_PKGS) -tags $(COVERAGE_TAGS) -Is $(COVERAGE_INC) $(TEST_FILES:.ml=.byte)
-	@BISECT_FILE=_build/coverage ./parser_test.byte
-	@BISECT_FILE=_build/coverage ./example.byte < tests/example.toml
-	@BISECT_FILE=_build/coverage ./hard_example.byte < tests/hard_example.toml
-	@BISECT_FILE=_build/coverage ./printer_test.byte
-	@BISECT_FILE=_build/coverage ./key_test.byte
-
-doc:
-	ocamlbuild -I src toml.docdir/index.html
-
-report: coverage
-	cd _build && bisect-report -verbose -html report coverage*.out
+reinstall: setup.data
+	$(SETUP) -reinstall $(REINSTALLFLAGS)
 
 clean:
-	ocamlbuild -clean
+	$(SETUP) -clean $(CLEANFLAGS)
+
+distclean:
+	$(SETUP) -distclean $(DISTCLEANFLAGS)
+
+setup.data:
+	$(SETUP) -configure $(CONFIGUREFLAGS)
+
+configure:
+	$(SETUP) -configure $(CONFIGUREFLAGS)
+
+.PHONY: build doc test all install uninstall reinstall clean distclean configure
+
+# OASIS_STOP

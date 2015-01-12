@@ -5,7 +5,7 @@ module Toml_key = Toml.Table.Key
 
 (* This test file expects example.toml from official toml repo read *)
 
-let toml = Parser.from_channel stdin
+let toml = Parser.from_filename "./example.toml"
 
 let mk_raw_table x =
   List.fold_left (fun tbl (k,v) ->
@@ -57,10 +57,9 @@ let expected =
     ]
 
 
-let test = "Official example.toml file" >:::
+let suite = "Official example.toml file" >:::
            [
              "example.toml parsing" >::
              (fun () -> assert_equal toml expected) ;
            ]
-let _ = OUnit.run_test_tt_main test
 

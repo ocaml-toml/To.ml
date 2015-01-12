@@ -65,3 +65,11 @@ val formatter : Format.formatter = <abstr>
 ## Limitations
 
 * Keys don't quite follow the Toml standard. Both section keys (eg, `[key1.key2]`) and ordinary keys (`key=...`) may not contain the following characters: space, '\t', '\n', '\r', '.', '[', ']', '"' and '#'.
+
+## Contributing
+
+- fork this repository
+- `oasis setup && ./configure --enable-tests --enable-report && make test`
+- submit a PR
+- _OR_ open an issue so that we can create a branch and a PR associated to it.  
+  This is better because then, all the Toml maintainers can push commits to this branch.
