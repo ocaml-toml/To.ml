@@ -32,7 +32,7 @@ let string_of_array toml_array =
 let toml_table key_values =
     create_table key_values |> string_of_table
 
-let test = "Printing values" >:::
+let suite = "Printing values" >:::
   [
     "simple string" >:: (fun () ->
       assert_equal_str
@@ -264,4 +264,3 @@ let test = "Printing values" >:::
 
   ]
 
-let _ = OUnit.run_test_tt_main test

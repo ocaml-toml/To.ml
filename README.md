@@ -1,8 +1,8 @@
 # Toml (OCaml parser for TOML)
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mackwic/To.ml?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/mackwic/To.ml.png?branch=master)](https://travis-ci.org/mackwic/To.ml)
-[![Coverage
-Status](https://coveralls.io/repos/mackwic/To.ml/badge.png?branch=master)](https://coveralls.io/r/mackwic/To.ml?branch=master)
+[![Coverage Status](https://coveralls.io/repos/mackwic/To.ml/badge.png?branch=master)](https://coveralls.io/r/mackwic/To.ml?branch=master)
 
 OCaml parser for TOML [(Tom's Obvious Minimal Language)](https://github.com/mojombo/toml) v0.2.0.
 
@@ -95,3 +95,11 @@ val formatter : Format.formatter = <abstr>
 ## Limitations
 
 * Keys don't quite follow the Toml standard. Both section keys (eg, `[key1.key2]`) and ordinary keys (`key=...`) may not contain the following characters: space, '\t', '\n', '\r', '.', '[', ']', '"' and '#'.
+
+## Contributing
+
+- fork this repository
+- `oasis setup && ./configure --enable-tests --enable-report && make test`
+- submit a PR
+- _OR_ open an issue so that we can create a branch and a PR associated to it.  
+  This is better because then, all the Toml maintainers can push commits to this branch.

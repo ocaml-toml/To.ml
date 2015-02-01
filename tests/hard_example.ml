@@ -15,7 +15,7 @@ let error2 ="array = [
 
 let error3 ="number = 3.14  pi <--again forgot the #"
 
-let toml = Parser.from_channel stdin
+let toml = Parser.from_filename "./hard_example.toml"
 
 let mk_table x =
   Toml.Value.Of.table (List.fold_left (fun tbl (k,v) -> Table.add (Toml_key.of_string k) v tbl) Table.empty x)
@@ -46,7 +46,7 @@ let expected =
         ]
     ]
 
-let test = "Official hard_example.toml file" >:::
+let suite = "Official hard_example.toml file" >:::
   [
 
     "Success" >:: (fun () -> assert_equal expected toml) ;
@@ -69,4 +69,3 @@ let test = "Official hard_example.toml file" >:::
         (fun () -> ignore(Parser.from_string error3)))
   ]
 
-let _ = OUnit.run_test_tt_main test

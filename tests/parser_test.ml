@@ -5,6 +5,7 @@
 open OUnit
 open Toml
 module Toml_key = Toml.Table.Key
+open Toml.Parser
 
 let table_find key_string = Table.find (Toml_key.of_string key_string)
 
@@ -19,11 +20,9 @@ let mk_raw_table x =
     Table.add (Toml_key.of_string k) v tbl)
   Table.empty x
 
-open Toml.Parser
-
-let _ =
+let suite =
   let assert_equal = OUnit.assert_equal in
-  let suite = "Main tests" >:::
+  "Main tests" >:::
   [
     "Rache Methodology Approved" >::: [
        "simple key value" >:: (fun () ->
@@ -331,5 +330,4 @@ let _ =
     (* ];                                                           *)
 
     (* "Huge files" >::: []                                         *)
-  ] in
-  OUnit.run_test_tt_main suite
+  ]
