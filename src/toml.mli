@@ -60,24 +60,39 @@ module Value : sig
      incorrect (eg, using {!Toml.Value.To.string} on a Toml boolean).
     *)
 
+    (* @since 2.0.0 *)
     val bool : value -> bool
+    (* @since 2.0.0 *)
     val int : value -> int
+    (* @since 2.0.0 *)
     val float : value -> float
+    (* @since 2.0.0 *)
     val string : value -> string
+    (* @since 2.0.0 *)
     val date : value -> Unix.tm
+    (* @since 2.0.0 *)
     val array : value -> array
+    (* @since 2.0.0 *)
     val table : value -> table
 
     module Array : sig
 
       (** Array functions. As a TOML array may nest types,
-          handling them needs a dedicated module. *)
+          handling them needs a dedicated module.
+          @since 2.0.0
+      *)
       val bool : array -> bool list
+      (* @since 2.0.0 *)
       val int : array -> int list
+      (* @since 2.0.0 *)
       val float : array -> float list
+      (* @since 2.0.0 *)
       val string : array -> string list
+      (* @since 2.0.0 *)
       val date : array -> Unix.tm list
+      (* @since 2.0.0 *)
       val array : array -> array list
+      (** @since 2.2.0 *)
       val table : array -> table list
     end
 
@@ -91,21 +106,35 @@ module Value : sig
      OCaml strings should be valid UTF-8, and OCaml dates should be in UTC.
     *)
 
+    (* @since 2.0.0 *)
     val bool : bool -> value
+    (* @since 2.0.0 *)
     val int : int -> value
+    (* @since 2.0.0 *)
     val float : float -> value
+    (* @since 2.0.0 *)
     val string : string -> value
+    (* @since 2.0.0 *)
     val date : Unix.tm -> value
+    (* @since 2.0.0 *)
     val array : array -> value
+    (* @since 2.0.0 *)
     val table : table -> value
 
     module Array : sig
+      (* @since 2.0.0 *)
       val bool : bool list -> array
+      (* @since 2.0.0 *)
       val int : int list -> array
+      (* @since 2.0.0 *)
       val float : float list -> array
+      (* @since 2.0.0 *)
       val string : string list -> array
+      (* @since 2.0.0 *)
       val date : Unix.tm list -> array
+      (* @since 2.0.0 *)
       val array : array list -> array
+      (** @since 2.2.0 *)
       val table : table list -> array
     end
 
@@ -163,30 +192,43 @@ end
  All conversion functions raise {!Toml.Value.To.Bad_type} if the type is wrong.
 *)
 
+(** @since 2.2.0 *)
 val to_bool : Value.value -> bool
 
+(** @since 2.2.0 *)
 val to_int : Value.value -> int
 
+(** @since 2.2.0 *)
 val to_float : Value.value -> float
 
+(** @since 2.2.0 *)
 val to_string : Value.value -> string
 
+(** @since 2.2.0 *)
 val to_date : Value.value -> Unix.tm
 
+(** @since 2.2.0 *)
 val to_table : Value.value -> Value.value Table.t
 
+(** @since 2.2.0 *)
 val to_bool_array : Value.value -> bool list
 
+(** @since 2.2.0 *)
 val to_int_array : Value.value -> int list
 
+(** @since 2.2.0 *)
 val to_float_array : Value.value -> float list
 
+(** @since 2.2.0 *)
 val to_string_array : Value.value -> string list
 
+(** @since 2.2.0 *)
 val to_date_array : Value.value -> Unix.tm list
 
+(** @since 2.2.0 *)
 val to_array_array : Value.value -> Value.array list
 
+(** @since 2.2.0 *)
 val to_table_array : Value.value -> Value.table list
 
 (**
@@ -220,30 +262,43 @@ val to_table_array : Value.value -> Value.table list
 
 *)
 
+(** @since 2.2.0 *)
 val get_bool : Table.Key.t -> Value.value Table.t -> bool
 
+(** @since 2.2.0 *)
 val get_int : Table.Key.t -> Value.value Table.t -> int
 
+(** @since 2.2.0 *)
 val get_float : Table.Key.t -> Value.value Table.t -> float
 
+(** @since 2.2.0 *)
 val get_string : Table.Key.t -> Value.value Table.t -> string
 
+(** @since 2.2.0 *)
 val get_date : Table.Key.t -> Value.value Table.t -> Unix.tm
 
+(** @since 2.2.0 *)
 val get_table : Table.Key.t -> Value.value Table.t -> Value.value Table.t
 
+(** @since 2.2.0 *)
 val get_bool_array : Table.Key.t -> Value.value Table.t -> bool list
 
+(** @since 2.2.0 *)
 val get_int_array : Table.Key.t -> Value.value Table.t -> int list
 
+(** @since 2.2.0 *)
 val get_float_array : Table.Key.t -> Value.value Table.t -> float list
 
+(** @since 2.2.0 *)
 val get_string_array : Table.Key.t -> Value.value Table.t -> string list
 
+(** @since 2.2.0 *)
 val get_date_array : Table.Key.t -> Value.value Table.t -> Unix.tm list
 
+(** @since 2.2.0 *)
 val get_array_array : Table.Key.t -> Value.value Table.t -> Value.array list
 
+(** @since 2.2.0 *)
 val get_table_array : Table.Key.t -> Value.value Table.t -> (Value.value Table.t) list
 
 (**
@@ -263,30 +318,43 @@ val get_table_array : Table.Key.t -> Value.value Table.t -> (Value.value Table.t
 
 *)
 
+(** @since 2.2.0 *)
 val of_bool : bool -> Value.value
 
+(** @since 2.2.0 *)
 val of_int : int -> Value.value
 
+(** @since 2.2.0 *)
 val of_float : float -> Value.value
 
+(** @since 2.2.0 *)
 val of_string : string -> Value.value
 
+(** @since 2.2.0 *)
 val of_date : Unix.tm -> Value.value
 
+(** @since 2.2.0 *)
 val of_table : Value.table -> Value.value
 
+(** @since 2.2.0 *)
 val of_bool_array : bool list -> Value.value
 
+(** @since 2.2.0 *)
 val of_int_array : int list -> Value.value
 
+(** @since 2.2.0 *)
 val of_float_array : float list -> Value.value
 
+(** @since 2.2.0 *)
 val of_string_array : string list -> Value.value
 
+(** @since 2.2.0 *)
 val of_date_array : Unix.tm list -> Value.value
 
+(** @since 2.2.0 *)
 val of_array_array : Value.array list -> Value.value
 
+(** @since 2.2.0 *)
 val of_table_array : Value.table list -> Value.value
 
 (** {2 Parser} *)
@@ -317,6 +385,7 @@ module Parser : sig
    Given a lexer buffer and a source (eg, a filename), returns a Toml table.
 
    @raise Toml.Parser.Error if the buffer is not valid Toml.
+   @since 2.0.0
    *)
   val parse : Lexing.lexbuf -> string -> Value.table
 
@@ -324,6 +393,7 @@ module Parser : sig
    Given an UTF-8 string, returns a Toml table.
 
    @raise Toml.Parser.Error if the string is not valid Toml.
+   @since 2.0.0
   *)
   val from_string : string -> Value.table
 
@@ -331,6 +401,7 @@ module Parser : sig
    Given an input channel, returns a Toml table.
 
    @raise Toml.Parser.Error if the data in the channel is not valid Toml.
+   @since 2.0.0
   *)
   val from_channel : in_channel -> Value.table
 
@@ -339,6 +410,7 @@ module Parser : sig
 
    @raise Toml.Parser.Error if the data in the file is not valid Toml.
    @raise Pervasives.Sys_error if the file could not be opened.
+   @since 2.0.0
   *)
   val from_filename : string -> Value.table
 
@@ -352,19 +424,25 @@ module Printer : sig
   (**
    Given a Toml value and a formatter, inserts a valid Toml representation of
    this value in the formatter.
+
+   @since 2.0.0
   *)
   val value : Format.formatter -> Value.value -> unit
 
   (**
    Given a Toml table and a formatter, inserts a valid Toml representation of
    this value in the formatter.
+
+   @since 2.0.0
   *)
   val table : Format.formatter -> Value.table -> unit
 
   (**
    Given a Toml array and a formatter, inserts a valid Toml representation of
    this value in the formatter.
+
    @raise Invalid_argument if the array is an array of tables
+   @since 2.0.0
   *)
   val array : Format.formatter -> Value.array -> unit
 
@@ -375,15 +453,24 @@ end
 module Compare : sig
 
   (** Given two Toml values, return [-1], [0] or [1] depending on whether the
-   first is smaller, equal or greater than the second *)
+   first is smaller, equal or greater than the second
+
+   @since 2.0.0
+  *)
   val value : Value.value -> Value.value -> int
 
   (** Given two Toml arrays, return [-1], [0] or [1] depending on whether the
-   first is smaller, equal or greater than the second *)
+   first is smaller, equal or greater than the second
+  
+   @since 2.0.0
+  *)
   val array : Value.array -> Value.array -> int
 
   (** Given two Toml tables, return [-1], [0] or [1] depending on whether the
-   first is smaller, equal or greater than the second *)
+   first is smaller, equal or greater than the second
+
+   @since 2.0.0
+  *)
   val table : Value.table -> Value.table -> int
 
 end
