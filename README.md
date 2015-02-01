@@ -1,4 +1,6 @@
 # Toml (OCaml parser for TOML)
+
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mackwic/To.ml?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/sagotch/To.ml.png?branch=master)](https://travis-ci.org/sagotch/To.ml)
 [![Coverage Status](https://coveralls.io/repos/sagotch/To.ml/badge.png)](https://coveralls.io/r/sagotch/To.ml)
 
