@@ -1,14 +1,16 @@
 opam-version: "1.2"
 
-ocaml-version: [ >= "4.02.0" ]
+ocaml-version: [ >= "4.01.0" ]
 
 maintainer: "support@toml.epimeros.org"
 
-homepage: "http://sagotch.github.io/To.ml/"
+homepage: "http://mackwic.github.io/To.ml/"
 
-build: [ [ make "build" ]
+build: [ [ "oasis" "setup" ]
+	 [ "./configure" ]
+         [ make "build" ]
          [ make "install" ] ]
 
-remove: [ "ocamlfind" "remove" "toml"]
+remove: [ "ocamlfind" "remove" "toml" ]
 
-depends: ["ocamlfind" "menhir"]
+depends: [ "ocamlfind" "menhir" "oasis" ]
