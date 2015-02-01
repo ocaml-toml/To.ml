@@ -1,6 +1,0 @@
-name            ="toml"
-version         ="2.0.0"
-description     ="TOML parser."
-requires        ="str"
-archive(byte)   ="toml.cma"
-archive(native) ="toml.cmxa"
