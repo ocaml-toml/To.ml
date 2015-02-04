@@ -35,7 +35,7 @@ XStdFilesAUTHORS: true
 # to limit merge conflicts, all fields are sorted by alphabetical order
 
 ###############################################################################
-# Main Librairy                                                               #
+# Main Library                                                               #
 ###############################################################################
 Library toml
     BuildDepends: str, menhirLib
