@@ -22,10 +22,8 @@ OCamlVersion: >= 4.01
 BuildTools: ocamlbuild
 
 Plugins:
-    Devfiles (0.4)
-    Doc (0.4)
-    META (0.4)
-    OCamlbuild (0.4)
+    Devfiles (0.4),
+    META (0.4),
     StdFiles (0.4)
 
 XStdFilesINSTALL: true
