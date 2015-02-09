@@ -43,6 +43,7 @@ Library toml
     Modules: Toml
     Path: src/
     XMETAEnable: true
+    XMETADescription: Toml parser
     XMETARequires: str, menhir
 
 ###############################################################################
