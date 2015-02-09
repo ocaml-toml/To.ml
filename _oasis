@@ -14,7 +14,7 @@ Authors:
     Emmanuel Surleau
     mackwic
 Maintainers: the TOML ML <contact@toml.epimeros.org>
-Homepage: http://sagotch.github.io/To.ml/
+Homepage: http://mackwic.github.io/To.ml/
 
 LicenseFile: LICENCE
 License: LGPL-3 with OCaml linking exception
