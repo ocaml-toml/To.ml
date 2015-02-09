@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: ce2d729828388c464c42fef5fcf8afdc)
+# DO NOT EDIT (digest: f8ba012723f04737ea7ecacffc503ddb)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -16,28 +16,19 @@ true: annot, bin_annot
 "_darcs": not_hygienic
 # Library toml
 "src/toml.cmxs": use_toml
-# Library tomlTest
-"src/tomlTest.cmxs": use_tomlTest
-<src/*.ml{,i,y}>: package(bisect)
-<src/*.ml{,i,y}>: package(camlp4)
 <src/*.ml{,i,y}>: package(menhirLib)
 <src/*.ml{,i,y}>: package(str)
 # Executable test_toml
 "tests/suite.byte": package(bisect)
-"tests/suite.byte": package(camlp4)
 "tests/suite.byte": package(menhirLib)
 "tests/suite.byte": package(oUnit)
 "tests/suite.byte": package(str)
-"tests/suite.byte": use_tomlTest
+"tests/suite.byte": use_toml
 <tests/*.ml{,i,y}>: package(bisect)
-<tests/*.ml{,i,y}>: package(camlp4)
 <tests/*.ml{,i,y}>: package(menhirLib)
 <tests/*.ml{,i,y}>: package(oUnit)
 <tests/*.ml{,i,y}>: package(str)
-<tests/*.ml{,i,y}>: use_tomlTest
+<tests/*.ml{,i,y}>: use_toml
 # OASIS_STOP
 true: use_menhir
-<*/*.ml{,i,y}>: syntax(camlp4o),syntax(bisect_pp)
-<*/*.{native,byte}>: syntax(camlp4o),syntax(bisect_pp)
-# XXX for some reason the use_toml flag fail the build
-"tests/suite.byte": -use_tomlTest
+"tests/suite.byte": -use_toml
