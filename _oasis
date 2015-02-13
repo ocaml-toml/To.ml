@@ -39,8 +39,8 @@ Library toml
     BuildDepends: str
     FindlibName: toml
     Install: true
-    InternalModules: TomlInternal
-    Modules: Toml, TomlLexer, TomlParser, TomlPrinter, TomlUnicode
+    InternalModules: TomlInternal, TomlLexer, TomlParser, TomlPrinter, TomlUnicode
+    Modules: Toml
     Path: src/
     XMETAEnable: true
     XMETADescription: Toml parser
