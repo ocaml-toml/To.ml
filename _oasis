@@ -36,15 +36,14 @@ XStdFilesAUTHORS: true
 # Main Library                                                               #
 ###############################################################################
 Library toml
-    BuildDepends: str, menhirLib
+    BuildDepends: str
     FindlibName: toml
     Install: true
     InternalModules: TomlInternal
-    Modules: Toml
+    Modules: Toml, TomlLexer, TomlParser, TomlPrinter, TomlUnicode
     Path: src/
     XMETAEnable: true
     XMETADescription: Toml parser
-    XMETARequires: str, menhir
 
 ###############################################################################
 # Test executables                                                            #
