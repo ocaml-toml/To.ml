@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 8b4b5eeffa498d87474f03f8265b6e6a)
+# DO NOT EDIT (digest: 7dd02c5c901e84dc3426f655a3a834cd)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -17,14 +17,17 @@ true: annot, bin_annot
 # Library toml
 "src/toml.cmxs": use_toml
 <src/*.ml{,i,y}>: package(str)
+<src/*.ml{,i,y}>: package(unix)
 # Executable test_toml
 "tests/suite.byte": package(bisect)
 "tests/suite.byte": package(oUnit)
 "tests/suite.byte": package(str)
+"tests/suite.byte": package(unix)
 "tests/suite.byte": use_toml
 <tests/*.ml{,i,y}>: package(bisect)
 <tests/*.ml{,i,y}>: package(oUnit)
 <tests/*.ml{,i,y}>: package(str)
+<tests/*.ml{,i,y}>: package(unix)
 <tests/*.ml{,i,y}>: use_toml
 # OASIS_STOP
 true: use_menhir
