@@ -6,11 +6,10 @@ maintainer: "support@toml.epimeros.org"
 
 homepage: "http://mackwic.github.io/To.ml/"
 
-build: [ [ "oasis" "setup" ]
-	 [ "./configure" ]
+build: [ [ "./configure" ]
          [ make "build" ]
          [ make "install" ] ]
 
 remove: [ "ocamlfind" "remove" "toml" ]
 
-depends: [ "ocamlfind" "menhir" "oasis" ]
+depends: [ "ocamlfind" "menhir" ]
