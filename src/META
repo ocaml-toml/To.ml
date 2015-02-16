@@ -1,0 +1,12 @@
+# OASIS_START
+# DO NOT EDIT (digest: b4c2abe9588d89e66d9e00a29207df3e)
+version = "2.2.0"
+description = "Toml parser"
+requires = "str unix"
+archive(byte) = "toml.cma"
+archive(byte, plugin) = "toml.cma"
+archive(native) = "toml.cmxa"
+archive(native, plugin) = "toml.cmxs"
+exists_if = "toml.cma"
+# OASIS_STOP
+
