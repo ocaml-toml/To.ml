@@ -1,6 +1,6 @@
 # OASIS_START
-# DO NOT EDIT (digest: b4c2abe9588d89e66d9e00a29207df3e)
-version = "2.2.0"
+# DO NOT EDIT (digest: 66d4bf64eabc8fb03c575c420469db85)
+version = "2.2.1"
 description = "Toml parser"
 requires = "str unix"
 archive(byte) = "toml.cma"
