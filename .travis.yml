@@ -12,10 +12,9 @@ env:
 
 after_script:
   - opam install -y ocveralls
-  - "`opam config var bin`/ocveralls \
-     --prefix _build _build/coverage*.out \
-     > coverage.json"
-  - curl -F 'json_file=@coverage.json' 'https://coveralls.io/api/v1/jobs'
+  - "`opam config var bin`/ocveralls _build/coverage*.out \
+     --prefix _build \
+     --send"
 
 notifications:
   email: false
