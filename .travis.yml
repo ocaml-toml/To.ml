@@ -3,13 +3,19 @@
 
 language: c
 
-script: bash -ex .travis-ci.sh
+script:
+  - bash -ex .travis-ci.sh
 
 env:
   - OCAML_VERSION=4.01.0 OPAM_VERSION=1.2.0
   - OCAML_VERSION=4.02.1 OPAM_VERSION=1.2.0
 
-after_script: chmod +x ./.ocveralls.sh && cd _build && ../.ocveralls.sh coverage*.out
+after_script:
+  - opam install -y ocveralls
+  - "`opam config var bin`/ocveralls \
+     --prefix _build _build/coverage*.out \
+     > coverage.json"
+  - curl -F 'json_file=@coverage.json' 'https://coveralls.io/api/v1/jobs'
 
 notifications:
   email: false

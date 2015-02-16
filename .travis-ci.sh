@@ -5,8 +5,7 @@
 # Configuration variables
 ######
 
-OPAM_DEPENDS="ocamlfind oasis ounit menhir"
-BISECT_URL="http://bisect.sagotch.fr/ "
+OPAM_DEPENDS="ocamlfind oasis ounit bisect menhir"
 
 ########
 #  Some utilities in order to ease printing
@@ -100,28 +99,6 @@ do
     echo ${LIME_GREEN}*${RESET} linking ${bin}${RESET}
     ln -s $bin
 done
-popd
-
-# install patched bisect library since it is not updated on opam yet
-step 'INSTALLING PATCHED BISECT LIBRARY'
-substep 'download'
-wget $BISECT_URL -O Bisect.tar.gz
-
-substep 'extraction'
-tar -xvf Bisect.tar.gz
-
-substep 'configure'
-pushd Bisect
-chmod +x configure
-./configure -ocaml-prefix `opam config var prefix`
-
-cmd_step cat Makefile.config
-
-cmd_step make all
-
-cmd_step make install
-#sudo make install # ./configure set PATH_OCAML_PREFIX=/usr instead of
-                  # using .opam directory, so we need sudo
 popd
 
 # run test, then send result to coveralls
