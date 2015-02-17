@@ -80,7 +80,7 @@ case "$OCAML_VERSION,$OPAM_VERSION" in
 *) error "Unknown ocaml or opam version: $OCAML_VERSION,$OPAM_VERSION";;
 esac
 
-step 'INSTALLING DEPENDENCIES'
+step 'SETTING UP ENVIRONMENT'
 
 substep 'aptitude install'
 echo "yes" | sudo add-apt-repository ppa:$ppa
@@ -89,6 +89,16 @@ sudo apt-get install -qq ocaml ocaml-native-compilers camlp4-extra opam
 
 export OPAMYES=1
 cmd_step opam init
+
+# First test install/uninstall step in a fresh environment
+step 'TESTING LIBRARY INSTALL'
+git clone https://github.com/mackwic/To.ml.git
+opam pin add -k git -n toml To.ml
+opam install toml
+opam remove toml
+opam pin remove toml
+
+step 'INSTALLING DEPENDENCIES'
 cmd_step opam install ${OPAM_DEPENDS}
 eval `opam config env`
 
