@@ -1,12 +1,16 @@
 # Changelog
 
+## 2.2.1
+
+* Fixed dependencies.
+
 ## 2.2.0
 
 * Numerous convenience functions to reduce verbosity
 * Fix wrong error location returned when parsing an invalid Toml file
 * Parsing a Toml file always throws `TomlParser.Error` and never `Failure`
 * Add array of tables
-* Add @since tags in the documentation 
+* Add @since tags in the documentation
 * Add changelog
 
 ## 2.0.0 and 2.1.0
@@ -26,4 +30,3 @@
 ## 1.0.0
 
 * Base parser from ocamllex and ocamlyacc
-
