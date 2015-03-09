@@ -11,6 +11,7 @@ OCaml parser for TOML [(Tom's Obvious Minimal Language)](https://github.com/mojo
 - [A foreword to beginners](#a-foreword-to-beginners)
 - [Dependencies](#dependencies)
 - [Install](#install)
+- [Documentation](#documentation)
 - [Usage](#usage)
 - [Reading Toml data](#reading-toml-data)
 - [Writing Toml data](#writing-toml-data)
@@ -47,6 +48,11 @@ make build
 make install
 ```
 make install may need sudo.
+
+## Documentation
+
+You can build documentation from sources with `make doc`, or browse
+[github pages](http://mackwic.github.io/To.ml/) of the project.
 
 ## Usage
 
@@ -94,12 +100,15 @@ val formatter : Format.formatter = <abstr>
 
 ## Limitations
 
-* Keys don't quite follow the Toml standard. Both section keys (eg, `[key1.key2]`) and ordinary keys (`key=...`) may not contain the following characters: space, '\t', '\n', '\r', '.', '[', ']', '"' and '#'.
+* Keys don't quite follow the Toml standard. Both section keys (eg,
+`[key1.key2]`) and ordinary keys (`key=...`) may not contain the
+following characters: space, '\t', '\n', '\r', '.', '[', ']', '"' and '#'.
 
 ## Contributing
 
-- fork this repository
+- Fork this repository
 - `oasis setup && ./configure --enable-tests --enable-report && make test`
-- submit a PR
-- _OR_ open an issue so that we can create a branch and a PR associated to it.  
-  This is better because then, all the Toml maintainers can push commits to this branch.
+- Submit a PR *or* open an issue so that we can create a branch and a
+  PR associated to it.
+  This is better because then, all the Toml maintainers can push commits
+  to this branch.
