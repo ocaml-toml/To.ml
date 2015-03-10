@@ -78,48 +78,6 @@ module Type = struct
 
   and table = value Map.t
 
-
-end
-
-module Dump = struct
-
-  open Type
-
-  let list (stringifier : 'a -> string) (els : 'a list)  =
-    String.concat "; " @@ List.map stringifier els
-
-  let rec table (tbl : table) : string =
-    Map.fold (fun k v acc -> (k, v) :: acc) tbl []
-    |> list (fun (k, v) -> (Type.Key.to_string k) ^ "->" ^ value v)
-
-  and array : array -> string = function
-    | NodeEmpty -> ""
-    | NodeBool l -> list string_of_bool l
-    | NodeInt l ->  list string_of_int l
-    | NodeFloat l ->  list string_of_float l
-    | NodeString l ->  list (fun x -> x) l
-    | NodeDate l ->  list date l
-    | NodeArray l ->  list array l
-    | NodeTable l -> failwith "Dumping table of arrays not supported"
-
-  and value : value -> string = function
-    | TBool b -> "TBool(" ^ string_of_bool b ^ ")"
-    | TInt i ->  "TInt(" ^ string_of_int i ^ ")"
-    | TFloat f -> "TFloat(" ^ string_of_float f ^ ")"
-    | TString s -> "TString(" ^ s ^ ")"
-    | TDate d -> "TDate(" ^ date d ^ ")"
-    | TArray arr -> "[" ^ array arr ^ "]"
-    | TTable tbl -> "TTable(" ^ table tbl ^ ")"
-
-  and date (d : Unix.tm) : string =
-    "{"
-    ^ string_of_int d.Unix.tm_year
-    ^ "-"
-    ^ string_of_int d.Unix.tm_mon
-    ^ "-"
-    ^ string_of_int d.Unix.tm_mday
-    ^ "-"
-    ^ "}"
 end
 
 module Compare = struct
