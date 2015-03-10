@@ -13,8 +13,6 @@
 let t_white   = ['\t' ' ']
 (** Tab char or space char *)
 let t_eol     = '\n'|'\r'|"\r\n"
-(** Cross platform end of lines *)
-let t_blank   = (t_white|t_eol)
 (** Blank characters as specified by the ref *)
 let t_digit   = ['0'-'9']
 let t_int     = ['-''+']? t_digit+
