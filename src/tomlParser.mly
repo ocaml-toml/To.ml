@@ -1,11 +1,9 @@
 %{
     open TomlInternal.Type
 
-    let to_path str : string list = Str.split (Str.regexp "\\.") str
-
     type t = Value of value
-           | Table of (string, t) Hashtbl.t
-           | Tables of ((string, t) Hashtbl.t) list
+           | Table of (Key.t, t) Hashtbl.t
+           | Tables of ((Key.t, t) Hashtbl.t) list
 
     (* Indicate if the given table is a [Regular] table (i.e. its name
      * is its real name), or if it is a [ArrayElement] (i.e. its name
@@ -20,7 +18,7 @@
         (fun t k ->
          try match Hashtbl.find t k with
              | Table t   -> t
-             | Value _   -> failwith (k ^ " is a value (table expected)")
+             | Value _   -> failwith ("lookup_table.")
              | Tables [] -> let sub = Hashtbl.create 0 in
                             Hashtbl.replace t k (Tables [sub]) ;
                             sub
@@ -35,7 +33,7 @@
      * in the table [t]. Fails if a value is already binded to [k]. *)
     let add_value t k v =
       if Hashtbl.mem t k
-      then failwith (k ^ " is already defined")
+      then failwith ("add_value")
       else Hashtbl.add t k (Value v)
 
     (* [add_to_table root ks kvs] add [kvs] to table found following path
@@ -70,8 +68,8 @@
 
       try match Hashtbl.find t k with
           | Tables ts -> Hashtbl.replace t k (insert_table ts kvs);
-          | Table _   -> failwith (k ^ " is a table, not an array of tables")
-          | Value _   -> failwith (k ^ " is a value")
+          | Table _
+          | Value _   -> failwith ("add_to_nested_table")
       with Not_found  -> Hashtbl.add t k (insert_table [] kvs)
 
     (* Convert a value of local type [t] into a [Value.value]  *)
@@ -83,7 +81,7 @@
                             |> List.map htbl_to_map))
 
     and htbl_to_map h =
-      Hashtbl.fold (fun k v map -> Map.add (Key.of_string k) (convert v) map)
+      Hashtbl.fold (fun k v map -> Map.add k (convert v) map)
                    h Map.empty
 
 %}
@@ -95,12 +93,12 @@
 %token <string> STRING
 %token <Unix.tm> DATE
 %token <string> KEY
-%token LBRACK RBRACK EQUAL EOF COMMA
+%token LBRACK RBRACK EQUAL EOF COMMA DOT
 
 %start toml
 
 %type <TomlInternal.Type.table> toml
-%type <string * TomlInternal.Type.value> keyValue
+%type <TomlInternal.Type.Key.t * TomlInternal.Type.value> keyValue
 %type <TomlInternal.Type.array> array_start
 
 %%
@@ -120,11 +118,17 @@ toml:
      match convert (Table t) with TTable t -> t | _ -> assert false }
 
 group_header:
- | LBRACK LBRACK KEY RBRACK RBRACK { ArrayElement, (to_path $3) }
- | LBRACK KEY RBRACK               { Regular, (to_path $2) }
+ | LBRACK LBRACK key_path RBRACK RBRACK { ArrayElement, $3 }
+ | LBRACK key_path RBRACK               { Regular, $2 }
+
+key:
+ | STRING { Key.quoted_key_of_string $1 }
+ | KEY    { Key.bare_key_of_string $1 }
+
+key_path: k = separated_nonempty_list (DOT, key) { k }
 
 keyValue:
-    KEY EQUAL value { ($1, $3) }
+    key EQUAL value { ($1, $3) }
 
 value:
     BOOL { TBool($1) }

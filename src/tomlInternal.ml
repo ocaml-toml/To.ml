@@ -9,47 +9,44 @@ module Type = struct
     type t
     exception Bad_key of string
     val compare : t -> t -> int
-
-    val of_string : string -> t
-
+    val bare_key_of_string : string -> t
+    val quoted_key_of_string : string -> t
     val to_string : t -> string
-
   end = struct
-    (**
-     A strongly-typed key. Used for both section keys ([[key1.key2]]) and
-     plain keys ([key=...]).
 
-     Keys don't quite follow the Toml standard. They may not contain the
-     following characters: space, [\t], [\n], [\r], [.], [\[], [\]], double
-     quote and [#].
-    *)
-    type t = string
+    (** A strongly-typed key. *)
+    type t = KeyBare of string
+           | KeyQuoted of string
 
     (** Exception thrown when an invalid character is found in a key.*)
     exception Bad_key of string
 
-    (**
-     Compare x y returns 0 if x is equal to y, a negative integer if x is
-     less than y, and a positive integer if x is greater than y.
-    *)
+    (** Compare x y returns 0 if x is equal to y, a negative integer if x is
+        less than y, and a positive integer if x is greater than y. *)
     let compare = Pervasives.compare
 
-    (**
-     Builds a key from a plain string.
+    (** Bare keys only allow [A-Za-z0-9_-].
+        @raise Type.Key.Bad_key if other char is found. *)
+    let bare_key_of_string s =
+      String.iter (fun c -> let c = Char.code c in
+                            if ( c < 48 (* 0 *)
+                                 && c <> 45 (* - *) )
+                               || ( c > 57 (* 0 *)
+                                    && c < 65 (* A *) )
+                               || ( c > 90 (* Z *)
+                                    && c < 97 (* a *)
+                                    && c <> 95 (* _ *) )
+                               || ( c > 122)
+                            then raise (Bad_key s)) s ;
+      KeyBare s
 
-     @raise TomlInternal.Type.Key.Bad_key if the key contains invalid
-     characters.
-    *)
-    let of_string s =
-        String.iter (fun ch ->
-            if String.contains " \t\n\r.[]\"#" ch then
-                raise (Bad_key s)) s;
-        s
+    (** FIXME: Ensure that: *)
+    (** Quoted keys follow the exact same rules as basic strings. *)
+    let quoted_key_of_string s = KeyQuoted s
 
-    (**
-     Returns the key as a plain string.
-    *)
-    let to_string key = key
+    let to_string = function
+      | KeyBare k -> k
+      | KeyQuoted k -> "\"" ^ k ^ "\""
 
   end
 

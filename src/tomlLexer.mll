@@ -11,18 +11,14 @@
 }
 
 let t_white   = ['\t' ' ']
-(** Tab char or space char *)
 let t_eol     = '\n'|'\r'|"\r\n"
-(** Blank characters as specified by the ref *)
 let t_digit   = ['0'-'9']
 let t_int     = ['-''+']? t_digit+
 let t_frac    = '.' t_digit+
 let t_exp     = ['E''e'] t_int
 let t_float   = t_int ((t_frac t_exp) | t_frac | t_exp)
 let t_bool    = ("true"|"false")
-(** booleans are full undercase *)
-let t_key     = [^ '\t' '\n' ' ' '\r' '"' '=' '[' ',' ']' '#']+
-(** keys begins with non blank char and end with the first blank *)
+let t_key     = ['A'-'Z''a'-'z''0'-'9''_''-']+
 
 let t_date    = (t_digit t_digit t_digit t_digit as year)
                 '-' (t_digit t_digit as mon)
@@ -77,6 +73,7 @@ rule tomlex = parse
 	  multiline_string (Buffer.create 13) lexbuf }
   | '"' { basic_string (Buffer.create 13) lexbuf }
   | ',' { COMMA }
+  | '.' { DOT }
   | '#' (_ # [ '\n' '\r' ] )* { tomlex lexbuf }
   | t_key as value { KEY (value) }
   | eof   { EOF }

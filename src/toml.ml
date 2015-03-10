@@ -1,6 +1,6 @@
 module Parser = struct
- 
-  open Lexing 
+
+  open Lexing
 
   type location = {
     source: string;
@@ -45,7 +45,9 @@ module Table = struct
 
 end
 
-let key = Table.Key.of_string
+let key = Table.Key.bare_key_of_string
+let bare_key_of_string = Table.Key.bare_key_of_string
+let quoted_key_of_string = Table.Key.quoted_key_of_string
 
 module Value = struct
 
