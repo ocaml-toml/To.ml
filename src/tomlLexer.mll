@@ -68,7 +68,7 @@ rule tomlex = parse
 		    |> snd )
 	   }
   | t_white+ { tomlex lexbuf }
-  | t_eol+ { update_loc lexbuf;tomlex lexbuf }
+  | t_eol { update_loc lexbuf;tomlex lexbuf }
   | '=' { EQUAL }
   | '[' { LBRACK }
   | ']' { RBRACK }
@@ -95,8 +95,8 @@ and multiline_string buff = parse
   | "" { string_common multiline_string buff lexbuf }
 
 and multiline_string_trim buff = parse
-  | t_eol as eol { update_loc lexbuf;
-		   multiline_string_trim buff lexbuf }
+  | t_eol { update_loc lexbuf;
+	    multiline_string_trim buff lexbuf }
   | t_white { multiline_string_trim buff lexbuf }
   | "" { multiline_string buff lexbuf }
 
