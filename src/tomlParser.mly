@@ -1,81 +1,94 @@
 %{
-open TomlInternal.Type
+    open TomlInternal.Type
 
-let to_path str : string list = Str.split (Str.regexp "\\.") str
+    let to_path str : string list = Str.split (Str.regexp "\\.") str
 
-type t = Value of value
-       | Table of (string, t) Hashtbl.t
-       | Tables of ((string, t) Hashtbl.t) list
+    type t = Value of value
+           | Table of (string, t) Hashtbl.t
+           | Tables of ((string, t) Hashtbl.t) list
 
-type group_names = string list
+    (* Indicate if the given table is a [Regular] table (i.e. its name
+     * is its real name), or if it is a [ArrayElement] (i.e. its name
+     * is the name of the array containing the table). *)
+    type table_tag = Regular | ArrayElement
 
-type group_header = SimpleGroup of group_names | NestedGroup of group_names
+    (* [lookup_table root keys]
+     * For a given path [keys], look over [root] and fetch a table.
+     * Creates empty subtables all along the way if needed. *)
+    let lookup_table root keys =
+      List.fold_left
+        (fun t k ->
+         try match Hashtbl.find t k with
+             | Table t   -> t
+             | Value _   -> failwith (k ^ " is a value (table expected)")
+             | Tables [] -> let sub = Hashtbl.create 0 in
+                            Hashtbl.replace t k (Tables [sub]) ;
+                            sub
+             (* Return the last table defined *)
+             | Tables t -> List.hd (List.rev t)
+         with Not_found -> let sub = Hashtbl.create 0 in
+                           Hashtbl.add t k (Table sub) ;
+                           sub)
+        root keys
 
-let ensure_group_table_exists root_table group_names =
-  List.fold_left
-      (fun tbl w -> try match Hashtbl.find tbl w with
-         | Table tbl          -> tbl
-         | Value _            -> failwith (w ^ " is a value")
-         | Tables (tbl1::rest as tbls) ->
-             let last_table = List.rev tbls |> List.hd
-             in last_table
-         | Tables [] ->
-             let sub = Hashtbl.create 0 in
-             Hashtbl.replace tbl w (Tables [sub]);
-             sub
-      with Not_found ->
-        let sub = Hashtbl.create 0 in
-        Hashtbl.add tbl w (Table sub); sub)
-      root_table group_names
+    (* [add_value t k v] add to the value [v], at the key [k],
+     * in the table [t]. Fails if a value is already binded to [k]. *)
+    let add_value t k v =
+      if Hashtbl.mem t k
+      then failwith (k ^ " is already defined")
+      else Hashtbl.add t k (Value v)
 
-let add_value group_table key value =
-  if Hashtbl.mem group_table key then failwith (key ^ " is already defined")
-  else Hashtbl.add group_table key (Value value)
+    (* [add_to_table root ks kvs] add [kvs] to table found following path
+     * [ks] from [root] table.
+     * Use it for a table not in array of tables. *)
+    let add_to_table root ks kvs =
+      let t = lookup_table root ks in
+      List.iter (fun (k, v) -> add_value t k v) kvs
 
-let add_simple_group root_table group_names key_values =
-  let group_table = ensure_group_table_exists root_table group_names in
-  List.iter (fun (key, value) -> add_value group_table key value) key_values
+    (* [add_to_nested_table root ks kvs] add [kvs] to nested
+     * table found following path [ks] from [root].
+     * Use it for a table which is in an array of tables.  *)
+    let add_to_nested_table root ks kvs =
 
-let add_nested_group root_table group_names key_values =
-  let create_table_from_values tables key_values =
-    let new_table = Hashtbl.create 0 in
-    List.iter(fun (key, value) ->
-      add_value new_table key value) key_values;
-    Tables (tables @ [new_table])
-  in
-  (* With [[x.y.z]], x and y should be tables and z an array of tables *)
-  let reversed_group_names = List.rev group_names in
-  let group_names_to_create = List.tl reversed_group_names |> List.rev in
-  (* Create x and y as tables *)
-  let group_table = ensure_group_table_exists root_table group_names_to_create in
-  let last_group_name = List.hd reversed_group_names in
-  (* Create z as an array of tables *)
-  try match Hashtbl.find group_table last_group_name with
-  | Tables tables ->
-      Hashtbl.replace group_table last_group_name (create_table_from_values tables key_values);
-  | Table _       -> failwith (last_group_name ^ " is a table, not an array of tables")
-  | Value _       -> failwith (last_group_name ^ " is a value")
-  with Not_found ->
-    Hashtbl.add group_table last_group_name (create_table_from_values [] key_values)
+      (* [ts] are intermediate tables key,
+       * [k] is the value key. *)
+      let (ts, k) = let rec aux acc = function
+                      | [ x ]  -> (List.rev acc, x)
+                      | h :: q -> aux (h :: acc) q
+                      | []     -> assert false
+                    in aux [] ks in
 
-let rec convert = function
-  | Table t ->
-    TTable (hashtbl_to_map t)
-  | Value v -> v
-  | Tables tables ->
-    let tables_as_list_of_toml_values =
-      tables
-      |> List.filter (fun table -> Hashtbl.length table > 0)
-      |> List.map hashtbl_to_map
-    in
-    TArray (NodeTable tables_as_list_of_toml_values)
-and hashtbl_to_map hashtbl =
-  Hashtbl.fold (fun k v map ->
-    Map.add (Key.of_string k) (convert v) map) hashtbl Map.empty
+      let t = lookup_table root ts in
+
+      (* [insert_in_new_table ts kvs] create a new table, insert
+       * [kvs], a (key * value) list into it, and pakc it with
+       * tables [ts] into an array of table. *)
+      let insert_table ts kvs =
+        let t = Hashtbl.create 0 in
+        List.iter(fun (k, v) -> add_value t k v) kvs ;
+        Tables (ts @ [ t ]) in
+
+      try match Hashtbl.find t k with
+          | Tables ts -> Hashtbl.replace t k (insert_table ts kvs);
+          | Table _   -> failwith (k ^ " is a table, not an array of tables")
+          | Value _   -> failwith (k ^ " is a value")
+      with Not_found  -> Hashtbl.add t k (insert_table [] kvs)
+
+    (* Convert a value of local type [t] into a [Value.value]  *)
+    let rec convert = function
+      | Table t   -> TTable (htbl_to_map t)
+      | Value v   -> v
+      | Tables ts ->
+         TArray (NodeTable (List.filter (fun t -> Hashtbl.length t > 0) ts
+                            |> List.map htbl_to_map))
+
+    and htbl_to_map h =
+      Hashtbl.fold (fun k v map -> Map.add (Key.of_string k) (convert v) map)
+                   h Map.empty
 
 %}
 
-/* OcamlYacc definitions */
+(* OcamlYacc definitions *)
 %token <bool> BOOL
 %token <int> INTEGER
 %token <float> FLOAT
@@ -91,25 +104,24 @@ and hashtbl_to_map hashtbl =
 %type <TomlInternal.Type.array> array_start
 
 %%
-/* Grammar rules */
+(* Grammar rules *)
 toml:
- | keyValue* pair(group_header, keyValue*)* EOF
-   { let groups = (SimpleGroup [], $1) :: $2
-     and table = Hashtbl.create 0 in
-     List.iter (fun (group_header, key_values) ->
-       match group_header with
-       | SimpleGroup group_names ->
-         add_simple_group table group_names key_values
-       | NestedGroup group_names ->
-         add_nested_group table group_names key_values
-     ) groups;
-     match convert (Table table) with
-     | TTable t -> t
-     | _ -> assert false }
+ | keyValue* pair( group_header, keyValue* )* EOF
+   { let t = Hashtbl.create 0 in
+
+     List.iter (fun ((tag, ks), kvs) ->
+                match tag with
+                | Regular      -> add_to_table t ks kvs
+                | ArrayElement -> add_to_nested_table t ks kvs)
+               (* Create a dummy table with empty key for values
+                * which are direct children of root table.  *)
+               (((Regular, []), $1) :: $2) ;
+
+     match convert (Table t) with TTable t -> t | _ -> assert false }
 
 group_header:
- | LBRACK LBRACK KEY RBRACK RBRACK { NestedGroup (to_path $3) }
- | LBRACK KEY RBRACK { SimpleGroup (to_path $2) }
+ | LBRACK LBRACK KEY RBRACK RBRACK { ArrayElement, (to_path $3) }
+ | LBRACK KEY RBRACK               { Regular, (to_path $2) }
 
 keyValue:
     KEY EQUAL value { ($1, $3) }
