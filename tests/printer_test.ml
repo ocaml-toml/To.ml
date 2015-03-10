@@ -1,266 +1,189 @@
 open OUnit
-module Toml_key = Toml.Table.Key
+open Utils
+open Toml
 
-let print_str str = str
+let test fn expected testing =
+  fun () -> assert_equal ~printer:(fun x -> x)
+                         expected
+                         (string_of_value (fn testing))
 
-let assert_equal_str x y = assert_equal ~printer:print_str x y
+let test_string = test of_string
+let test_bool = test of_bool
+let test_int = test of_int
+let test_float = test of_float
+let test_date = test of_date
 
-let create_table key_values =
-    let table = Toml.Table.empty in
-    List.fold_left (fun tbl (key, value) ->
-      Toml.Table.add (Toml_key.of_string key) value tbl)
-    table key_values
+let test_int_array = test of_int_array
+let test_bool_array = test of_bool_array
+let test_float_array = test of_float_array
+let test_string_array = test of_string_array
+let test_date_array = test of_date_array
 
-let string_of_table toml_table =
-    let buffer = Buffer.create 100 in
-    let formatter = Format.formatter_of_buffer buffer in
-    toml_table |> Toml.Printer.table formatter;
-    Buffer.contents buffer
+let test_array_array =
+  test of_array_array
 
-let string_of_value toml_value =
-    let buffer = Buffer.create 100 in
-    let formatter = Format.formatter_of_buffer buffer in
-    toml_value |> Toml.Printer.value formatter;
-    Buffer.contents buffer
+let test_table expected testing =
+  fun () -> assert_equal ~printer:(fun x -> x)
+                         (String.concat "\n" expected ^ "\n")
+                         (toml_table testing)
 
-let string_of_array toml_array =
-    let buffer = Buffer.create 100 in
-    let formatter = Format.formatter_of_buffer buffer in
-    toml_array |> Toml.Printer.array formatter;
-    Buffer.contents buffer
+let suite =
+  "Printing simple" >:::
+    [
+      "values string" >::
+        test_string  "\"string value\"" "string value" ;
+      "string with control chars" >::
+        test_string "\"str\\\\ing\\t\\n\\u0002\\\"\"" "str\\ing\t\n\002\"" ;
+      "string with accented chars" >::
+        test_string "\"\195\169\"" "\195\169" ;
+      "boolean true" >::
+        test_bool "true" true ;
+      "boolean false" >::
+        test_bool "false" false ;
+      "positive int" >::
+        test_int "42" 42 ;
+      "negative int" >::
+        test_int "-42" (-42) ;
+      "positive float" >::
+        test_float "42.24" 42.24 ;
+      "negative float" >::
+        test_float "-42.24" (-42.24) ;
+      "round float" >::
+        test_float "1.0" 1. ;
+      "negative round float" >::
+        test_float "-1.0" (-1.) ;
+      "date (1)" >::
+        (let open UnixLabels in
+         test_date "1979-05-27T07:32:00Z" (gmtime 296638320.)) ;
+      "date (2)" >::
+        (let open UnixLabels in
+         test_date "1970-01-01T00:00:00Z" (gmtime 0.)) ;
 
-let toml_table key_values =
-    create_table key_values |> string_of_table
+      "empty int array" >::
+        test_int_array "[]" [] ;
+      "int array" >::
+        test_int_array "[4, 5]"  [4; 5] ;
+      "empty bool array" >::
+        test_bool_array "[]" [] ;
+      "bool array" >::
+        test_bool_array "[true, false]" [true;false] ;
+      "empty float array" >::
+        test_float_array "[]" [] ;
+      "float array" >::
+        test_float_array "[4.2, 3.14]"  [4.2; 3.14] ;
+      "empty string array" >::
+        test_string_array "[]" [] ;
+      "string array" >::
+        test_string_array "[\"a\", \"b\"]" ["a";"b"] ;
+      "empty date array" >::
+        test_date_array "[]" [] ;
+      "date array" >::
+        (let open UnixLabels in
+         test_date_array "[1979-05-27T07:32:00Z, 1979-05-27T08:38:40Z]"
+                         [(gmtime 296638320.);(gmtime 296642320.)]) ;
 
-let suite = "Printing values" >:::
-  [
-    "simple string" >:: (fun () ->
-      assert_equal_str
-        "\"string value\""
-        (string_of_value (Toml.Value.Of.string "string value")));
-    "string with control chars" >:: (fun () ->
-      assert_equal_str
-        "\"str\\\\ing\\t\\n\\u0002\\\"\""
-        (string_of_value (Toml.Value.Of.string "str\\ing\t\n\002\"")));
-    "string with accented chars" >:: (fun () ->
-      assert_equal_str
-        "\"\195\169\""
-        (string_of_value (Toml.Value.Of.string "\195\169")));
+      "table" >::
+        test_table
+          [ "[dog]"; "type = \"golden retriever\"" ]
+          [ bk"dog", of_table (create_table
+                                [bk"type", of_string "golden retriever"])] ;
 
-    "boolean true" >:: (fun () ->
-      assert_equal_str
-        "true"
-        (string_of_value (Toml.Value.Of.bool true)));
-    "boolean false" >:: (fun () ->
-      assert_equal_str
-        "false"
-        (string_of_value (Toml.Value.Of.bool false)));
+      "nested tables" >::
+        test_table
+          [ "[dog.tater]"; "type = \"pug\"" ]
+          [ bk"dog", of_table (create_table
+                                 [bk"tater", of_table (create_table
+                                                         [bk"type",
+                                                          of_string "pug"])])] ;
 
-    "positive int" >:: (fun () ->
-      assert_equal_str
-        "42"
-        (string_of_value (Toml.Value.Of.int 42)));
-    "negative int" >:: (fun () ->
-      assert_equal_str
-        "-42"
-        (string_of_value (Toml.Value.Of.int (-42))));
+      "table of empty array of tables" >::
+        (fun () ->
+         assert_equal ~printer:(fun x -> x) ""
+                      (string_of_table
+                         (create_table [bk"dog", [] |> of_table_array]))) ;
 
-    "positive float" >:: (fun () ->
-      assert_equal_str
-        "42.24"
-        (string_of_value (Toml.Value.Of.float 42.24)));
-    "negative float" >:: (fun () ->
-      assert_equal_str
-        "-42.24"
-        (string_of_value (Toml.Value.Of.float (-42.24))));
-    "round float" >:: (fun () ->
-      assert_equal_str
-        "1.0"
-        (string_of_value (Toml.Value.Of.float (1.))));
-    "negative round float" >:: (fun () ->
-      assert_equal_str
-        "-1.0"
-        (string_of_value (Toml.Value.Of.float (-1.))));
+      "table of array of tables" >::
+        test_table
+          [ "[[dog]]" ; "[dog.tater]"; "type = \"pug\""]
+          [bk"dog", [create_table
+                     [bk"tater", of_table (create_table
+                                             [bk"type", of_string "pug"])]
+                  ] |> of_table_array] ;
 
-    "date" >:: (fun () ->
-      let open UnixLabels
-      in
-      assert_equal_str
-        "1979-05-27T07:32:00Z"
-        (string_of_value (Toml.Value.Of.date (gmtime 296638320.))));
+      "table of nested array of tables" >::
+        test_table
+          [ "[[dog]]"; "[dog.tater]"; "type = \"pug\"";
+            "[[dog.dalmatian]]"; "number = 1";
+            "[[dog.dalmatian]]"; "number = 2" ]
 
-    "array value" >:: (fun () ->
-      assert_equal_str
-        "[4, 5]"
-        (string_of_value (Toml.Value.Of.array (Toml.Value.Of.Array.int [4; 5]))));
+          [bk"dog",
+           [ create_table
+               [bk"tater", of_table (create_table
+                                        [bk"type", of_string "pug"])] ;
+             create_table
+               [bk"dalmatian",
+                 [ create_table [bk"number", of_int 1];
+                   create_table [bk"number", of_int 2] ]
+                 |> of_table_array ] ]
+           |> of_table_array] ;
 
-    "table value" >:: (fun () ->
-      assert_equal_str
-        ((String.concat "\n" [
-          "[dog]";
-          "type = \"golden retriever\""])^"\n")
-      (toml_table ["dog", (
-        Toml.Value.Of.table (create_table ["type", (Toml.Value.Of.string "golden retriever")]))]));
+      "empty array of arrays" >::
+        test_array_array "[]" [] ;
 
-    "table" >:: (fun () ->
-      assert_equal_str
-        ((String.concat "\n" [
-          "[dog]";
-          "type = \"golden retriever\""])^"\n")
-      (toml_table ["dog", (
-        Toml.Value.Of.table (create_table ["type", (Toml.Value.Of.string "golden retriever")]))]));
+      "array of empty arrays" >::
+        test_array_array "[[]]" [V.Of.Array.int []] ;
 
-    "nested tables" >:: (fun () ->
-      assert_equal_str
-        ((String.concat "\n" [
-          "[dog.tater]";
-          "type = \"pug\""])^"\n")
-      (toml_table ["dog", (
-        Toml.Value.Of.table (create_table ["tater", (
-          Toml.Value.Of.table (create_table ["type", (Toml.Value.Of.string "pug")]))]))]) );
+      "array of arrays" >::
+        test_array_array "[[2341, 2242], [true]]"
+                         [ V.Of.Array.int [2341 ; 2242] ;
+                           V.Of.Array.bool [true] ] ;
+      "empty array of tables" >::
+        (fun () ->
+         assert_raises
+           (Invalid_argument "Cannot format array of tables, \
+                              use Toml.Printer.table")
+           (fun () -> ignore(string_of_array (V.Of.Array.table [])))) ;
 
-    "table of empty array of tables" >:: (fun () ->
-      assert_equal_str
-        ("")
-      (toml_table ["dog", (
-        [] |> Toml.Value.Of.Array.table |> Toml.Value.Of.array)]));
-    "table of array of tables" >:: (fun () ->
-      assert_equal_str
-        ((String.concat "\n" [
-          "[[dog]]";
-          "[dog.tater]";
-          "type = \"pug\""])^"\n")
-      (toml_table ["dog", (
-        [
-          create_table ["tater", (
-            Toml.Value.Of.table (create_table ["type", (Toml.Value.Of.string "pug")]))]
-      ] |> Toml.Value.Of.Array.table |> Toml.Value.Of.array)]));
-    "table of nested array of tables" >:: (fun () ->
-      assert_equal_str
-        ((String.concat "\n" [
-          "[[dog]]";
-          "[dog.tater]";
-          "type = \"pug\"";
-          "[[dog.dalmatian]]";
-          "number = 1";
-          "[[dog.dalmatian]]";
-          "number = 2";
-        ])^"\n")
-      (toml_table ["dog", (
-        [
-          create_table ["tater", (
-            Toml.Value.Of.table (create_table ["type", (Toml.Value.Of.string "pug")]))];
+      "array of tables" >::
+        (fun () ->
+         assert_raises
+           (Invalid_argument "Cannot format array of tables, \
+                              use Toml.Printer.table")
+           (fun () -> ignore (string_of_array
+                                (V.Of.Array.table
+                                   [ create_table [bk"number", of_int 1];
+                                     create_table [bk"number", of_int 2]])))) ;
 
-          create_table ["dalmatian", [
-            create_table ["number", Toml.Value.Of.int 1];
-            create_table ["number", Toml.Value.Of.int 2];
-          ]
-          |> Toml.Value.Of.Array.table |> Toml.Value.Of.array ]
-        ] |> Toml.Value.Of.Array.table |> Toml.Value.Of.array)]));
+      "mixed example" >::
+        (fun () ->
+         let level3_table =
+           create_table [ bk "is_deep", of_bool true ;
+                          bk "location", of_string "basement" ]
+         in
 
-    "empty array" >:: (fun () ->
-      assert_equal_str
-        "[]"
-        (string_of_array (Toml.Value.Of.Array.bool [])));
-    "empty bool array" >:: (fun () ->
-      assert_equal_str
-        "[]"
-        (string_of_array (Toml.Value.Of.Array.bool [])));
-    "bool array" >:: (fun () ->
-      assert_equal_str
-        "[true, false]"
-        (string_of_array (Toml.Value.Of.Array.bool [true; false])));
-    "empty int array" >:: (fun () ->
-      assert_equal_str
-        "[]"
-        (string_of_array (Toml.Value.Of.Array.int [])));
-    "int array" >:: (fun () ->
-      assert_equal_str
-        "[4, 5]"
-        (string_of_array (Toml.Value.Of.Array.int [4; 5])));
-    "empty float array" >:: (fun () ->
-      assert_equal_str
-        "[]"
-        (string_of_array (Toml.Value.Of.Array.float [])));
-    "float array" >:: (fun () ->
-      assert_equal_str
-        "[4.2, 3.14]"
-        (string_of_array (Toml.Value.Of.Array.float [4.2; 3.14])));
-    "empty string array" >:: (fun () ->
-      assert_equal_str
-        "[]"
-        (string_of_array (Toml.Value.Of.Array.string [])));
-    "string array" >:: (fun () ->
-      assert_equal_str
-        "[\"a\", \"b\"]"
-        (string_of_array (Toml.Value.Of.Array.string ["a";"b"])));
-    "empty date array" >:: (fun () ->
-      assert_equal_str
-        "[]"
-        (string_of_array (Toml.Value.Of.Array.date [])));
-    "date array" >:: (fun () ->
-      let open UnixLabels
-      in
-      assert_equal_str
-        "[1979-05-27T07:32:00Z, 1979-05-27T08:38:40Z]"
-        (string_of_array (Toml.Value.Of.Array.date [
-          (gmtime 296638320.);(gmtime 296642320.)])));
-    "empty array of arrays" >:: (fun () ->
-      assert_equal_str
-        "[]"
-        (string_of_array (Toml.Value.Of.Array.array [])));
-    "array of arrays" >:: (fun () ->
-      assert_equal_str
-        "[[2341, 2242], [[true]]]"
-        (string_of_array (Toml.Value.Of.Array.array [
-          (Toml.Value.Of.Array.int [2341;2242]);
-          (Toml.Value.Of.Array.array [Toml.Value.Of.Array.bool [true]])])));
-    "empty array of tables" >:: (fun () ->
-      assert_raises
-        (Invalid_argument "Cannot format array of tables, use Toml.Printer.table")
-        (fun () -> ignore(string_of_array ([] |> Toml.Value.Of.Array.table)))
-    );
-    "array of tables" >:: (fun () ->
-      assert_raises
-        (Invalid_argument "Cannot format array of tables, use Toml.Printer.table")
-        (fun () -> ignore(string_of_array ([
-            create_table ["number", Toml.Value.Of.int 1];
-            create_table ["number", Toml.Value.Of.int 2];
-          ]
-          |> Toml.Value.Of.Array.table)))
-    );
-    "mixed example" >:: (fun () ->
-      let level3_table =
-          Toml.Table.empty
-          |> Toml.Table.add (Toml_key.of_string "is_deep") (Toml.Value.Of.bool true)
-          |> Toml.Table.add (Toml_key.of_string "location") (Toml.Value.Of.string "basement")
-      in
+         let level2_1_table = create_table [bk "level3",
+                                            of_table level3_table] in
+         let level2_2_table = create_table [bk "is_less_deep",
+                                            of_bool true] in
 
-      let level2_1_table = create_table ["level3", (Toml.Value.Of.table level3_table)] in
-      let level2_2_table = create_table ["is_less_deep", (Toml.Value.Of.bool true)] in
+         let level1_table =
+           create_table [bk "level2_1", of_table level2_1_table;
+                         bk "level2_2", of_table level2_2_table]
+         in
 
-      let level1_table =
-          Toml.Table.empty
-          |> Toml.Table.add (Toml_key.of_string "level2_1") (Toml.Value.Of.table level2_1_table)
-          |> Toml.Table.add (Toml_key.of_string "level2_2") (Toml.Value.Of.table level2_2_table)
-      in
+         let top_level_table =
+           create_table [bk "toplevel", of_string "ocaml" ;
+                         bk "level1", of_table level1_table]
+         in
 
-      let top_level_table =
-          Toml.Table.empty
-          |> Toml.Table.add (Toml_key.of_string "toplevel") (Toml.Value.Of.string "ocaml")
-          |> Toml.Table.add (Toml_key.of_string "level1") (Toml.Value.Of.table level1_table)
-      in
+         assert_equal ~printer:(fun x -> x)
+           ((String.concat "\n" [ "toplevel = \"ocaml\"";
+                                  "[level1.level2_1.level3]";
+                                  "is_deep = true";
+                                  "location = \"basement\"";
+                                  "[level1.level2_2]";
+                                  "is_less_deep = true";]) ^ "\n")
+           (top_level_table |> string_of_table));
 
-      assert_equal_str
-        ((String.concat "\n" [
-          "toplevel = \"ocaml\"";
-          "[level1.level2_1.level3]";
-          "is_deep = true";
-          "location = \"basement\"";
-          "[level1.level2_2]";
-          "is_less_deep = true";
-        ])^"\n")
-        (top_level_table |> string_of_table));
 
-  ]
-
+    ]

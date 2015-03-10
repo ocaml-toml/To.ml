@@ -1,40 +1,33 @@
 open OUnit
+open Utils
 
-module Toml_key = Toml.Table.Key
+let test_bad_bk k =
+  fun () -> assert_raises (K.Bad_key k) (fun () -> bk k)
 
-let suite = "Printing values" >:::
-[
-  "good key" >:: (fun () ->
-    assert_equal
-      "my_good_unicodé_key"
-      (Toml_key.of_string "my_good_unicodé_key" |> Toml_key.to_string)
-  );
-  "key with spaces" >:: (fun () ->
-    assert_raises (Toml_key.Bad_key "key with spaces")
-    (fun () -> Toml_key.of_string "key with spaces"));
-  "key with tab" >:: (fun () ->
-    assert_raises (Toml_key.Bad_key "with\ttab")
-    (fun () -> Toml_key.of_string "with\ttab"));
-  "key with linefeed" >:: (fun () ->
-    assert_raises (Toml_key.Bad_key "with\nlinefeed")
-    (fun () -> Toml_key.of_string "with\nlinefeed"));
-  "key with cr" >:: (fun () ->
-    assert_raises (Toml_key.Bad_key "with\rcr")
-    (fun () -> Toml_key.of_string "with\rcr"));
-  "key with dot" >:: (fun () ->
-    assert_raises (Toml_key.Bad_key "with.dot")
-    (fun () -> Toml_key.of_string "with.dot"));
-  "key with [" >:: (fun () ->
-    assert_raises (Toml_key.Bad_key "with[bracket")
-    (fun () -> Toml_key.of_string "with[bracket"));
-  "key with ]" >:: (fun () ->
-    assert_raises (Toml_key.Bad_key "with]bracket")
-    (fun () -> Toml_key.of_string "with]bracket"));
-  "key with \"" >:: (fun () ->
-    assert_raises (Toml_key.Bad_key "with\"quote")
-    (fun () -> Toml_key.of_string "with\"quote"));
-  "key with #" >:: (fun () ->
-    assert_raises (Toml_key.Bad_key "with#pound")
-    (fun () -> Toml_key.of_string "with#pound"));
-]
+let suite =
+  "Printing values" >:::
+    [
 
+      "good key" >::
+        (fun () ->
+         test_string "\"my_good_unicodé_key\""
+                     (K.to_string (qk "my_good_unicodé_key")) );
+
+      "key with spaces" >:: test_bad_bk "key with spaces" ;
+
+      "key with tab" >:: test_bad_bk "with\ttab" ;
+
+      "key with linefeed" >:: test_bad_bk "with\nlinefeed" ;
+
+      "key with cr" >:: test_bad_bk "with\rcr" ;
+
+      "key with dot" >:: test_bad_bk "with.dot" ;
+
+      "key with [" >:: test_bad_bk "with[bracket" ;
+
+      "key with ]" >:: test_bad_bk "with]bracket" ;
+
+      "key with \"" >:: test_bad_bk "with\"quote" ;
+
+      "key with #" >:: test_bad_bk "with#pound" ;
+    ]

@@ -1,342 +1,332 @@
-(**
-  * Here is the main file of testing
-  *)
-
 open OUnit
+open Utils
 open Toml
-module Toml_key = Toml.Table.Key
-open Toml.Parser
 
-let table_find key_string = Table.find (Toml_key.of_string key_string)
+let find k = Table.find (bk k)
 
-let get_table tbl key =
-  try
-    table_find key tbl |> Toml.Value.To.table
-  with exn ->
-    assert false
-
-let mk_raw_table x =
-  List.fold_left (fun tbl (k,v) ->
-    Table.add (Toml_key.of_string k) v tbl)
-  Table.empty x
-
-let mk_printer p x =
-  let buf = Buffer.create 42 in
-  p (Format.formatter_of_buffer buf) x ;
-  Buffer.contents buf
-
-let table_printer = mk_printer Toml.Printer.table
-
-let value_printer = mk_printer Toml.Printer.value
+let test_value = assert_equal ~printer:string_of_value
+let test_table = assert_equal ~printer:string_of_table
 
 let suite =
   let assert_equal = OUnit.assert_equal in
   "Main tests" >:::
-  [
-    "Rache Methodology Approved" >::: [
-       "simple key value" >:: (fun () ->
-        let str = "key = \"VaLUe42\"" in
-        let toml = Parser.from_string str in
-        let var = table_find "key" toml in
-        assert_equal (Toml.Value.Of.string "VaLUe42") var;
-        assert_bool "Bad grammar" (var <> (Toml.Value.Of.string "value42")));
+    [
+      "Rache Methodology Approved" >:::
+        [ "simple key value" >::
+            (fun () ->
+             let str = "key = \"VaLUe42\"" in
+             let toml = Parser.from_string str in
+             test_string "VaLUe42" (get_string (bk "key") toml) );
 
-      "Two keys value" >:: (fun () ->
-        let str = "key = \"VaLUe42\"\nkey2=42" in
-        let toml = Parser.from_string str in
-        let var = table_find "key" toml and var2 = table_find "key2" toml in
-        assert_equal (Toml.Value.Of.string "VaLUe42") var;
-        assert_equal (Toml.Value.Of.int 42) var2);
+          "Two keys value" >::
+            (fun () ->
+             let str = "key = \"VaLUe42\"\nkey2=42" in
+             let toml = Parser.from_string str in
+             test_string "VaLUe42" (get_string (bk "key") toml);
+             test_int 42 (get_int (bk "key2") toml));
 
-      "Int" >:: (fun () ->
-        let str = "key = 42\nkey2=-42 \n key3 = +42" in
-        let toml = Parser.from_string str in
-        assert_equal (Toml.Value.Of.int 42) (table_find "key" toml);
-        assert_equal (Toml.Value.Of.int (-42)) (table_find "key2" toml);
-        assert_equal (Toml.Value.Of.int 42) (table_find "key3" toml));
+          "Int" >::
+            (fun () ->
+             let str = "key = 42\nkey2=-42 \n key3 = +42" in
+             let toml = Parser.from_string str in
+             test_int 42 (get_int (bk "key") toml);
+             test_int (-42) (get_int (bk "key2") toml);
+             test_int 42 (get_int (bk "key3") toml));
 
-      "Float key" >:: (fun () ->
-	let test str =
-	  let toml = Parser.from_string ("key=" ^ str) in
-	  assert_equal (Toml.Value.Of.float (float_of_string str))
-		       (table_find "key" toml) in
-	test "+1.0" ;
-	test "3.1415" ;
-	test "-0.01" ;
-	test "5e+22" ;
-	test "1e6" ;
-	test "-2E-2" ;
-	test "6.626e-34" ) ;
+          "Float key" >::
+            (fun () ->
+	     let test str =
+               let toml = Parser.from_string ("key=" ^ str) in
+	       test_float (float_of_string str)
+		          (get_float (bk "key") toml) in
+	     test "+1.0" ;
+	     test "3.1415" ;
+	     test "-0.01" ;
+	     test "5e+22" ;
+	     test "1e6" ;
+	     test "-2E-2" ;
+	     test "6.626e-34" ) ;
 
-      "Bool key" >:: (fun () ->
-        let str = "key = true\nkey2=false" in
-        let toml = Parser.from_string str in
-        assert_equal (Toml.Value.Of.bool true) (table_find "key" toml);
-        assert_equal (Toml.Value.Of.bool false) (table_find "key2" toml));
+          "Bool key" >::
+            (fun () ->
+             let str = "key = true\nkey2=false" in
+             let toml = Parser.from_string str in
+             test_bool true (get_bool (bk "key") toml);
+             test_bool false (get_bool (bk "key2") toml));
 
-      "String" >:: (fun () ->
-         assert_equal
-           (Toml.Value.Of.string "\b")
-           (table_find "key" (Parser.from_string "key=\"\\b\""));
-         assert_equal
-           (Toml.Value.Of.string "\t")
-           (table_find "key" (Parser.from_string "key=\"\\t\""));
-         assert_equal
-           (Toml.Value.Of.string "\n")
-           (table_find "key" (Parser.from_string "key=\"\\n\""));
-         assert_equal
-           (Toml.Value.Of.string "\r")
-           (table_find "key" (Parser.from_string "key=\"\\r\""));
-         assert_equal
-           (Toml.Value.Of.string "\"")
-           (table_find "key" (Parser.from_string "key=\"\\\"\""));
-         assert_equal
-           (Toml.Value.Of.string "\\")
-           (table_find "key" (Parser.from_string "key=\"\\\\\""));
-         assert_equal
-           (Toml.Value.Of.string "\\")
-           (table_find "key" (Parser.from_string "key=\"\\\\\""));
-         assert_raises (Parser.Error (
-           "Error in <string> at line 1 at column 6 (position 6): " ^
-           "Forbidden escaped char",
-           {source = "<string>"; line = 1; column = 6; position = 6}))
-           (fun () -> Parser.from_string "key=\"\\j\"");
-         assert_raises (Parser.Error(
-           "Error in <string> at line 1 at column 30 (position 30): " ^
-           "Unterminated string",
-           {source = "<string>"; line = 1; column = 30; position = 30}))
-           (fun () -> Parser.from_string "key=\"This string is not termin"));
+          "String" >::
+            (fun () ->
+	     let test str input =
+               let toml = Parser.from_string ("key=\"" ^ input ^ "\"") in
+	       test_string str (get_string (bk "key") toml) in
+             test "\b" "\\b" ;
+             test "\t" "\\t" ;
+             test "\n" "\\n" ;
+             test "\r" "\\r" ;
+             test "\\" "\\\\" ;
+             test "\"" "\\\"" ;
 
-      "Multi-lines string" >:: (fun () ->
-	let assert_equal = assert_equal ~printer:value_printer in
-	let str = "key1 = \"\"\"\nRoses are red\nViolets are blue\"\"\"" in
-	let toml = Parser.from_string str in
-	let var = table_find "key1" toml in
-	assert_equal (Toml.Value.Of.string "Roses are red\nViolets are blue")
-		     var) ;
+             assert_raises
+               (Parser.Error
+                  ("Error in <string> at line 1 at column 6 (position 6): " ^
+                     "Forbidden escaped char",
+                   {Parser.source = "<string>";
+                    line = 1; column = 6; position = 6}))
+               (fun () -> Parser.from_string "key=\"\\j\"");
+             assert_raises
+               (Parser.Error
+                  ("Error in <string> at line 1 at column 30 (position 30): " ^
+                     "Unterminated string",
+                   {Parser.source = "<string>";
+                    line = 1; column = 30; position = 30}))
+               (fun () -> Parser.from_string "key=\"This string is not termin"));
 
-      "Array key" >:: (fun () ->
-        let str = "key = [true, true, false, true]" in
-        let toml = Parser.from_string str in
-        let var = table_find "key" toml in
-        assert_equal (
-          Toml.Value.Of.Array.bool [true; true; false; true] |> Toml.Value.Of.array) var;
-        let str = "key = []" in
-        let toml = Parser.from_string str in
-        let var = table_find "key" toml in
-        assert_equal (Toml.Value.Of.Array.bool [] |> Toml.Value.Of.array) var;
-        let str = "key = [true, true,]" in
-        let toml = Parser.from_string str in
-        let var = table_find "key" toml in
-        assert_equal (
-          Toml.Value.Of.Array.bool [true; true] |> Toml.Value.Of.array) var);
+          "Multi-lines string" >::
+            (fun () ->
+	     let str = "key1 = \"\"\"\n\
+                        Roses are red\n\
+                        Violets are blue\"\"\"" in
+	     let toml = Parser.from_string str in
+	     let var = find "key1" toml in
+	     test_string "Roses are red\n\
+                          Violets are blue"
+                         (get_string (bk "key1") toml) ) ;
 
-        "Nested Arrays" >:: (fun () ->
-        let str ="key=[ [1,2],[\"a\",\"b\",\"c\",\"d\"]\n,[] ]" in
-        let toml = Parser.from_string str in
-        assert_equal
-          ([Toml.Value.Of.Array.int [1; 2];
-            Toml.Value.Of.Array.string ["a";"b";"c";"d"];
-            Toml.Value.Of.Array.bool []]
-            |> Toml.Value.Of.Array.array
-            |> Toml.Value.Of.array)
-          (table_find "key" toml));
+          "Array key" >::
+            (fun () ->
+             let str = "key = [true, true, false, true]" in
+             let toml = Parser.from_string str in
+             let var = find "key" toml in
+             test_value (of_bool_array [true; true; false; true]) var;
 
-      "Grouped key" >:: (fun () ->
-        let str = "[group1]\nkey = true\nkey2 = 1337" in
-        let toml = Parser.from_string str in
-        assert_raises Not_found (fun () -> table_find "key" toml);
-        let group1 = get_table toml "group1" in
-        assert_equal (Toml.Value.Of.bool true) (table_find "key" group1);
-        assert_equal (Toml.Value.Of.int 1337) (table_find "key2" group1));
+             let str = "key = []" in
+             let toml = Parser.from_string str in
+             let var = find "key" toml in
+             test_value (of_bool_array []) var;
 
-      "Comment" >:: (fun () ->
-        let str = "[group1]\nkey = true # this is comment" in
-        let toml = Parser.from_string str in
-        let group1 = get_table toml "group1" in
-        assert_equal (Toml.Value.Of.bool true) (table_find "key" group1));
+             let str = "key = [true, true,]" in
+             let toml = Parser.from_string str in
+             let var = find "key" toml in
+             test_value (of_bool_array [true; true]) var);
 
-      "Date" >:: (fun () ->
-        let str = "[group1]\nkey = 1979-05-27T07:32:00Z" in
-        let toml = Parser.from_string str in
-        let group1 = get_table toml "group1" in
-         assert_equal
-           (Toml.Value.Of.date
-	      (Unix.mktime {Unix.tm_year=79; tm_mon=04; tm_mday=27;
-			    tm_hour=07; tm_min=32; tm_sec=0;
-			    tm_wday=(-1);tm_yday=(-1);tm_isdst=true;}
-	       |> snd))
-           (table_find "key" group1));
+          "Nested Arrays" >::
+            (fun () ->
+             let str ="key=[ [1,2],[\"a\",\"b\",\"c\",\"d\"]\n,[] ]" in
+             let toml = Parser.from_string str in
+             test_value
+               ([Toml.Value.Of.Array.int [1; 2];
+                 Toml.Value.Of.Array.string ["a";"b";"c";"d"];
+                 Toml.Value.Of.Array.bool []]
+                |> of_array_array)
+               (find "key" toml));
 
-      "Array of tables" >:: (fun () ->
-        let str = [
-            "[[a.b.c]]";
-            "field1 = 1";
-            "field2 = 2";
+          "Grouped key" >::
+            (fun () ->
+             let str = "[group1]\nkey = true\nkey2 = 1337" in
+             let toml = Parser.from_string str in
+             assert_raises Not_found (fun () -> find "key" toml);
+             let group1 = get_table (bk "group1") toml in
+             test_value (of_bool true) (find "key" group1);
+             test_value (of_int 1337) (find "key2" group1));
 
-            "[[a.b.c]]";
-            "field1 = 10";
-            "field2 = 20";
-          ] |> String.concat "\n"
-        in
-        let toml = Parser.from_string str in
-        let c = Toml.Value.Of.Array.table [
-          mk_raw_table [
-            "field1", Toml.Value.Of.int 1;
-            "field2", Toml.Value.Of.int 2;
-          ];
-          mk_raw_table [
-            "field1", Toml.Value.Of.int 10;
-            "field2", Toml.Value.Of.int 20;
-          ];
-          ] |> Toml.Value.Of.array
-        in
-        let b = Toml.Table.empty |> Toml.Table.add (Toml.key "c") c |> Toml.Value.Of.table in
-        let a = Toml.Table.empty |> Toml.Table.add (Toml.key "b") b |> Toml.Value.Of.table in
-        let expected = Toml.Table.empty |> Toml.Table.add (Toml.key "a") a in
-        assert_equal expected toml;
-      );
-      "Nested array of tables, official example" >:: (fun () ->
-        let str = [
-          "[[fruit]]";
-          "  name = \"apple\"";
-          "  [fruit.physical]";
-          "    color = \"red\"";
-          "    shape = \"round\"";
-          "  [[fruit.variety]]";
-          "    name = \"red delicious\"";
-          "  [[fruit.variety]]";
-          "    name = \"granny smith\"";
-          "[[fruit]]";
-          "  name = \"banana\"";
-          "  [[fruit.variety]]";
-          "  name = \"plantain\"";
-        ] |> String.concat "\n"
-        in
-        let toml = Parser.from_string str in
+          "Comment" >::
+            (fun () ->
+             let str = "[group1]\nkey = true # this is comment" in
+             let toml = Parser.from_string str in
+             let group1 = get_table (bk "group1") toml in
+             test_value (of_bool true) (find "key" group1));
 
-        assert_equal 1 (Toml.Table.cardinal toml);
-        assert_equal true (Toml.Table.mem (Toml.key "fruit") toml);
-        let fruits = Toml.Table.find (Toml.key "fruit") toml
-          |> Toml.Value.To.array |> Toml.Value.To.Array.table
-        in
-        assert_equal 2 (List.length fruits);
-        let apple = List.hd fruits in
-        assert_equal 3 (Toml.Table.cardinal apple);
-        assert_equal "apple" (
-          Toml.Table.find (Toml.key "name") apple |> Toml.Value.To.string);
-        let physical =
-          Toml.Table.find (Toml.key "physical") apple |> Toml.Value.To.table in
-        let expected_physical = mk_raw_table [
-          "color", Toml.Value.Of.string "red";
-          "shape", Toml.Value.Of.string "round";
-        ] in
-        assert_equal expected_physical physical;
-        let apple_varieties =
-          Toml.Table.find (Toml.key "variety") apple
-          |> Toml.Value.To.array |> Toml.Value.To.Array.table
-        in
-        assert_equal 2 (List.length apple_varieties);
-        let expected_red_delicious = mk_raw_table [
-          "name", Toml.Value.Of.string "red delicious";
-        ] in
-        assert_equal expected_red_delicious (List.hd apple_varieties);
-        let expected_granny_smith = mk_raw_table [
-          "name", Toml.Value.Of.string "granny smith";
-        ] in
-        assert_equal expected_granny_smith (List.rev apple_varieties |> List.hd);
-        let banana = List.rev fruits |> List.hd in
-        assert_equal 2 (Toml.Table.cardinal banana);
-        assert_equal "banana" (
-          Toml.Table.find (Toml.key "name") banana |> Toml.Value.To.string);
-        let banana_varieties =
-          Toml.Table.find (Toml.key "variety") banana
-          |> Toml.Value.To.array |> Toml.Value.To.Array.table
-        in
-        assert_equal 1 (List.length banana_varieties);
-        let expected_plantain = mk_raw_table [
-          "name", Toml.Value.Of.string "plantain";
-        ] in
-        assert_equal expected_plantain (List.hd banana_varieties);
-      );
-      "Array of tables expected, got table" >:: (fun () ->
-        let str = [
-            "[a.b.c]";
-            "field1 = 1";
-            "field2 = 2";
+          "Date" >::
+            (fun () ->
+             let str = "[group1]\nkey = 1979-05-27T07:32:00Z" in
+             let toml = Parser.from_string str in
+             let group1 = get_table (bk "group1") toml in
+             test_value
+               (of_date (Unix.mktime {Unix.tm_year=79; tm_mon=04; tm_mday=27;
+			              tm_hour=07; tm_min=32; tm_sec=0;
+			              tm_wday=(-1);tm_yday=(-1);tm_isdst=true;}
+	                 |> snd))
+               (find "key" group1));
 
-            "[[a.b.c]]";
-            "field1 = 10";
-            "field2 = 20";
-          ] |> String.concat "\n"
-        in
-        assert_raises
-          (Parser.Error (
-            "Error in <string> at line 6 at column 11 (position 63): c is a table, not an array of tables",
-            { source = "<string>"; line = 6; column = 11; position = 63; }))
-          (fun () -> ignore(Parser.from_string str));
-      );
-      "Nested array of table, initially empty" >:: (fun () ->
-        let str = [
-          "[[fruit]]";
-          "[vegetable]";
-          "name=\"lettuce\"";
-          "[[fruit]]";
-          "name=\"apple\"";
-        ] |> String.concat "\n" in
-        let toml = Parser.from_string str in
-        assert_equal 2 (Toml.Table.cardinal toml);
-        let expected_vegetable = mk_raw_table [
-          "name", Toml.Value.Of.string "lettuce";
-        ] in
-        let vegetable =
-          Toml.Table.find (Toml.key "vegetable") toml
-          |> Toml.Value.To.table
-        in
-        assert_equal expected_vegetable vegetable;
-        let fruits =
-          Toml.Table.find (Toml.key "fruit") toml
-          |> Toml.Value.To.array
-          |> Toml.Value.To.Array.table
-        in
-        assert_equal 1 (List.length fruits);
-        let expected_fruit = mk_raw_table [
-          "name", Toml.Value.Of.string "apple";
-        ] in
-        assert_equal expected_fruit (List.hd fruits);
-      );
-      "Same key, different group" >:: (fun () ->
-        let str = "key=1[group]\nkey = 2" in
-        let toml = Parser.from_string str in
-        assert_equal
-          (Toml.Value.Of.int 1)
-          (table_find "key" toml);
-        assert_equal
-          (Toml.Value.Of.int 2)
-          (table_find "key" (get_table toml "group")));
+          "Array of tables" >::
+            (fun () ->
+             let str = [
+                 "[[a.b.c]]";
+                 "field1 = 1";
+                 "field2 = 2";
 
-      "Unicode" >:: (fun () ->
-        let str = "key=\"\\u03C9\"\nkey2=\"\\u4E2D\\u56FD\\u0021\"" in
-        let toml = Parser.from_string str in
-        assert_equal
-          (Toml.Value.Of.string "ω")
-          (table_find "key" toml);
-        assert_equal
-          (Toml.Value.Of.string "中国!")
-          (table_find "key2" toml));
+                 "[[a.b.c]]";
+                 "field1 = 10";
+                 "field2 = 20";
+               ] |> String.concat "\n"
+             in
+             let toml = Parser.from_string str in
+             let c = Toml.Value.Of.Array.table [
+                         create_table [
+                             bk "field1", of_int 1;
+                             bk "field2", of_int 2;
+                           ];
+                         create_table [
+                             bk "field1", of_int 10;
+                             bk "field2", of_int 20;
+                           ];
+                       ] |> Toml.Value.Of.array
+             in
+             let b = create_table_as_value [bk "c", c] in
+             let a = create_table_as_value [bk "b", b] in
+             let expected = create_table [bk "a", a] in
+             test_table expected toml;
+            );
 
-      "Error location when endlines in strings" >:: (fun () ->
-        let str =
-          "\na = [\"b\"]\nb = \"error here\n\nc = \"should not be reached\""
-        in
-        assert_raises
-          (Parser.Error (
-               "Error in <string> at line 5 at column 15 (position 43)",
-               { source = "<string>"; line = 5; column = 15; position = 43; }))
-          (fun () -> ignore(Parser.from_string str));
-        );
+          "Nested array of tables, official example" >::
+            (fun () ->
+             let str = "[[fruit]]\n\
+                        name = \"apple\"\n\
+                        [fruit.physical]\n\
+                        color = \"red\"\n\
+                        shape = \"round\"\n\
+                        [[fruit.variety]]\n\
+                        name = \"red delicious\"\n\
+                        [[fruit.variety]]\n\
+                        name = \"granny smith\"\n\
+                        [[fruit]]\n\
+                        name = \"banana\"\n\
+                        [[fruit.variety]]\n\
+                        name = \"plantain\"" in
+             let toml = Parser.from_string str in
 
-  ];
+             assert_equal 1 (Toml.Table.cardinal toml);
+             assert_bool "" (Toml.Table.mem (bk "fruit") toml);
+
+             let fruits = get_table_array (bk "fruit") toml in
+             assert_equal 2 (List.length fruits);
+
+             let apple = List.hd fruits in
+             assert_equal 3 (Toml.Table.cardinal apple);
+             assert_equal "apple" (get_string (bk "name") apple);
+
+             (* FIXME: Order should not matter but it does.
+              * Test fails with
+              * let expected_physical = create_table [
+              *                             bk "color", of_string "red";
+              *                             bk "shape", of_string "round" ]
+              * but not with:
+              * let expected_physical = create_table [
+              *                             bk "shape", of_string "round";
+              *                             bk "color", of_string "red" ]
+              *)
+             let physical = get_table (bk "physical") apple in
+             let expected_physical = create_table [
+                                         bk "color", of_string "red";
+                                         bk "shape", of_string "round";
+                                       ] in
+             test_table expected_physical physical;
+
+             let apple_varieties = get_table_array (bk "variety") apple in
+             assert_equal 2 (List.length apple_varieties);
+
+             let expected_red_delicious =
+               create_table [bk "name", of_string "red delicious" ] in
+             test_table expected_red_delicious (List.hd apple_varieties);
+
+             let expected_granny_smith =
+               create_table [ bk "name", of_string "granny smith" ] in
+             test_table expected_granny_smith
+                        (List.rev apple_varieties |> List.hd);
+
+             let banana = List.rev fruits |> List.hd in
+             assert_equal 2 (Toml.Table.cardinal banana);
+             assert_equal "banana" (find "name" banana |> to_string);
+
+             let banana_varieties = find "variety" banana |> to_table_array in
+             assert_equal 1 (List.length banana_varieties);
+
+             let expected_plantain =
+               create_table [ bk "name", of_string "plantain" ] in
+             assert_equal expected_plantain (List.hd banana_varieties);
+            );
+
+          "Array of tables expected, got table" >::
+            (fun () ->
+             let str = "[a.b.c]\n\
+                        field1 = 1\n\
+                        field2 = 2\n\
+                        [[a.b.c]]\n\
+                        field1 = 10\n\
+                        field2 = 20"  in
+             assert_raises
+               (Parser.Error
+                  ("Error in <string> at line 6 \
+                    at column 11 (position 63): \
+                    c is a table, not an array of tables",
+                   { Parser.source = "<string>"; line = 6;
+                     column = 11; position = 63; }))
+               (fun () -> ignore(Parser.from_string str));
+            );
+
+          "Nested array of table, initially empty" >::
+            (fun () ->
+             let str = [
+                 "[[fruit]]";
+                 "[vegetable]";
+                 "name=\"lettuce\"";
+                 "[[fruit]]";
+                 "name=\"apple\"";
+               ] |> String.concat "\n" in
+
+             let toml = Parser.from_string str in
+             assert_equal 2 (Toml.Table.cardinal toml);
+
+             let expected_vegetable = create_table [
+                                          bk "name", of_string "lettuce";
+                                        ] in
+             let vegetable = get_table (bk "vegetable") toml in
+             assert_equal expected_vegetable vegetable;
+
+             let fruits = get_table_array (bk "fruit") toml in
+             assert_equal 1 (List.length fruits);
+
+             let expected_fruit = create_table [ bk "name", of_string "apple" ] in
+             assert_equal expected_fruit (List.hd fruits)
+            ) ;
+
+          "Same key, different group" >::
+            (fun () ->
+             let str = "key=1[group]\nkey = 2" in
+             let toml = Parser.from_string str in
+             assert_equal 1 (get_int (bk "key") toml);
+             assert_equal 2 (get_table (bk "group") toml |> get_int (bk "key")));
+
+          "Unicode" >::
+            (fun () ->
+             let str = "key=\"\\u03C9\"\n\
+                        key2=\"\\u4E2D\\u56FD\\u0021\"" in
+             let toml = Parser.from_string str in
+             assert_equal "ω" (get_string (bk "key") toml) ;
+             assert_equal "中国!" (get_string (bk "key2") toml)) ;
+
+          "Error location when endlines in strings" >::
+            (fun () ->
+             let str =
+               "\na = [\"b\"]\n\
+                b = \"error here\n\n\
+                c = \"should not be reached\"" in
+             assert_raises
+               (Parser.Error
+                  ("Error in <string> at line 5 at column 15 (position 43)",
+                   { Parser.source = "<string>";
+                     line = 5; column = 15; position = 43; }))
+               (fun () -> ignore (Parser.from_string str));
+            );
+
+        ]
+    ]
+
+      (*)
+
+
+
+      ];
     (* "Lexer" >:::                                                 *)
     (* [                                                            *)
     (*   "Detect strings" >:: (fun () -> OUnit.todo "Not yet !");   *)
@@ -356,4 +346,5 @@ let suite =
     (* ];                                                           *)
 
     (* "Huge files" >::: []                                         *)
-  ]
+    ]
+       *)
