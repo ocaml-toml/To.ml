@@ -11,7 +11,7 @@
 }
 
 let t_white   = ['\t' ' ']
-let t_eol     = '\n'|'\r'|"\r\n"
+let t_eol     = '\n'|"\r\n"
 let t_digit   = ['0'-'9']
 let t_int     = ['-''+']? t_digit+
 let t_frac    = '.' t_digit+
