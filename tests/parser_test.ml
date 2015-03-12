@@ -91,6 +91,19 @@ let suite =
                           Violets are blue"
                          (get_string (bk "key1") toml) ) ;
 
+          "Literal strings" >::
+            (fun () ->
+             let test input =
+               let toml = Parser.from_string ("key = '" ^ input ^ "'") in
+               test_string input (get_string (bk "key") toml) in
+
+             test "C:\\Users\\nodejs\\templates" ;
+             test "\\\\ServerX\\admin$\\system32\\" ;
+             test "Tom \"Dubs\" Preston-Werner" ;
+             test "<\\i\\c*\\s*>"  ) ;
+
+          (* TODO: "Multiline literal strings" >:: (fun () -> ...) *)
+
           "Array key" >::
             (fun () ->
              let str = "key = [true, true, false, true]" in
