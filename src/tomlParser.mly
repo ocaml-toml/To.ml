@@ -90,7 +90,7 @@
 %token <bool> BOOL
 %token <int> INTEGER
 %token <float> FLOAT
-%token <string> STRING
+%token <string> STRING COMMENT
 %token <float> DATE
 %token <string> KEY
 %token LBRACK RBRACK EQUAL EOF COMMA DOT
@@ -103,8 +103,11 @@
 
 %%
 (* Grammar rules *)
+(* If file starts with a comment, it will not be skipped as lexer require
+ * comment to follow a EOL to be skipped, otherwise it assumes a commented
+ * value. *)
 toml:
- | h=list(keyValue) q=list(pair(group_header,list(keyValue))) EOF
+ | COMMENT? h=list(keyValue) q=list(pair(group_header,list(keyValue))) EOF
    { let t = Hashtbl.create 0 in
 
      List.iter (fun ((tag, ks), kvs) ->
@@ -120,6 +123,9 @@ toml:
 group_header:
  | LBRACK LBRACK k=key_path RBRACK RBRACK { ArrayElement, k }
  | LBRACK k=key_path RBRACK               { Regular, k }
+ (* [[foo]] # not skipped *)
+ (* [foo] # not skipped *)
+ | h=group_header COMMENT { h } (* FIXME: associate comment with the table *)
 
 key:
  | STRING { Key.quoted_key_of_string $1 }
@@ -128,7 +134,8 @@ key:
 key_path: k = separated_nonempty_list (DOT, key) { k }
 
 keyValue:
-    k=key EQUAL v=value { (k, v) }
+   k=key EQUAL v=value           { (k, v) }
+ | k=key EQUAL v=value c=COMMENT { (k, TCommented (c, v)) }
 
 value:
     x=BOOL               { TBool x }
@@ -146,13 +153,21 @@ array_start:
   | h=STRING q=array_end(STRING)            { NodeString (h :: q) }
   | h=DATE q=array_end(DATE)                { NodeDate (h :: q) }
   | LBRACK h=array_start q=nested_array_end { NodeArray (h :: q) }
+  (* [ # will be parsed as comment while it should be ignored *)
+  | COMMENT x=array_start                   { x }
 
 array_end(param):
-    COMMA h=param q=array_end(param) { h :: q }
-  | option(COMMA) RBRACK { [] }
+    array_sep h=param q=array_end(param) { h :: q }
+  | option(array_sep) RBRACK             { [] }
 
 nested_array_end:
-    COMMA LBRACK h=array_start q=nested_array_end { h :: q }
-  | option(COMMA) RBRACK { [] }
+    array_sep LBRACK h=array_start q=nested_array_end { h :: q }
+  | option(array_sep) RBRACK                          { [] }
+
+(* , # comma and then comment *)
+(* # comment and then comma
+ * , *)
+array_sep:
+  | option(COMMENT) COMMA option(COMMENT) {  }
 
 %%

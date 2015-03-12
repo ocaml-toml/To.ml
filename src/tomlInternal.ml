@@ -72,6 +72,7 @@ module Type = struct
     | TDate of float
     | TArray of array
     | TTable of table
+    | TCommented of string * value
 
   and table = value Map.t
 

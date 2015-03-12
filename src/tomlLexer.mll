@@ -11,7 +11,7 @@
 }
 
 let t_white   = ['\t' ' ']
-let t_eol     = '\n'|"\r\n"
+let t_eol     = ('\n'|"\r\n")
 let t_digit   = ['0'-'9']
 let t_int     = ['-''+']? t_digit+
 let t_frac    = '.' t_digit+
@@ -46,7 +46,10 @@ rule tomlex = parse
   | t_bool as value  { BOOL (bool_of_string value) }
   | t_date as date { DATE (fst (ISO8601.Permissive.datetime_tz date)) }
   | t_white+ { tomlex lexbuf }
-  | t_eol { update_loc lexbuf;tomlex lexbuf }
+  | t_eol { update_loc lexbuf; tomlex lexbuf }
+  | t_eol (t_white* '#' (_ # [ '\n' '\r' ] )* )?
+      { update_loc lexbuf; tomlex lexbuf }
+  | '#' t_white* ((_ # [ '\n' '\r' ] )* as com) { COMMENT com }
   | '=' { EQUAL }
   | '[' { LBRACK }
   | ']' { RBRACK }
@@ -60,7 +63,6 @@ rule tomlex = parse
 	  multiline_literal_string (Buffer.create 13) lexbuf }
   | ',' { COMMA }
   | '.' { DOT }
-  | '#' (_ # [ '\n' '\r' ] )* { tomlex lexbuf }
   | t_key as value { KEY (value) }
   | eof   { EOF }
 

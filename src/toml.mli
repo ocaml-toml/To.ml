@@ -74,6 +74,8 @@ module Value : sig
     val array : value -> array
     (* @since 2.0.0 *)
     val table : value -> table
+    (* @since 3.0.0 *)
+    val comment : value -> string option
 
     module Array : sig
 
@@ -231,6 +233,8 @@ val to_array_array : Value.value -> Value.array list
 (** @since 2.2.0 *)
 val to_table_array : Value.value -> Value.table list
 
+val see_comment : Value.value -> string option
+
 (**
  {3 Getting OCaml values from a table}
 
@@ -356,6 +360,8 @@ val of_array_array : Value.array list -> Value.value
 
 (** @since 2.2.0 *)
 val of_table_array : Value.table list -> Value.value
+
+val add_comment : string -> Value.value -> Value.value
 
 (** {2 Parser} *)
 (** Simple parsing functions. *)

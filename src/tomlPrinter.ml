@@ -99,6 +99,11 @@ and pp_value fmt v path =
   | TDate value   -> pp_date fmt value
   | TArray value  -> pp_array fmt value path
   | TTable value  -> pp_table fmt value path
+  | TCommented (c, v) -> pp_value fmt v path ;
+                         pp_comment fmt c
+
+and pp_comment fmt c =
+  Format.fprintf fmt " # %s\n" c
 
 and pp_key_value fmt key v path =
 

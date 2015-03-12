@@ -144,7 +144,8 @@ let suite =
              let str = "[group1]\nkey = true # this is comment" in
              let toml = Parser.from_string str in
              let group1 = get_table (bk "group1") toml in
-             test_value (of_bool true) (find "key" group1));
+             test_value (add_comment "this is comment" (of_bool true))
+                        (find "key" group1)) ;
 
           "Date" >::
             (fun () ->

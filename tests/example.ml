@@ -44,15 +44,21 @@ let expected =
           bk"beta",
           create_table_as_value [bk"ip", of_string "10.0.0.2";
                                  bk"dc", of_string "eqdc10";
-                                 bk"country", of_string "中国" ] ] ;
+                                 bk"country", add_comment
+                                                "This should be parsed as UTF-8"
+                                                (of_string "中国") ] ] ;
 
+      (* FIXME: Attach "Comment attached to clients table". *)
       bk"clients",
-      create_table_as_value
-        [ bk"data", of_array_array [
-                        V.Of.Array.string ["gamma"; "delta"];
-                        V.Of.Array.int [1; 2] ];
-          bk"hosts", of_string_array ["alpha"; "omega"] ];
+      add_comment "Comment attached to data"
+              (create_table_as_value
+                 [ bk"data", of_array_array [
+                                 V.Of.Array.string ["gamma"; "delta"];
+                                 V.Of.Array.int [1; 2] ];
+                   bk"hosts", of_string_array ["alpha"; "omega"] ]) ;
 
+      (* FIXME: Attach "Comment attached to first products item" *)
+      (* FIXME: Attach "Comment attached to second products item" *)
       bk"products",
       of_table_array [ create_table [
                            bk"name", of_string "Hammer";

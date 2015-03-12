@@ -63,13 +63,16 @@ module Value = struct
 
     let exn t = raise (Bad_type t)
 
-    let bool   = function TBool b   -> b | _ -> exn "bool"
-    let int    = function TInt i    -> i | _ -> exn "int"
-    let float  = function TFloat f  -> f | _ -> exn "float"
-    let string = function TString s -> s | _ -> exn "string"
-    let date   = function TDate d   -> d | _ -> exn "date"
-    let table  = function TTable t  -> t | _ -> exn "table"
-    let array  = function TArray a  -> a | _ -> exn "array"
+    let aux fn = function TCommented (_, v) | v -> fn v
+
+    let bool   = aux (function TBool b   -> b | _ -> exn "bool")
+    let int    = aux (function TInt i    -> i | _ -> exn "int")
+    let float  = aux (function TFloat f  -> f | _ -> exn "float")
+    let string = aux (function TString s -> s | _ -> exn "string")
+    let date   = aux (function TDate d   -> d | _ -> exn "date")
+    let table  = aux (function TTable t  -> t | _ -> exn "table")
+    let array  = aux (function TArray a  -> a | _ -> exn "array")
+    let comment = function TCommented (c, _) -> Some c | _ -> None
 
     module Array = struct
 
@@ -104,6 +107,7 @@ module Value = struct
     let date d   = TDate d
     let table t  = TTable t
     let array a  = TArray a
+    let comment c v = TCommented (c, v)
 
     module Array = struct
       let maybe_empty fn = function [] -> NodeEmpty | a -> fn a
@@ -135,6 +139,8 @@ let to_date_array value = Value.To.array value |> Value.To.Array.date
 let to_array_array value = Value.To.array value |> Value.To.Array.array
 let to_table_array value = Value.To.array value |> Value.To.Array.table
 
+let see_comment = Value.To.comment
+
 let get_bool key table = Table.find key table |> to_bool
 let get_int key table = Table.find key table |> to_int
 let get_float key table = Table.find key table |> to_float
@@ -164,6 +170,8 @@ let of_string_array value = Value.Of.Array.string value |> Value.Of.array
 let of_date_array value = Value.Of.Array.date value |> Value.Of.array
 let of_array_array value = Value.Of.Array.array value |> Value.Of.array
 let of_table_array value = Value.Of.Array.table value |> Value.Of.array
+
+let add_comment = Value.Of.comment
 
 module Compare = TomlInternal.Compare
 
