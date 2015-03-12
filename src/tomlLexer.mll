@@ -31,7 +31,7 @@ let t_date    = t_digit t_digit t_digit t_digit
 
 (** RFC 3339 date of form 1979-05-27T07:32:00.42+00:00 *)
 
-let t_escape  =  '\\' ['b' 't' 'n' 'f' 'r' '"' '/' '\\']
+let t_escape  =  '\\' ['b' 't' 'n' 'f' 'r' '"' '\\']
 let t_alpha   = ['A'-'Z' 'a'-'z']
 let t_alphanum= t_alpha | t_digit
 let t_unicode = t_alphanum t_alphanum t_alphanum t_alphanum
