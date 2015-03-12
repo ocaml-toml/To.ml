@@ -69,7 +69,7 @@ module Value : sig
     (* @since 2.0.0 *)
     val string : value -> string
     (* @since 2.0.0 *)
-    val date : value -> Unix.tm
+    val date : value -> float
     (* @since 2.0.0 *)
     val array : value -> array
     (* @since 2.0.0 *)
@@ -89,7 +89,7 @@ module Value : sig
       (* @since 2.0.0 *)
       val string : array -> string list
       (* @since 2.0.0 *)
-      val date : array -> Unix.tm list
+      val date : array -> float list
       (* @since 2.0.0 *)
       val array : array -> array list
       (** @since 2.2.0 *)
@@ -115,7 +115,7 @@ module Value : sig
     (* @since 2.0.0 *)
     val string : string -> value
     (* @since 2.0.0 *)
-    val date : Unix.tm -> value
+    val date : float -> value
     (* @since 2.0.0 *)
     val array : array -> value
     (* @since 2.0.0 *)
@@ -131,7 +131,7 @@ module Value : sig
       (* @since 2.0.0 *)
       val string : string list -> array
       (* @since 2.0.0 *)
-      val date : Unix.tm list -> array
+      val date : float list -> array
       (* @since 2.0.0 *)
       val array : array list -> array
       (** @since 2.2.0 *)
@@ -163,7 +163,7 @@ end
 
   # let bar = Toml.Table.find (Toml.key "foo") table
     |> Toml.Value.To.string;;
-  val bar : bytes = "bar" 
+  val bar : bytes = "bar"
 
   # let table = Toml.Table.empty
     |> Toml.Table.add (Toml.key "fortytwos")
@@ -205,7 +205,7 @@ val to_float : Value.value -> float
 val to_string : Value.value -> string
 
 (** @since 2.2.0 *)
-val to_date : Value.value -> Unix.tm
+val to_date : Value.value -> float
 
 (** @since 2.2.0 *)
 val to_table : Value.value -> Value.value Table.t
@@ -223,7 +223,7 @@ val to_float_array : Value.value -> float list
 val to_string_array : Value.value -> string list
 
 (** @since 2.2.0 *)
-val to_date_array : Value.value -> Unix.tm list
+val to_date_array : Value.value -> float list
 
 (** @since 2.2.0 *)
 val to_array_array : Value.value -> Value.array list
@@ -245,7 +245,7 @@ val to_table_array : Value.value -> Value.table list
   val table : Toml.Value.value Toml.Table.t = <abstr>
 
   # let bar = Toml.get_string (Toml.key "foo") table;;
-  val bar : bytes = "bar" 
+  val bar : bytes = "bar"
 
   # let table = Toml.Table.empty
     |> Toml.Table.add (Toml.key "fortytwos")
@@ -275,7 +275,7 @@ val get_float : Table.Key.t -> Value.value Table.t -> float
 val get_string : Table.Key.t -> Value.value Table.t -> string
 
 (** @since 2.2.0 *)
-val get_date : Table.Key.t -> Value.value Table.t -> Unix.tm
+val get_date : Table.Key.t -> Value.value Table.t -> float
 
 (** @since 2.2.0 *)
 val get_table : Table.Key.t -> Value.value Table.t -> Value.value Table.t
@@ -293,7 +293,7 @@ val get_float_array : Table.Key.t -> Value.value Table.t -> float list
 val get_string_array : Table.Key.t -> Value.value Table.t -> string list
 
 (** @since 2.2.0 *)
-val get_date_array : Table.Key.t -> Value.value Table.t -> Unix.tm list
+val get_date_array : Table.Key.t -> Value.value Table.t -> float list
 
 (** @since 2.2.0 *)
 val get_array_array : Table.Key.t -> Value.value Table.t -> Value.array list
@@ -331,7 +331,7 @@ val of_float : float -> Value.value
 val of_string : string -> Value.value
 
 (** @since 2.2.0 *)
-val of_date : Unix.tm -> Value.value
+val of_date : float -> Value.value
 
 (** @since 2.2.0 *)
 val of_table : Value.table -> Value.value
@@ -349,7 +349,7 @@ val of_float_array : float list -> Value.value
 val of_string_array : string list -> Value.value
 
 (** @since 2.2.0 *)
-val of_date_array : Unix.tm list -> Value.value
+val of_date_array : float list -> Value.value
 
 (** @since 2.2.0 *)
 val of_array_array : Value.array list -> Value.value
@@ -461,7 +461,7 @@ module Compare : sig
 
   (** Given two Toml arrays, return [-1], [0] or [1] depending on whether the
    first is smaller, equal or greater than the second
-  
+
    @since 2.0.0
   *)
   val array : Value.array -> Value.array -> int

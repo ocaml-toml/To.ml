@@ -27,10 +27,7 @@ let expected =
           bk"organization", of_string "GitHub";
           bk"bio", of_string "GitHub Cofounder & CEO\n\
                               Likes tater tots and beer.";
-          bk"dob", of_date (Unix.mktime { Unix.tm_year=79; tm_mon=04; tm_mday=27;
-                                         tm_hour=07; tm_min=32; tm_sec=0;
-                                         tm_wday=(-1); tm_yday=(-1);
-                                         tm_isdst=true } |> snd) ] ;
+          bk"dob", of_date 296638320. (* 1979-05-27T07:32:00 *) ] ;
 
       bk"database",
       create_table_as_value

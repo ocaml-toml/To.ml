@@ -36,7 +36,7 @@ XStdFilesAUTHORS: true
 # Main Library                                                               #
 ###############################################################################
 Library toml
-    BuildDepends: str, unix
+    BuildDepends: str, unix, ISO8601
     FindlibName: toml
     Install: true
     InternalModules: TomlInternal, TomlLexer, TomlParser, TomlPrinter, TomlUnicode
@@ -44,7 +44,7 @@ Library toml
     Path: src/
     XMETAEnable: true
     XMETADescription: Toml parser
-    XMETARequires: str, unix
+    XMETARequires: str, unix, ISO8601
 
 ###############################################################################
 # Test executables                                                            #

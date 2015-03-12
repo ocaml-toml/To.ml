@@ -60,7 +60,7 @@ module Type = struct
     | NodeInt of int list
     | NodeFloat of float list
     | NodeString of string list
-    | NodeDate of Unix.tm list
+    | NodeDate of float list
     | NodeArray of array list (* this can have any type *)
     | NodeTable of table list
 
@@ -69,7 +69,7 @@ module Type = struct
     | TInt of int
     | TFloat of float
     | TString of string
-    | TDate of Unix.tm
+    | TDate of float
     | TArray of array
     | TTable of table
 

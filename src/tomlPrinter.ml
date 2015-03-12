@@ -32,16 +32,10 @@ let print_string formatter value =
   String.iter (maybe_escape_char formatter) value ;
   Format.pp_print_char formatter '"'
 
-let print_date formatter d =
-  let open UnixLabels
-  in
-  Format.fprintf formatter "%4d-%02d-%02dT%02d:%02d:%02dZ"
-    (1900 + d.tm_year) (d.tm_mon + 1) d.tm_mday
-    d.tm_hour d.tm_min d.tm_sec
+let print_date fmt d =
+  ISO8601.Permissive.pp_datetimezone fmt (d, 0.)
 
-(*
-* This function is a shim for Format.pp_print_list from ocaml 4.02
-*)
+(* This function is a shim for [Format.pp_print_list] from ocaml 4.02 *)
 let pp_print_list ~pp_sep print_item_func formatter values =
   match values with
   | []    -> ()

@@ -138,12 +138,7 @@ let suite =
              let str = "[group1]\nkey = 1979-05-27T07:32:00Z" in
              let toml = Parser.from_string str in
              let group1 = get_table (bk "group1") toml in
-             test_value
-               (of_date (Unix.mktime {Unix.tm_year=79; tm_mon=04; tm_mday=27;
-			              tm_hour=07; tm_min=32; tm_sec=0;
-			              tm_wday=(-1);tm_yday=(-1);tm_isdst=true;}
-	                 |> snd))
-               (find "key" group1));
+             test_value (of_date 296638320.) (find "key" group1));
 
           "Array of tables" >::
             (fun () ->
@@ -319,11 +314,6 @@ let suite =
         ]
     ]
 
-      (*)
-
-
-
-      ];
     (* "Lexer" >:::                                                 *)
     (* [                                                            *)
     (*   "Detect strings" >:: (fun () -> OUnit.todo "Not yet !");   *)
@@ -343,5 +333,3 @@ let suite =
     (* ];                                                           *)
 
     (* "Huge files" >::: []                                         *)
-    ]
-       *)

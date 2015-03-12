@@ -20,14 +20,15 @@ let t_float   = t_int ((t_frac t_exp) | t_frac | t_exp)
 let t_bool    = ("true"|"false")
 let t_key     = ['A'-'Z''a'-'z''0'-'9''_''-']+
 
-let t_date    = (t_digit t_digit t_digit t_digit as year)
-                '-' (t_digit t_digit as mon)
-                '-' (t_digit t_digit as mday)
-                ['T' 't'] (t_digit t_digit as hour)
-                ':' (t_digit t_digit as min)
-                ':' (t_digit t_digit ('.' t_digit+)? as sec)
-                (['Z' 'z'] | (['+' '-'] t_digit t_digit ':' t_digit t_digit)
-		 as offset)
+let t_date    = t_digit t_digit t_digit t_digit
+                '-' t_digit t_digit
+                '-' t_digit t_digit
+                ['T' 't']
+                t_digit t_digit
+                ':' t_digit t_digit
+                ':' t_digit t_digit ('.' t_digit+)?
+                (['Z' 'z'] | (['+' '-'] t_digit t_digit ':' t_digit t_digit))
+
 (** RFC 3339 date of form 1979-05-27T07:32:00.42+00:00 *)
 
 let t_escape  =  '\\' ['b' 't' 'n' 'f' 'r' '"' '/' '\\']
@@ -43,26 +44,7 @@ rule tomlex = parse
 		       INTEGER (int_of_string value) }
   | t_float as value { FLOAT (float_of_string value) }
   | t_bool as value  { BOOL (bool_of_string value) }
-
-  | t_date { let (off_hour, off_min) = match offset with
-	       | "Z" | "z" -> (0, 0)
-	       | offset -> let sign = if offset.[0] = '+'
-				      then (fun x -> 0 + int_of_string x)
-				      else (fun x -> 0 - int_of_string x) in
-			   (sign (String.sub offset 1 2),
-			    sign (String.sub offset 4 2)) in
-	     DATE ( Unix.mktime
-		      { Unix.tm_sec = int_of_float (float_of_string sec);
-			Unix.tm_min = int_of_string min + off_min;
-			Unix.tm_hour = int_of_string hour + off_hour;
-			Unix.tm_mday = int_of_string mday;
-			Unix.tm_mon = int_of_string mon - 1;
-			Unix.tm_year = int_of_string year - 1900;
-			Unix.tm_wday = 0;
-			Unix.tm_yday = 0;
-			Unix.tm_isdst = false }
-		    |> snd )
-	   }
+  | t_date as date { DATE (fst (ISO8601.Permissive.datetime_tz date)) }
   | t_white+ { tomlex lexbuf }
   | t_eol { update_loc lexbuf;tomlex lexbuf }
   | '=' { EQUAL }

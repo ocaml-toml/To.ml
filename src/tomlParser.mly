@@ -91,7 +91,7 @@
 %token <int> INTEGER
 %token <float> FLOAT
 %token <string> STRING
-%token <Unix.tm> DATE
+%token <float> DATE
 %token <string> KEY
 %token LBRACK RBRACK EQUAL EOF COMMA DOT
 
