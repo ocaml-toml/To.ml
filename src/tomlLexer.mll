@@ -54,11 +54,25 @@ rule tomlex = parse
 	  if eol <> "" then update_loc lexbuf ;
 	  multiline_string (Buffer.create 13) lexbuf }
   | '"' { basic_string (Buffer.create 13) lexbuf }
+  | '\'' { literal_string (Buffer.create 13) lexbuf }
+  | "'''" (t_eol? as eol) {
+	  if eol <> "" then update_loc lexbuf ;
+	  multiline_literal_string (Buffer.create 13) lexbuf }
   | ',' { COMMA }
   | '.' { DOT }
   | '#' (_ # [ '\n' '\r' ] )* { tomlex lexbuf }
   | t_key as value { KEY (value) }
   | eof   { EOF }
+
+and literal_string buff = parse
+  | '\''   { STRING (Buffer.contents buff)}
+  | _ as c { Buffer.add_char buff c ;
+             literal_string buff lexbuf }
+
+and multiline_literal_string buff = parse
+  | "'''"  { STRING (Buffer.contents buff)}
+  | _ as c { Buffer.add_char buff c ;
+             literal_string buff lexbuf }
 
 and basic_string buff = parse
   | '"'  { STRING (Buffer.contents buff) }
