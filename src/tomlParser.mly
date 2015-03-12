@@ -104,7 +104,7 @@
 %%
 (* Grammar rules *)
 toml:
- | keyValue* pair( group_header, keyValue* )* EOF
+ | h=list(keyValue) q=list(pair(group_header,list(keyValue))) EOF
    { let t = Hashtbl.create 0 in
 
      List.iter (fun ((tag, ks), kvs) ->
@@ -113,13 +113,13 @@ toml:
                 | ArrayElement -> add_to_nested_table t ks kvs)
                (* Create a dummy table with empty key for values
                 * which are direct children of root table.  *)
-               (((Regular, []), $1) :: $2) ;
+               (((Regular, []), h) :: q) ;
 
      match convert (Table t) with TTable t -> t | _ -> assert false }
 
 group_header:
- | LBRACK LBRACK key_path RBRACK RBRACK { ArrayElement, $3 }
- | LBRACK key_path RBRACK               { Regular, $2 }
+ | LBRACK LBRACK k=key_path RBRACK RBRACK { ArrayElement, k }
+ | LBRACK k=key_path RBRACK               { Regular, k }
 
 key:
  | STRING { Key.quoted_key_of_string $1 }
@@ -128,31 +128,31 @@ key:
 key_path: k = separated_nonempty_list (DOT, key) { k }
 
 keyValue:
-    key EQUAL value { ($1, $3) }
+    k=key EQUAL v=value { (k, v) }
 
 value:
-    BOOL { TBool($1) }
-  | INTEGER { TInt($1) }
-  | FLOAT { TFloat($1) }
-  | STRING { TString($1) }
-  | DATE { TDate $1 }
-  | LBRACK array_start { TArray($2) }
+    x=BOOL               { TBool x }
+  | x=INTEGER            { TInt x }
+  | x=FLOAT              { TFloat x }
+  | x=STRING             { TString x }
+  | x=DATE               { TDate x }
+  | LBRACK x=array_start { TArray x }
 
 array_start:
-    RBRACK { NodeEmpty }
-  | BOOL array_end(BOOL) { NodeBool($1 :: $2) }
-  | INTEGER array_end(INTEGER) { NodeInt($1 :: $2) }
-  | FLOAT array_end(FLOAT) { NodeFloat($1 :: $2) }
-  | STRING array_end(STRING) { NodeString($1 :: $2) }
-  | DATE array_end(DATE) { NodeDate($1 :: $2) }
-  | LBRACK array_start nested_array_end { NodeArray($2 :: $3) }
+    RBRACK                                  { NodeEmpty }
+  | h=BOOL q=array_end(BOOL)                { NodeBool (h :: q) }
+  | h=INTEGER q=array_end(INTEGER)          { NodeInt (h :: q) }
+  | h=FLOAT q=array_end(FLOAT)              { NodeFloat (h :: q) }
+  | h=STRING q=array_end(STRING)            { NodeString (h :: q) }
+  | h=DATE q=array_end(DATE)                { NodeDate (h :: q) }
+  | LBRACK h=array_start q=nested_array_end { NodeArray (h :: q) }
 
 array_end(param):
-    COMMA param array_end(param) { $2 :: $3 }
-  | COMMA? RBRACK { [] }
+    COMMA h=param q=array_end(param) { h :: q }
+  | option(COMMA) RBRACK { [] }
 
 nested_array_end:
-    COMMA LBRACK array_start nested_array_end { $3 :: $4 }
-  | COMMA? RBRACK { [] }
+    COMMA LBRACK h=array_start q=nested_array_end { h :: q }
+  | option(COMMA) RBRACK { [] }
 
 %%
