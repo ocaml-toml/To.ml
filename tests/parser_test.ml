@@ -87,7 +87,6 @@ let suite =
                         Roses are red\n\
                         Violets are blue\"\"\"" in
 	     let toml = Parser.from_string str in
-	     let var = find "key1" toml in
 	     test_string "Roses are red\n\
                           Violets are blue"
                          (get_string (bk "key1") toml) ) ;
@@ -96,18 +95,16 @@ let suite =
             (fun () ->
              let str = "key = [true, true, false, true]" in
              let toml = Parser.from_string str in
-             let var = find "key" toml in
-             test_value (of_bool_array [true; true; false; true]) var;
+             assert_equal [true; true; false; true]
+                          (get_bool_array (bk "key") toml) ;
 
              let str = "key = []" in
              let toml = Parser.from_string str in
-             let var = find "key" toml in
-             test_value (of_bool_array []) var;
+             assert_equal [] (get_bool_array (bk "key") toml) ;
 
              let str = "key = [true, true,]" in
              let toml = Parser.from_string str in
-             let var = find "key" toml in
-             test_value (of_bool_array [true; true]) var);
+             assert_equal [true; true] (get_bool_array (bk "key") toml) ) ;
 
           "Nested Arrays" >::
             (fun () ->
