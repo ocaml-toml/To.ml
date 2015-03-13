@@ -5,9 +5,9 @@ open Utils
 (** FIXME: Printed output has no diff but equality test fails. *)
 
 (* This test file expects example.toml from official toml repo read *)
-let toml = Parser.from_filename "./example.toml"
+let testing = Parser.from_filename "./example.toml"
 
-let test expected testing =
+let test testing expected =
   fun () ->  OUnit.assert_equal
                ~cmp:(fun x y -> Compare.table x y == 0)
                ~printer:(fun x -> let buf = Buffer.create 42 in
@@ -66,4 +66,4 @@ let expected =
 
 let suite =
   "Official example.toml file" >:::
-    [ "example.toml parsing" >:: test toml expected ; ]
+    [ "example.toml parsing" >:: test testing expected ; ]
