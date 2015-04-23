@@ -27,11 +27,12 @@ let suite =
 
           "Int" >::
             (fun () ->
-             let str = "key = 42\nkey2=-42 \n key3 = +42" in
+             let str = "key = 42\nkey2=-42 \n key3 = +42 \n key4 = 1_2_3_4_5" in
              let toml = Parser.from_string str in
              test_int 42 (get_int (bk "key") toml);
              test_int (-42) (get_int (bk "key2") toml);
-             test_int 42 (get_int (bk "key3") toml));
+             test_int 42 (get_int (bk "key3") toml);
+             test_int 12345 (get_int (bk "key4") toml));
 
           "Float key" >::
             (fun () ->

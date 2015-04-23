@@ -13,10 +13,13 @@
 let t_white   = ['\t' ' ']
 let t_eol     = '\n'|"\r\n"
 let t_digit   = ['0'-'9']
-let t_int     = ['-''+']? t_digit+
+let t_int_part  = ['1'-'9'] ('_'? t_digit)*
+(** Leading zeros are not allowed *)
+let t_sign    = ['-''+']
+let t_int     = (t_sign as int_sign)? t_int_part as int_part
 let t_frac    = '.' t_digit+
 let t_exp     = ['E''e'] t_int
-let t_float   = t_int ((t_frac t_exp) | t_frac | t_exp)
+let t_float   = t_int ((t_frac t_exp?) | t_exp)
 let t_bool    = ("true"|"false")
 let t_key     = ['A'-'Z''a'-'z''0'-'9''_''-']+
 
@@ -37,12 +40,14 @@ let t_alphanum= t_alpha | t_digit
 let t_unicode = t_alphanum t_alphanum t_alphanum t_alphanum
 
 rule tomlex = parse
-  | t_int as value   { let value =
-			 if value.[0] = '+'
-			 then String.sub value 1 (String.length value - 1)
-			 else value in
-		       INTEGER (int_of_string value) }
-  | t_float as value { FLOAT (float_of_string value) }
+  | t_int as value   {
+      let int_string =
+        match int_sign with
+        | Some '+'  -> int_part
+        | _         -> value
+      in INTEGER (int_of_string int_string)
+    }
+  | t_float as value   { FLOAT (float_of_string value) }
   | t_bool as value  { BOOL (bool_of_string value) }
   | t_date as date { DATE (fst (ISO8601.Permissive.datetime_tz date)) }
   | t_white+ { tomlex lexbuf }
