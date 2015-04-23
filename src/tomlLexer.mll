@@ -16,10 +16,10 @@ let t_digit   = ['0'-'9']
 let t_int_part  = ['1'-'9'] ('_'? t_digit)*
 (** Leading zeros are not allowed *)
 let t_sign    = ['-''+']
-let t_int     = (t_sign as int_sign)? t_int_part as int_part
+let t_int     = (t_sign as int_sign)? (t_int_part as int_part)
 let t_frac    = '.' t_digit+
 let t_exp     = ['E''e'] t_int
-let t_float   = t_int ((t_frac t_exp?) | t_exp)
+let t_float   = t_sign? ('0' | t_int_part) ((t_frac t_exp?) | t_exp)
 let t_bool    = ("true"|"false")
 let t_key     = ['A'-'Z''a'-'z''0'-'9''_''-']+
 
