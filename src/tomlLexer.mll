@@ -77,7 +77,7 @@ and literal_string buff = parse
 and multiline_literal_string buff = parse
   | "'''"  { STRING (Buffer.contents buff)}
   | _ as c { Buffer.add_char buff c ;
-             literal_string buff lexbuf }
+             multiline_literal_string buff lexbuf }
 
 and basic_string buff = parse
   | '"'  { STRING (Buffer.contents buff) }
