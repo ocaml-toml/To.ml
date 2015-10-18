@@ -5,7 +5,7 @@
 # Configuration variables
 ######
 
-OPAM_DEPENDS="ocamlfind oasis ounit bisect menhir"
+OPAM_DEPENDS="ocamlfind oasis ounit bisect menhir ISO8601"
 
 ########
 #  Some utilities in order to ease printing
