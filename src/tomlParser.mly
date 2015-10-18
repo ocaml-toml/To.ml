@@ -68,7 +68,7 @@
 
       try match Hashtbl.find t k with
           | Tables ts -> Hashtbl.replace t k (insert_table ts kvs);
-          | Table _
+          | Table _   -> failwith (Printf.sprintf "%s is a table, not an array of tables" (Key.to_string k))
           | Value _   -> failwith ("add_to_nested_table")
       with Not_found  -> Hashtbl.add t k (insert_table [] kvs)
 

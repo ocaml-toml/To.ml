@@ -320,9 +320,9 @@ let suite =
                 c = \"should not be reached\"" in
              assert_raises
                (Parser.Error
-                  ("Error in <string> at line 5 at column 15 (position 43)",
+                  ("Error in <string> at line 3 at column 16 (position 27): Control characters (U+0000 to U+001F) must be escaped",
                    { Parser.source = "<string>";
-                     line = 5; column = 15; position = 43; }))
+                     line = 3; column = 16; position = 27; }))
                (fun () -> ignore (Parser.from_string str));
             );
 

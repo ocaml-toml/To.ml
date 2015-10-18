@@ -8,8 +8,9 @@ let bk = K.bare_key_of_string
 let qk = K.quoted_key_of_string
 
 (* Create a new table containing [kvs], a key-value list. *)
+(* Use List.rev because otherwise = complains, ugh *)
 let create_table kvs =
-  List.fold_left (fun t (k, v) -> T.add k v t) T.empty kvs
+  List.fold_left (fun t (k, v) -> T.add k v t) T.empty (List.rev kvs)
 
 (* Same as [create_table], but return table as [value] instead of [table]. *)
 let create_table_as_value kvs =
