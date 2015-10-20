@@ -61,34 +61,63 @@ module Value = struct
 
     exception Bad_type of string
 
-    let exn t = raise (Bad_type t)
+    let exn cast_type value =
+      let actual_type =
+        match value with
+        | TBool   _ -> "bool"
+        | TInt    _ -> "int"
+        | TFloat  _ -> "float"
+        | TString _ -> "string"
+        | TDate   _ -> "date"
+        | TTable  _ -> "table"
+        | TArray  _ -> "array"
+      in
+      raise (Bad_type (
+          Printf.sprintf "attempted to cast as %s, actual type is %s"
+            cast_type actual_type))
 
-    let bool   = function TBool b   -> b | _ -> exn "bool"
-    let int    = function TInt i    -> i | _ -> exn "int"
-    let float  = function TFloat f  -> f | _ -> exn "float"
-    let string = function TString s -> s | _ -> exn "string"
-    let date   = function TDate d   -> d | _ -> exn "date"
-    let table  = function TTable t  -> t | _ -> exn "table"
-    let array  = function TArray a  -> a | _ -> exn "array"
+    let bool    = function TBool b   -> b | _ as v -> exn "bool" v
+    let int     = function TInt i    -> i | _ as v -> exn "int" v
+    let float   = function TFloat f  -> f | _ as v -> exn "float" v
+    let string  = function TString s -> s | _ as v -> exn "string" v
+    let date    = function TDate d   -> d | _ as v -> exn "date" v
+    let table   = function TTable t  -> t | _ as v -> exn "table" v
+    let array   = function TArray a  -> a | _ as v -> exn "array" v
 
     module Array = struct
 
       let maybe_empty fn = function NodeEmpty -> [] | a -> fn a
 
+      let exn cast_type value =
+        let actual_type =
+          match value with
+          | NodeBool _    -> "array of bool"
+          | NodeInt _     -> "array of int"
+          | NodeFloat _   -> "array of float"
+          | NodeString _  -> "array of string"
+          | NodeDate _    -> "array of date"
+          | NodeArray _   -> "array of array"
+          | NodeTable _   -> "array of table"
+          | NodeEmpty     -> "empty"
+        in
+        raise (Bad_type (
+            Printf.sprintf "attempted to cast as %s, actual type is %s"
+              cast_type actual_type))
+
       let bool = maybe_empty
-          (function NodeBool b   -> b | _ -> exn "bool array")
+          (function NodeBool b   -> b | _ as v -> exn "bool array" v)
       let int = maybe_empty
-          (function NodeInt i    -> i | _ -> exn "int array")
+          (function NodeInt i    -> i | _ as v -> exn "int array" v)
       let float = maybe_empty
-          (function NodeFloat f  -> f | _ -> exn "float array")
+          (function NodeFloat f  -> f | _ as v -> exn "float array" v)
       let string = maybe_empty
-          (function NodeString s -> s | _ -> exn "string array")
+          (function NodeString s -> s | _ as v -> exn "string array" v)
       let date = maybe_empty
-          (function NodeDate d   -> d | _ -> exn "date array")
+          (function NodeDate d   -> d | _ as v -> exn "date array" v)
       let array = maybe_empty
-          (function NodeArray a  -> a | _ -> exn "array array")
+          (function NodeArray a  -> a | _ as v -> exn "array array" v)
       let table = maybe_empty
-          (function NodeTable a  -> a | _ -> exn "table array")
+          (function NodeTable a  -> a | _ as v -> exn "table array" v)
     end
 
   end
