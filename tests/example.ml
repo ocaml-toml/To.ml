@@ -2,8 +2,6 @@ open OUnit
 open Toml
 open Utils
 
-(** FIXME: Printed output has no diff but equality test fails. *)
-
 (* This test file expects example.toml from official toml repo read *)
 let toml = Parser.from_filename "./example.toml"
 
