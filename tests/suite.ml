@@ -9,5 +9,6 @@ let _ =
         Key_test.suite;
         Printer_test.suite ;
         Example.suite ;
+        Example4.suite ;
       ] in
   OUnit.run_test_tt_main suites
