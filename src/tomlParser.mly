@@ -84,6 +84,16 @@
       Hashtbl.fold (fun k v map -> Map.add k (convert v) map)
                    h Map.empty
 
+    let to_table key_values key_value_groups =
+      let t = Hashtbl.create 0 in
+      List.iter (fun ((tag, ks), kvs) ->
+                match tag with
+                | Regular      -> add_to_table t ks kvs
+                | ArrayElement -> add_to_nested_table t ks kvs)
+               (* Create a dummy table with empty key for values
+                * which are direct children of root table.  *)
+               (((Regular, []), key_values) :: key_value_groups) ;
+      match convert (Table t) with TTable t -> t | _ -> assert false
 %}
 
 (* OcamlYacc definitions *)
@@ -93,7 +103,7 @@
 %token <string> STRING
 %token <float> DATE
 %token <string> KEY
-%token LBRACK RBRACK EQUAL EOF COMMA DOT
+%token LBRACK RBRACK LBRACE RBRACE EQUAL EOF COMMA DOT
 
 %start toml
 
@@ -105,17 +115,7 @@
 (* Grammar rules *)
 toml:
  | keyValue* pair( group_header, keyValue* )* EOF
-   { let t = Hashtbl.create 0 in
-
-     List.iter (fun ((tag, ks), kvs) ->
-                match tag with
-                | Regular      -> add_to_table t ks kvs
-                | ArrayElement -> add_to_nested_table t ks kvs)
-               (* Create a dummy table with empty key for values
-                * which are direct children of root table.  *)
-               (((Regular, []), $1) :: $2) ;
-
-     match convert (Table t) with TTable t -> t | _ -> assert false }
+   { to_table $1 $2 }
 
 group_header:
  | LBRACK LBRACK key_path RBRACK RBRACK { ArrayElement, $3 }
@@ -137,6 +137,11 @@ value:
   | STRING { TString($1) }
   | DATE { TDate $1 }
   | LBRACK array_start { TArray($2) }
+  | LBRACE; key_values = inline_table_key_values; RBRACE {
+    TTable (to_table key_values []) }
+
+inline_table_key_values:
+  key_values = separated_list(COMMA, keyValue) { key_values }
 
 array_start:
     RBRACK { NodeEmpty }

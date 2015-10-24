@@ -56,6 +56,8 @@ rule tomlex = parse
   | '=' { EQUAL }
   | '[' { LBRACK }
   | ']' { RBRACK }
+  | '{' { LBRACE }
+  | '}' { RBRACE }
   | '"' '"' '"' (t_eol? as eol) {
 	  if eol <> "" then update_loc lexbuf ;
 	  multiline_string (Buffer.create 13) lexbuf }
