@@ -1,5 +1,7 @@
 S src
+S tests
 PKG oUnit
 PKG ISO8601
 PKG bisect
 B _build/src
+B _build/tests
