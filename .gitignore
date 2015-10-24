@@ -7,6 +7,8 @@
 *.cmx
 *.cmxs
 *.cmxa
+*.mldylib
+*.mllib
 _build/
 toml.docdir
 setup.data
