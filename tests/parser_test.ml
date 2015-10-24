@@ -48,7 +48,15 @@ let suite =
 	     test "1e6" ;
 	     test "-2E-2" ;
 	     test "6.626e-34" ) ;
-
+          "Underscore float key" >::
+            (fun () ->
+              let get_float_value toml_string = Parser.from_string toml_string
+                                                |> Table.find (Toml.key "key")
+                                                |> Value.To.float
+              in
+              assert_equal (-1023.03) (get_float_value "key=-1_023.0_3");
+              assert_equal (142.301e10) (get_float_value "key=14_2.3_01e1_0");
+            );
           "Bool key" >::
             (fun () ->
              let str = "key = true\nkey2=false" in
