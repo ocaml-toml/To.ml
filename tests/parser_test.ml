@@ -5,7 +5,6 @@ open Toml
 let find k = Table.find (bk k)
 
 let test_value = assert_equal ~printer:string_of_value
-let test_table = assert_equal ~printer:string_of_table
 
 let suite =
   let assert_equal = OUnit.assert_equal in
@@ -190,7 +189,7 @@ let suite =
              let b = create_table_as_value [bk "c", c] in
              let a = create_table_as_value [bk "b", b] in
              let expected = create_table [bk "a", a] in
-             test_table expected toml;
+             assert_table_equal expected toml;
             );
 
           "Nested array of tables, official example" >::
@@ -220,33 +219,23 @@ let suite =
              assert_equal 3 (Toml.Table.cardinal apple);
              assert_equal "apple" (get_string (bk "name") apple);
 
-             (* FIXME: Order should not matter but it does.
-              * Test fails with
-              * let expected_physical = create_table [
-              *                             bk "color", of_string "red";
-              *                             bk "shape", of_string "round" ]
-              * but not with:
-              * let expected_physical = create_table [
-              *                             bk "shape", of_string "round";
-              *                             bk "color", of_string "red" ]
-              *)
              let physical = get_table (bk "physical") apple in
              let expected_physical = create_table [
                                          bk "color", of_string "red";
                                          bk "shape", of_string "round";
                                        ] in
-             test_table expected_physical physical;
+             assert_table_equal expected_physical physical;
 
              let apple_varieties = get_table_array (bk "variety") apple in
              assert_equal 2 (List.length apple_varieties);
 
              let expected_red_delicious =
                create_table [bk "name", of_string "red delicious" ] in
-             test_table expected_red_delicious (List.hd apple_varieties);
+             assert_table_equal expected_red_delicious (List.hd apple_varieties);
 
              let expected_granny_smith =
                create_table [ bk "name", of_string "granny smith" ] in
-             test_table expected_granny_smith
+             assert_table_equal expected_granny_smith
                         (List.rev apple_varieties |> List.hd);
 
              let banana = List.rev fruits |> List.hd in

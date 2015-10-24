@@ -7,6 +7,15 @@ module K = Toml.Table.Key
 let bk = K.bare_key_of_string
 let qk = K.quoted_key_of_string
 
+let assert_table_equal expected testing =
+  OUnit.assert_equal
+               ~cmp:(fun x y -> Compare.table x y == 0)
+               ~printer:(fun x -> let buf = Buffer.create 42 in
+                                  Printer.table
+			            (Format.formatter_of_buffer buf) x ;
+		                  Buffer.contents buf)
+               expected testing
+
 (* Create a new table containing [kvs], a key-value list. *)
 (* Use List.rev because otherwise = complains, ugh *)
 let create_table kvs =

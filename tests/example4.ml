@@ -5,15 +5,6 @@ open Utils
 (* This test file expects example.toml from official toml repo read *)
 let toml = Parser.from_filename "./example4.toml"
 
-let test expected testing =
-  fun () ->  OUnit.assert_equal
-               ~cmp:(fun x y -> Compare.table x y == 0)
-               ~printer:(fun x -> let buf = Buffer.create 42 in
-                                  Printer.table
-			            (Format.formatter_of_buffer buf) x ;
-		                  Buffer.contents buf)
-               expected testing
-
 let expected =
   create_table [ 
     bk"table",
@@ -208,4 +199,4 @@ let expected =
 
 let suite =
   "Official example.toml file" >:::
-    [ "example4.toml parsing" >:: test toml expected ; ]
+    [ "example4.toml parsing" >:: (fun () -> assert_table_equal toml expected); ]
