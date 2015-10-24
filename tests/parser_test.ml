@@ -309,6 +309,49 @@ let suite =
              assert_equal "ω" (get_string (bk "key") toml) ;
              assert_equal "中国!" (get_string (bk "key2") toml)) ;
 
+          "Inline table" >::
+            (fun () ->
+              let str = "key = { it_key1 = 1, it_key2 = '2' }" in
+              let toml = Parser.from_string str in
+              let expected = create_table [
+                  bk"key",
+                    create_table_as_value [
+                      bk"it_key1", of_int 1;
+                      bk"it_key2", of_string "2";
+                    ];
+                ]
+              in
+              assert_table_equal expected toml;
+            );
+          "Empty inline table" >::
+            (fun () ->
+              let str = "key = {}" in
+              let toml = Parser.from_string str in
+              let expected = create_table [
+                  bk"key",
+                  create_table_as_value []
+                ]
+              in
+              assert_table_equal expected toml;
+            );
+          "Nested inline tables" >::
+            (fun () ->
+              let str = "key = { it_key1 = 1, it_key2 = '2', it_key3 = { nested_it_key = 'nested value' } }" in
+              let toml = Parser.from_string str in
+              let expected = create_table [
+                  bk"key",
+                    create_table_as_value [
+                      bk"it_key1", of_int 1;
+                      bk"it_key2", of_string "2";
+                      bk"it_key3",
+                        create_table_as_value [
+                          bk"nested_it_key", of_string "nested value";
+                        ]
+                    ];
+                ]
+              in
+              assert_table_equal expected toml;
+            );
           "Error location when endlines in strings" >::
             (fun () ->
              let str =
