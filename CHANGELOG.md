@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.0
+
+* Add support for version 0.4 of the language.
+
 ## 2.2.1
 
 * Fixed dependencies.
