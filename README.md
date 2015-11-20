@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/mackwic/To.ml.png?branch=master)](https://travis-ci.org/mackwic/To.ml)
 [![Coverage Status](https://coveralls.io/repos/mackwic/To.ml/badge.png?branch=master)](https://coveralls.io/r/mackwic/To.ml?branch=master)
 
-OCaml parser for TOML [(Tom's Obvious Minimal Language)](https://github.com/mojombo/toml) v0.2.0.
+OCaml parser for TOML [(Tom's Obvious Minimal Language)](https://github.com/mojombo/toml) v0.4.0.
 
 ## Table of contents
 
