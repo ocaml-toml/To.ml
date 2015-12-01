@@ -3,7 +3,7 @@ open TomlTypes
 open Utils
 
 (* This test file expects example.toml from official toml repo read *)
-let toml = Toml.Parser.from_filename "./example.toml"
+let toml = Toml.Parser.(from_filename "./example.toml" |> unsafe)
 
 let expected =
   Toml.of_key_values

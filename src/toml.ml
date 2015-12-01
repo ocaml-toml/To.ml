@@ -11,11 +11,12 @@ module Parser = struct
     position: int;
   }
 
-  exception Error of (string * location)
+  type result = [`Ok of TomlTypes.table | `Error of (string * location)]
 
   let parse lexbuf source =
     try
-      TomlParser.toml TomlLexer.tomlex lexbuf
+      let result = TomlParser.toml TomlLexer.tomlex lexbuf in
+      `Ok result
     with (TomlParser.Error | Failure _) as error ->
       let formatted_error_msg = match error with
       | Failure failure_msg -> Printf.sprintf ": %s" failure_msg
@@ -31,10 +32,18 @@ module Parser = struct
         Printf.sprintf "Error in %s at line %d at column %d (position %d)%s"
           source location.line location.column location.position formatted_error_msg
       in
-      raise (Error (msg, location))
+      `Error (msg, location)
   let from_string s = parse (Lexing.from_string s) "<string>"
   let from_channel c = parse (Lexing.from_channel c) "<channel>"
   let from_filename f = parse (open_in f |> Lexing.from_channel) f
+
+  exception Error of (string * location)
+
+  (** A combinator to force the result. Raise [Error] if the result was [`Ok] *)
+  let unsafe result =
+    match result with
+    | `Ok toml_table          -> toml_table
+    | `Error (msg, location)  -> raise (Error (msg, location))
 end
 
 module Compare = struct

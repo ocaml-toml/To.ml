@@ -16,8 +16,9 @@ module Parser : sig
     position: int;
   }
 
-  (** Exception raised when a parsing error occurs. Contains a (message, location) tuple. *)
-  exception Error of (string * location)
+  (** Parsing result. Either Ok or error (which contains a (message, location)
+      tuple). *)
+  type result = [`Ok of TomlTypes.table | `Error of (string * location)]
 
   (**
    Given a lexer buffer and a source (eg, a filename), returns a Toml table.
@@ -25,7 +26,7 @@ module Parser : sig
    @raise Toml.Parser.Error if the buffer is not valid Toml.
    @since 2.0.0
    *)
-  val parse : Lexing.lexbuf -> string -> TomlTypes.table
+  val parse : Lexing.lexbuf -> string -> result
 
   (**
    Given an UTF-8 string, returns a Toml table.
@@ -33,7 +34,7 @@ module Parser : sig
    @raise Toml.Parser.Error if the string is not valid Toml.
    @since 2.0.0
   *)
-  val from_string : string -> TomlTypes.table
+  val from_string : string -> result
 
   (**
    Given an input channel, returns a Toml table.
@@ -41,7 +42,7 @@ module Parser : sig
    @raise Toml.Parser.Error if the data in the channel is not valid Toml.
    @since 2.0.0
   *)
-  val from_channel : in_channel -> TomlTypes.table
+  val from_channel : in_channel -> result
 
   (**
    Given a filename, returns a Toml table.
@@ -50,7 +51,12 @@ module Parser : sig
    @raise Pervasives.Sys_error if the file could not be opened.
    @since 2.0.0
   *)
-  val from_filename : string -> TomlTypes.table
+  val from_filename : string -> result
+
+  exception Error of (string * location)
+
+  (** A combinator to force the result. Raise [Error] if the result was [`Ok] *)
+  val unsafe : result -> TomlTypes.table
 
 end
 
