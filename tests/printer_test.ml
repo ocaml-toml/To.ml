@@ -1,31 +1,32 @@
 open OUnit
 open Utils
-open Toml
+open TomlTypes
 
 let test fn expected testing =
   fun () -> assert_equal ~printer:(fun x -> x)
                          expected
-                         (string_of_value (fn testing))
+                         (Toml.Printer.string_of_value (fn testing))
 
-let test_string = test of_string
-let test_bool = test of_bool
-let test_int = test of_int
-let test_float = test of_float
-let test_date = test of_date
+let test_string = test (fun v -> TString v) 
+let test_bool = test (fun v -> TBool v)
+let test_int = test (fun v -> TInt v)
+let test_float = test (fun v -> TFloat v)
+let test_date = test (fun v -> TDate v)
 
-let test_int_array = test of_int_array
-let test_bool_array = test of_bool_array
-let test_float_array = test of_float_array
-let test_string_array = test of_string_array
-let test_date_array = test of_date_array
+let test_int_array = test (fun v -> TArray (NodeInt v))
+let test_bool_array = test (fun v -> TArray (NodeBool v)) 
+let test_float_array = test (fun v -> TArray (NodeFloat v))
+let test_string_array = test (fun v -> TArray (NodeString v))
+let test_date_array = test (fun v -> TArray (NodeDate v))
 
-let test_array_array =
-  test of_array_array
+let test_array_array = test (fun v -> TArray (NodeArray v))
 
-let test_table expected testing =
+let test_table expected key_values =
   fun () -> assert_equal ~printer:(fun x -> x)
                          (String.concat "\n" expected ^ "\n")
-                         (toml_table testing)
+                         ((TTable
+                             (Toml.of_key_values key_values)) |>
+                                            Toml.Printer.string_of_value)
 
 let suite =
   "Printing simple" >:::
@@ -84,30 +85,32 @@ let suite =
       "table" >::
         test_table
           [ "[dog]"; "type = \"golden retriever\"" ]
-          [ bk"dog", of_table (create_table
-                                [bk"type", of_string "golden retriever"])] ;
+          [ Toml.key "dog", TTable (Toml.of_key_values
+                                [Toml.key "type", TString "golden retriever"])] ;
 
       "nested tables" >::
         test_table
           [ "[dog.tater]"; "type = \"pug\"" ]
-          [ bk"dog", of_table (create_table
-                                 [bk"tater", of_table (create_table
-                                                         [bk"type",
-                                                          of_string "pug"])])] ;
+          [ Toml.key "dog", TTable (Toml.of_key_values
+                                 [Toml.key "tater", TTable (Toml.of_key_values
+                                                         [Toml.key "type",
+                                                          TString "pug"])])] ;
 
       "table of empty array of tables" >::
         (fun () ->
          assert_equal ~printer:(fun x -> x) ""
-                      (string_of_table
-                         (create_table [bk"dog", [] |> of_table_array]))) ;
+                      (Toml.Printer.string_of_table
+                         (Toml.of_key_values [
+                             Toml.key "dog", TArray
+                                                           (NodeTable [])])));
 
       "table of array of tables" >::
         test_table
           [ "[[dog]]" ; "[dog.tater]"; "type = \"pug\""]
-          [bk"dog", [create_table
-                     [bk"tater", of_table (create_table
-                                             [bk"type", of_string "pug"])]
-                  ] |> of_table_array] ;
+          [Toml.key "dog", TArray (NodeTable [Toml.of_key_values
+                     [Toml.key "tater", TTable (Toml.of_key_values
+                                             [Toml.key "type", TString "pug"])]
+                  ])] ;
 
       "table of nested array of tables" >::
         test_table
@@ -115,64 +118,64 @@ let suite =
             "[[dog.dalmatian]]"; "number = 1";
             "[[dog.dalmatian]]"; "number = 2" ]
 
-          [bk"dog",
-           [ create_table
-               [bk"tater", of_table (create_table
-                                        [bk"type", of_string "pug"])] ;
-             create_table
-               [bk"dalmatian",
-                 [ create_table [bk"number", of_int 1];
-                   create_table [bk"number", of_int 2] ]
-                 |> of_table_array ] ]
-           |> of_table_array] ;
+          [Toml.key "dog",
+           TArray (NodeTable [
+             Toml.of_key_values
+               [Toml.key "tater", TTable (Toml.of_key_values
+                                        [Toml.key "type", TString "pug"])] ;
+             Toml.of_key_values
+               [Toml.key "dalmatian",
+                 TArray (NodeTable [ Toml.of_key_values [Toml.key "number", TInt 1];
+                   Toml.of_key_values [Toml.key "number", TInt 2] ])
+               ]])] ;
 
       "empty array of arrays" >::
         test_array_array "[]" [] ;
 
       "array of empty arrays" >::
-        test_array_array "[[]]" [V.Of.Array.int []] ;
+        test_array_array "[[]]" [NodeInt []] ;
 
       "array of arrays" >::
         test_array_array "[[2341, 2242], [true]]"
-                         [ V.Of.Array.int [2341 ; 2242] ;
-                           V.Of.Array.bool [true] ] ;
+                         [ NodeInt [2341 ; 2242] ;
+                           NodeBool [true] ] ;
       "empty array of tables" >::
         (fun () ->
          assert_raises
            (Invalid_argument "Cannot format array of tables, \
                               use Toml.Printer.table")
-           (fun () -> ignore(string_of_array (V.Of.Array.table [])))) ;
+           (fun () -> ignore(Toml.Printer.string_of_array (NodeTable [])))) ;
 
       "array of tables" >::
         (fun () ->
          assert_raises
            (Invalid_argument "Cannot format array of tables, \
                               use Toml.Printer.table")
-           (fun () -> ignore (string_of_array
-                                (V.Of.Array.table
-                                   [ create_table [bk"number", of_int 1];
-                                     create_table [bk"number", of_int 2]])))) ;
+           (fun () -> ignore (Toml.Printer.string_of_array
+                                (NodeTable
+                                   [ Toml.of_key_values [Toml.key "number", TInt 1];
+                                     Toml.of_key_values [Toml.key "number", TInt 2]])))) ;
 
       "mixed example" >::
         (fun () ->
          let level3_table =
-           create_table [ bk "is_deep", of_bool true ;
-                          bk "location", of_string "basement" ]
+           Toml.of_key_values [ Toml.key "is_deep", TBool true ;
+                          Toml.key "location", TString "basement" ]
          in
 
-         let level2_1_table = create_table [bk "level3",
-                                            of_table level3_table] in
-         let level2_2_table = create_table [bk "is_less_deep",
-                                            of_bool true] in
+         let level2_1_table = Toml.of_key_values [Toml.key "level3",
+                                            TTable level3_table] in
+         let level2_2_table = Toml.of_key_values [Toml.key "is_less_deep",
+                                            TBool true] in
 
          let level1_table =
-           create_table [bk "level2_1", of_table level2_1_table;
-                         bk "level2_2", of_table level2_2_table]
+           Toml.of_key_values [Toml.key "level2_1", TTable level2_1_table;
+                         Toml.key "level2_2", TTable level2_2_table]
          in
 
          let top_level_table =
-           create_table [bk "toplevel", of_string "ocaml" ;
-                         bk "level1", of_table level1_table]
+           Toml.of_key_values [Toml.key "toplevel", TString "ocaml" ;
+                         Toml.key "level1", TTable level1_table]
          in
 
          assert_equal ~printer:(fun x -> x)
@@ -182,7 +185,7 @@ let suite =
                                   "location = \"basement\"";
                                   "[level1.level2_2]";
                                   "is_less_deep = true";]) ^ "\n")
-           (top_level_table |> string_of_table));
+           (top_level_table |> Toml.Printer.string_of_table));
 
 
     ]

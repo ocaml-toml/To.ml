@@ -2,7 +2,7 @@ open OUnit
 open Utils
 
 let test_bad_bk k =
-  fun () -> assert_raises (K.Bad_key k) (fun () -> bk k)
+  fun () -> assert_raises (TomlTypes.Table.Key.Bad_key k) (fun () -> Toml.key k)
 
 let suite =
   "Printing values" >:::
@@ -11,7 +11,8 @@ let suite =
       "good key" >::
         (fun () ->
          test_string "\"my_good_unicodé_key\""
-                     (K.to_string (qk "my_good_unicodé_key")) );
+                     (TomlTypes.Table.Key.to_string
+                        (TomlTypes.Table.Key.quoted_key_of_string "my_good_unicodé_key")) );
 
       "key with spaces" >:: test_bad_bk "key with spaces" ;
 

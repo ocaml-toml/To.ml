@@ -1,4 +1,3 @@
-
 open OUnit
 
 let _ =
@@ -8,7 +7,7 @@ let _ =
         Parser_test.suite;
         Key_test.suite;
         Printer_test.suite ;
-        Example.suite ;
-        Example4.suite ;
+        Example.suite;
+        Example4.suite;
       ] in
   OUnit.run_test_tt_main suites

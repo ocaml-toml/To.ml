@@ -1,3 +1,5 @@
+open TomlTypes
+
 module Parser = struct
 
   open Lexing
@@ -35,166 +37,31 @@ module Parser = struct
   let from_filename f = parse (open_in f |> Lexing.from_channel) f
 end
 
-module Table = struct
+module Compare = struct
 
-  include TomlInternal.Type.Map
+  let rec list_compare ~f l1 l2 = match l1, l2 with
+    | head1::tail1, head2::tail2  ->
+      let comp_result = f head1 head2 in
+      if comp_result != 0 then
+        comp_result
+      else
+        list_compare ~f tail1 tail2
+    | [], head2::tail2            -> -1
+    | head1::tail1, []            -> 1
+    | [], []                      -> 0
 
-  module Key = struct
-    include TomlInternal.Type.Key
-  end
+  let rec value (x : TomlTypes.value) (y : TomlTypes.value) = match x, y with
+    | TArray x, TArray y -> array x y
+    | TTable x, TTable y -> table x y
+    | _, _               -> compare x y
 
-end
-
-let key = Table.Key.bare_key_of_string
-let bare_key_of_string = Table.Key.bare_key_of_string
-let quoted_key_of_string = Table.Key.quoted_key_of_string
-
-module Value = struct
-
-  type value = TomlInternal.Type.value
-  type array = TomlInternal.Type.array
-  type table = value Table.t
-
-  module To = struct
-
-    open TomlInternal.Type
-
-    exception Bad_type of string
-
-    let exn cast_type value =
-      let actual_type =
-        match value with
-        | TBool   _ -> "bool"
-        | TInt    _ -> "int"
-        | TFloat  _ -> "float"
-        | TString _ -> "string"
-        | TDate   _ -> "date"
-        | TTable  _ -> "table"
-        | TArray  _ -> "array"
-      in
-      raise (Bad_type (
-          Printf.sprintf "attempted to cast as %s, actual type is %s"
-            cast_type actual_type))
-
-    let bool    = function TBool b   -> b | _ as v -> exn "bool" v
-    let int     = function TInt i    -> i | _ as v -> exn "int" v
-    let float   = function TFloat f  -> f | _ as v -> exn "float" v
-    let string  = function TString s -> s | _ as v -> exn "string" v
-    let date    = function TDate d   -> d | _ as v -> exn "date" v
-    let table   = function TTable t  -> t | _ as v -> exn "table" v
-    let array   = function TArray a  -> a | _ as v -> exn "array" v
-
-    module Array = struct
-
-      let maybe_empty fn = function NodeEmpty -> [] | a -> fn a
-
-      let exn cast_type value =
-        let actual_type =
-          match value with
-          | NodeBool _    -> "array of bool"
-          | NodeInt _     -> "array of int"
-          | NodeFloat _   -> "array of float"
-          | NodeString _  -> "array of string"
-          | NodeDate _    -> "array of date"
-          | NodeArray _   -> "array of array"
-          | NodeTable _   -> "array of table"
-          | NodeEmpty     -> "empty"
-        in
-        raise (Bad_type (
-            Printf.sprintf "attempted to cast as %s, actual type is %s"
-              cast_type actual_type))
-
-      let bool = maybe_empty
-          (function NodeBool b   -> b | _ as v -> exn "bool array" v)
-      let int = maybe_empty
-          (function NodeInt i    -> i | _ as v -> exn "int array" v)
-      let float = maybe_empty
-          (function NodeFloat f  -> f | _ as v -> exn "float array" v)
-      let string = maybe_empty
-          (function NodeString s -> s | _ as v -> exn "string array" v)
-      let date = maybe_empty
-          (function NodeDate d   -> d | _ as v -> exn "date array" v)
-      let array = maybe_empty
-          (function NodeArray a  -> a | _ as v -> exn "array array" v)
-      let table = maybe_empty
-          (function NodeTable a  -> a | _ as v -> exn "table array" v)
-    end
-
-  end
-
-  module Of = struct
-
-    open TomlInternal.Type
-
-    let bool b   = TBool b
-    let int i    = TInt i
-    let float f  = TFloat f
-    let string s = TString s
-    let date d   = TDate d
-    let table t  = TTable t
-    let array a  = TArray a
-
-    module Array = struct
-      let maybe_empty fn = function [] -> NodeEmpty | a -> fn a
-
-      let bool b   = maybe_empty (fun b -> NodeBool b) b
-      let int i    = maybe_empty (fun i -> NodeInt i) i
-      let float f  = maybe_empty (fun f -> NodeFloat f) f
-      let string s = maybe_empty (fun s -> NodeString s) s
-      let date d   = maybe_empty (fun d -> NodeDate d) d
-      let array a  = maybe_empty (fun a -> NodeArray a) a
-      let table t  = NodeTable t
-    end
-  end
+  and array (x : TomlTypes.array) (y : TomlTypes.array) = match x, y with
+    | NodeTable nt1, NodeTable nt2 -> list_compare ~f:table nt1 nt2
+    | _ -> compare x y
+  and table (x : TomlTypes.table) (y : TomlTypes.table) =
+    TomlTypes.Table.compare value x y
 
 end
-
-let to_bool = Value.To.bool
-let to_int = Value.To.int
-let to_float = Value.To.float
-let to_string = Value.To.string
-let to_date = Value.To.date
-let to_table = Value.To.table
-
-let to_bool_array value = Value.To.array value |> Value.To.Array.bool
-let to_int_array value = Value.To.array value |> Value.To.Array.int
-let to_float_array value = Value.To.array value |> Value.To.Array.float
-let to_string_array value = Value.To.array value |> Value.To.Array.string
-let to_date_array value = Value.To.array value |> Value.To.Array.date
-let to_array_array value = Value.To.array value |> Value.To.Array.array
-let to_table_array value = Value.To.array value |> Value.To.Array.table
-
-let get_bool key table = Table.find key table |> to_bool
-let get_int key table = Table.find key table |> to_int
-let get_float key table = Table.find key table |> to_float
-let get_string key table = Table.find key table |> to_string
-let get_date key table = Table.find key table |> to_date
-let get_table key table = Table.find key table |> to_table
-
-let get_bool_array key table = Table.find key table |> to_bool_array
-let get_int_array key table = Table.find key table |> to_int_array
-let get_float_array key table = Table.find key table |> to_float_array
-let get_string_array key table = Table.find key table |> to_string_array
-let get_date_array key table = Table.find key table |> to_date_array
-let get_array_array key table = Table.find key table |> to_array_array
-let get_table_array key table = Table.find key table |> to_table_array
-
-let of_bool = Value.Of.bool
-let of_int = Value.Of.int
-let of_float = Value.Of.float
-let of_string = Value.Of.string
-let of_date = Value.Of.date
-let of_table = Value.Of.table
-
-let of_bool_array value = Value.Of.Array.bool value |> Value.Of.array
-let of_int_array value = Value.Of.Array.int value |> Value.Of.array
-let of_float_array value = Value.Of.Array.float value |> Value.Of.array
-let of_string_array value = Value.Of.Array.string value |> Value.Of.array
-let of_date_array value = Value.Of.Array.date value |> Value.Of.array
-let of_array_array value = Value.Of.Array.array value |> Value.Of.array
-let of_table_array value = Value.Of.Array.table value |> Value.Of.array
-
-module Compare = TomlInternal.Compare
 
 module Printer = struct
 
@@ -204,4 +71,14 @@ module Printer = struct
 
   let array formatter toml_array = TomlPrinter.array formatter toml_array
 
+  let string_of_value = TomlPrinter.string_of_value
+
+  let string_of_table = TomlPrinter.string_of_table
+
+  let string_of_array = TomlPrinter.string_of_array
+
 end
+
+let key = TomlTypes.Table.Key.bare_key_of_string
+
+let of_key_values = TomlTypes.Table.of_key_values

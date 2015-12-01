@@ -1,44 +1,41 @@
-open Toml
 open OUnit
-module T = Toml.Table
-module V = Toml.Value
-module K = Toml.Table.Key
-
-let bk = K.bare_key_of_string
-let qk = K.quoted_key_of_string
 
 let assert_table_equal expected testing =
   OUnit.assert_equal
-               ~cmp:(fun x y -> Compare.table x y == 0)
+               ~cmp:(fun x y -> Toml.Compare.table x y == 0)
                ~printer:(fun x -> let buf = Buffer.create 42 in
-                                  Printer.table
+                                  Toml.Printer.table
 			            (Format.formatter_of_buffer buf) x ;
 		                  Buffer.contents buf)
                expected testing
 
-(* Create a new table containing [kvs], a key-value list. *)
-(* Use List.rev because otherwise = complains, ugh *)
-let create_table kvs =
-  List.fold_left (fun t (k, v) -> T.add k v t) T.empty (List.rev kvs)
+let force_opt opt =
+  match opt with
+  | Some value  -> value
+  | None        -> failwith "No value"
 
-(* Same as [create_table], but return table as [value] instead of [table]. *)
-let create_table_as_value kvs =
-  of_table (create_table kvs)
+let get_string k toml_table =
+  TomlLenses.(get toml_table (key k |-- string)) |> force_opt
 
-let mk_printer fn =
-  fun x ->
-  let b = Buffer.create 100 in
-  let fmt = Format.formatter_of_buffer b in
-  fn fmt x;
-  Buffer.contents b
+let get_int k toml_table =
+  TomlLenses.(get toml_table (key k |-- int)) |> force_opt
 
-let string_of_table = mk_printer Toml.Printer.table
-let string_of_value = mk_printer Toml.Printer.value
-let string_of_array = mk_printer Toml.Printer.array
+let get_float k toml_table =
+  TomlLenses.(get toml_table (key k |-- float)) |> force_opt
 
-let toml_table key_values =
-  create_table key_values |> string_of_table
+let get_bool k toml_table =
+  TomlLenses.(get toml_table (key k |-- bool)) |> force_opt
 
+let get_bool_array k toml_table =
+  TomlLenses.(get toml_table (key k |-- array |-- bools)) |> force_opt
+
+let get_table k toml_table =
+  TomlLenses.(get toml_table (key k |-- table)) |> force_opt
+
+let get_table_array k toml_table =
+  TomlLenses.(get toml_table (key k |-- array |-- tables)) |> force_opt
+
+let test_value = assert_equal ~printer:Toml.Printer.string_of_value
 let test_string = assert_equal ~printer:(fun x -> x)
 let test_int = assert_equal ~printer:string_of_int
 let test_float = assert_equal ~printer:string_of_float

@@ -1,7 +1,7 @@
-open TomlInternal.Type
+open TomlTypes
 
-module TomlMap = TomlInternal.Type.Map
-module TomlKey = TomlInternal.Type.Key
+module TomlMap = TomlTypes.Table
+module TomlKey = TomlTypes.Table.Key
 
 let maybe_escape_char formatter ch =
   match ch with
@@ -89,6 +89,7 @@ and print_table formatter toml_table sections =
   (* iter() guarantees that keys are returned in ascending order *)
   TomlMap.iter print_key_value table_with_non_table_values;
   TomlMap.iter print_key_value table_with_table_values
+
 and print_value formatter toml_value sections =
   match toml_value with
   | TBool value   -> print_bool formatter value
@@ -138,3 +139,14 @@ let array formatter toml_array =
 let table formatter toml_table =
   print_table formatter toml_table [];
   Format.pp_print_flush formatter ()
+
+let mk_printer fn =
+  fun x ->
+  let b = Buffer.create 100 in
+  let fmt = Format.formatter_of_buffer b in
+  fn fmt x;
+  Buffer.contents b
+
+let string_of_table = mk_printer table
+let string_of_value = mk_printer value
+let string_of_array = mk_printer array

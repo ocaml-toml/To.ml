@@ -1,9 +1,6 @@
-(** This module is for internal usage only,
-    and is not exposed in final library. *)
+(** {2 Toml tables} *)
 
-module Type = struct
-
-  (** {2 Toml tables} *)
+module Table = struct
 
   module Key : sig
     type t
@@ -50,58 +47,31 @@ module Type = struct
       String.compare (to_string m1) (to_string m2)
 
   end
+  
+  include Map.Make(Key)
 
-  module Map = Map.Make(Key)
-
-  (** {2 Toml values} *)
-
-  type array =
-    | NodeEmpty
-    | NodeBool of bool list
-    | NodeInt of int list
-    | NodeFloat of float list
-    | NodeString of string list
-    | NodeDate of float list
-    | NodeArray of array list (* this can have any type *)
-    | NodeTable of table list
-
-  and value =
-    | TBool of bool
-    | TInt of int
-    | TFloat of float
-    | TString of string
-    | TDate of float
-    | TArray of array
-    | TTable of table
-
-  and table = value Map.t
+  let of_key_values key_values = List.fold_left ( fun tbl (key, value) ->
+      add key value tbl) empty key_values
 
 end
 
-module Compare = struct
+type array =
+  | NodeEmpty
+  | NodeBool of bool list
+  | NodeInt of int list
+  | NodeFloat of float list
+  | NodeString of string list
+  | NodeDate of float list
+  | NodeArray of array list (* this can have any type *)
+  | NodeTable of table list
 
-  open Type
+and value =
+  | TBool of bool
+  | TInt of int
+  | TFloat of float
+  | TString of string
+  | TDate of float
+  | TArray of array
+  | TTable of table
 
-  let rec list_compare ~f l1 l2 = match l1, l2 with
-    | head1::tail1, head2::tail2  ->
-      let comp_result = f head1 head2 in
-      if comp_result != 0 then
-        comp_result
-      else
-        list_compare ~f tail1 tail2
-    | [], head2::tail2            -> -1
-    | head1::tail1, []            -> 1
-    | [], []                      -> 0
-
-  let rec value (x : Type.value) (y : Type.value) = match x, y with
-    | TArray x, TArray y -> array x y
-    | TTable x, TTable y -> table x y
-    | _, _               -> compare x y
-
-  and array (x : Type.array) (y : Type.array) = match x, y with
-    | NodeTable nt1, NodeTable nt2 -> list_compare ~f:table nt1 nt2
-    | _ -> compare x y
-  and table (x : Type.table) (y : Type.table) =
-    Type.Map.compare value x y
-
-end
+and table = value Table.t

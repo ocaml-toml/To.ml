@@ -1,55 +1,55 @@
 open OUnit
-open Toml
+open TomlTypes
 open Utils
 
 (* This test file expects example.toml from official toml repo read *)
-let toml = Parser.from_filename "./example.toml"
+let toml = Toml.Parser.from_filename "./example.toml"
 
 let expected =
-  create_table
-    [ bk"title",
-      of_string "TOML Example" ;
+  Toml.of_key_values
+    [ Toml.key "title",
+      TString "TOML Example" ;
 
-      bk"owner",
-      create_table_as_value
-        [ bk"name", of_string "Tom Preston-Werner";
-          bk"organization", of_string "GitHub";
-          bk"bio", of_string "GitHub Cofounder & CEO\n\
-                              Likes tater tots and beer.";
-          bk"dob", of_date 296638320. (* 1979-05-27T07:32:00 *) ] ;
+      Toml.key "owner",
+        TTable (Toml.of_key_values
+          [ Toml.key "name", TString "Tom Preston-Werner";
+            Toml.key "organization", TString "GitHub";
+            Toml.key "bio", TString "GitHub Cofounder & CEO\n\
+                                Likes tater tots and beer.";
+            Toml.key "dob", TDate 296638320. (* 1979-05-27T07:32:00 *) ]) ;
 
-      bk"database",
-      create_table_as_value
-        [ bk"server", of_string "192.168.1.1" ;
-          bk"ports", of_int_array [8001; 8001; 8002] ;
-          bk"connection_max", of_int 5000;
-          bk"enabled", of_bool true] ;
+      Toml.key "database",
+        TTable (Toml.of_key_values
+          [ Toml.key "server", TString "192.168.1.1" ;
+            Toml.key "ports", TArray (NodeInt [8001; 8001; 8002]) ;
+            Toml.key "connection_max", TInt 5000;
+            Toml.key "enabled", TBool true]) ;
 
-      bk"servers",
-      create_table_as_value
-        [ bk"alpha",
-          create_table_as_value [bk"ip", of_string "10.0.0.1" ;
-                                 bk"dc", of_string "eqdc10" ] ;
-          bk"beta",
-          create_table_as_value [bk"ip", of_string "10.0.0.2";
-                                 bk"dc", of_string "eqdc10";
-                                 bk"country", of_string "中国" ] ] ;
+      Toml.key "servers",
+        TTable (Toml.of_key_values
+          [ Toml.key "alpha",
+            TTable (Toml.of_key_values [Toml.key "ip", TString "10.0.0.1" ;
+                                   Toml.key "dc", TString "eqdc10" ]) ;
+            Toml.key "beta",
+            TTable (Toml.of_key_values [Toml.key "ip", TString "10.0.0.2";
+                                   Toml.key "dc", TString "eqdc10";
+                                   Toml.key "country", TString "中国" ] )]) ;
 
-      bk"clients",
-      create_table_as_value
-        [ bk"data", of_array_array [
-                        V.Of.Array.string ["gamma"; "delta"];
-                        V.Of.Array.int [1; 2] ];
-          bk"hosts", of_string_array ["alpha"; "omega"] ];
+      Toml.key "clients",
+        TTable (Toml.of_key_values
+          [ Toml.key "data", TArray (NodeArray[
+                          NodeString ["gamma"; "delta"];
+                          NodeInt [1; 2] ]);
+            Toml.key "hosts", TArray (NodeString ["alpha"; "omega"]) ]);
 
-      bk"products",
-      of_table_array [ create_table [
-                           bk"name", of_string "Hammer";
-                           bk"sku", of_int 738594937];
-                       create_table [
-                           bk"name", of_string "Nail";
-                           bk"sku", of_int 284758393;
-                           bk"color", of_string "gray"] ] ;
+      Toml.key "products",
+        TArray (NodeTable [ Toml.of_key_values [
+                           Toml.key "name", TString "Hammer";
+                           Toml.key "sku", TInt 738594937];
+                       Toml.of_key_values [
+                           Toml.key "name", TString "Nail";
+                           Toml.key "sku", TInt 284758393;
+                           Toml.key "color", TString "gray"] ]) ;
     ]
 
 

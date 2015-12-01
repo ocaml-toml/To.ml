@@ -6,5 +6,7 @@
 #directory "_build/src/";;
 #directory "_build/tests/";;
 #load "toml.cma";;
+#load "tomlTypes.cmo";;
+#load "tomlLenses.cmo";;
 (* vim:syntax=ocaml:
 *)

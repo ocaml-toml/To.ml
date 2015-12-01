@@ -1,9 +1,9 @@
 %{
-    open TomlInternal.Type
+    open TomlTypes
 
     type t = Value of value
-           | Table of (Key.t, t) Hashtbl.t
-           | Tables of ((Key.t, t) Hashtbl.t) list
+           | Table of (Table.Key.t, t) Hashtbl.t
+           | Tables of ((Table.Key.t, t) Hashtbl.t) list
 
     (* Indicate if the given table is a [Regular] table (i.e. its name
      * is its real name), or if it is a [ArrayElement] (i.e. its name
@@ -68,7 +68,7 @@
 
       try match Hashtbl.find t k with
           | Tables ts -> Hashtbl.replace t k (insert_table ts kvs);
-          | Table _   -> failwith (Printf.sprintf "%s is a table, not an array of tables" (Key.to_string k))
+          | Table _   -> failwith (Printf.sprintf "%s is a table, not an array of tables" (Table.Key.to_string k))
           | Value _   -> failwith ("add_to_nested_table")
       with Not_found  -> Hashtbl.add t k (insert_table [] kvs)
 
@@ -81,8 +81,8 @@
                             |> List.map htbl_to_map))
 
     and htbl_to_map h =
-      Hashtbl.fold (fun k v map -> Map.add k (convert v) map)
-                   h Map.empty
+      Hashtbl.fold (fun k v map -> Table.add k (convert v) map)
+                   h Table.empty
 
     let to_table key_values key_value_groups =
       let t = Hashtbl.create 0 in
@@ -107,9 +107,9 @@
 
 %start toml
 
-%type <TomlInternal.Type.table> toml
-%type <TomlInternal.Type.Key.t * TomlInternal.Type.value> keyValue
-%type <TomlInternal.Type.array> array_start
+%type <TomlTypes.table> toml
+%type <Table.Key.t * TomlTypes.value> keyValue
+%type <TomlTypes.array> array_start
 
 %%
 (* Grammar rules *)
@@ -122,8 +122,8 @@ group_header:
  | LBRACK key_path RBRACK               { Regular, $2 }
 
 key:
- | STRING { Key.quoted_key_of_string $1 }
- | KEY    { Key.bare_key_of_string $1 }
+ | STRING { Table.Key.quoted_key_of_string $1 }
+ | KEY    { Table.Key.bare_key_of_string $1 }
 
 key_path: k = separated_nonempty_list (DOT, key) { k }
 
