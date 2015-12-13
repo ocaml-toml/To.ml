@@ -180,6 +180,8 @@ let compose (l1:('a, 'b) lens) (l2:('c, 'a)lens) = {
 
 let (|--) l1 l2 = compose l2 l1
 
+let field k = key k |-- table
+
 let get record lens = lens.get record
 
 let set value record lens = lens.set value record

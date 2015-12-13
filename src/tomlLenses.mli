@@ -139,6 +139,14 @@ val (|--) : ('a, 'b) lens -> ('b, 'c) lens -> ('a, 'c) lens
 val key : string -> (TomlTypes.table, TomlTypes.value) lens
 
 (**
+ Combines the [key] and [table] lenses, for the common case of nested tables.
+
+ @raise TomlTypes.Table.Key.Bad_key if the key contains invalid characters.
+ @since 4.0.0
+ *)
+val field : string -> (TomlTypes.table, TomlTypes.table) lens
+
+(**
  Lens to a string value.
 
  @since 4.0.0
