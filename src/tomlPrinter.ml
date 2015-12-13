@@ -44,7 +44,10 @@ let pp_print_list ~pp_sep print_item_func formatter values =
     print_item_func formatter e;
     List.iter (fun v -> pp_sep formatter (); print_item_func formatter v) l
 
-let is_table = fun _ -> function TTable _ -> true | _ -> false
+let is_table = fun _ -> function
+  | TTable _ -> true
+  | (TArray (NodeTable _)) -> true
+  | _ -> false
 
 let is_array_of_table = fun _ -> function TArray (NodeTable _) -> true | _ -> false
 

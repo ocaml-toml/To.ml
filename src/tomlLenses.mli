@@ -101,7 +101,6 @@ val set : 'b  -> 'a -> ('a, 'b) lens -> 'a option
 
     utop # print_endline @@ Toml.Printer.string_of_table toml_data';;
 
-    [table.of]
     [[table.of.mixed_values]]
     int = 0
     str = "a"
