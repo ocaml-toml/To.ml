@@ -21,7 +21,7 @@ module Parser : sig
   type result = [`Ok of TomlTypes.table | `Error of (string * location)]
 
   (**
-   Given a lexer buffer and a source (eg, a filename), returns a Toml table.
+   Given a lexer buffer and a source (eg, a filename), returns a [result].
 
    @raise Toml.Parser.Error if the buffer is not valid Toml.
    @since 2.0.0
@@ -29,25 +29,22 @@ module Parser : sig
   val parse : Lexing.lexbuf -> string -> result
 
   (**
-   Given an UTF-8 string, returns a Toml table.
+   Given an UTF-8 string, returns a [result].
 
-   @raise Toml.Parser.Error if the string is not valid Toml.
    @since 2.0.0
   *)
   val from_string : string -> result
 
   (**
-   Given an input channel, returns a Toml table.
+   Given an input channel, returns a [result].
 
-   @raise Toml.Parser.Error if the data in the channel is not valid Toml.
    @since 2.0.0
   *)
   val from_channel : in_channel -> result
 
   (**
-   Given a filename, returns a Toml table.
+   Given a filename, returns a [result].
 
-   @raise Toml.Parser.Error if the data in the file is not valid Toml.
    @raise Pervasives.Sys_error if the file could not be opened.
    @since 2.0.0
   *)
@@ -55,7 +52,10 @@ module Parser : sig
 
   exception Error of (string * location)
 
-  (** A combinator to force the result. Raise [Error] if the result was [`Ok] *)
+  (**
+   A combinator to force the result. Raise [Error] if the result was [`Error].
+   @since 4.0.0
+  *)
   val unsafe : result -> TomlTypes.table
 
 end
@@ -112,14 +112,35 @@ module Printer : sig
   *)
   val array : Format.formatter -> TomlTypes.array -> unit
 
+  (**
+   Turns a Toml value into a string.
+   @since 4.0.0
+  *)
   val string_of_value : TomlTypes.value -> string
 
+  (**
+   Turns a Toml table into a string.
+   @since 4.0.0
+  *)
   val string_of_table : TomlTypes.table -> string
 
+  (**
+   Turns a Toml array into a string.
+   @since 4.0.0
+  *)
   val string_of_array : TomlTypes.array -> string
 
 end
 
+(**
+ Turns a string into a table key.
+ @raise TomlTypes.Table.Key.Bad_key if the key contains invalid characters.
+ @since 2.0.0
+ *)
 val key : string -> TomlTypes.Table.Key.t
 
+(**
+ Builds a Toml table out of a list of (key, value) tuples.
+ @since 4.0.0
+ *)
 val of_key_values : (TomlTypes.Table.Key.t * TomlTypes.value) list -> TomlTypes.table
