@@ -8,8 +8,6 @@ type ('a, 'b) lens = {
   set: 'b -> 'a -> 'a option;
 }
 
-val (|-) : ('a -> 'b option) -> ('b -> 'c option) -> 'a -> 'c option
-
 val modify : ('a, 'b) lens -> ('b -> 'b option) -> 'a -> 'a option
 
 val compose : ('a, 'b) lens -> ('c, 'a) lens -> ('c, 'b) lens
