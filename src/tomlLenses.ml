@@ -1,64 +1,3 @@
-(*
-let (|-) f g x = g (f x)
-
-
-
-type ('a, 'b) t = {
-    get : 'a -> 'b;
-    set : 'b -> 'a -> 'a;
-}
-
-let modify (l:(('a, 'b)t)) (f:('b -> 'b)) (a:'a) =
-  let value = l.get a in
-  let new_value = f value in
-  l.set new_value a
-
-let compose l1 l2 = {
-    get = l2.get |- l1.get;
-    (*set = l1.set |- (modify l2)*)
-    set = fun v -> modify l2 (l1.set v);
-}
-
-    TomlTypes.(
-      match Table.find (key "foo") with
-      | Some x -> match Table.find (key "bar") with
-                  | Some v -> match v with Int v -> Some v | _ -> None
-                  | _ -> None
-      | None
-    )
-
-let compose 
-   *)
-
-(* Utils *)
-(*
-
-let safe_nth idx lst =
-  try
-    let value = List.nth lst idx
-    in
-    Some value
-  with Failure "nth" -> None
-*)
-(* Composition *)
-    (*
-let (>~) f g x =
-  match f x with
-  | Some r -> g r
-  | None -> None
-       *)
-(*
-let nth_table idx (value:TomlTypes.value) =
-  let open TomlTypes in
-  match value with
-  | TArray (NodeTable arr) -> safe_nth idx arr
-  | _ -> None
-*)
-(* getters *)
-(*
-  key "a" >~ key "b" >~ key "c" >~ string "c" (TomlTypes.TTable toml) 
-*)
-
 let safe_find key table =
   try
     let value = TomlTypes.Table.find (TomlTypes.Table.Key.bare_key_of_string
@@ -66,29 +5,6 @@ let safe_find key table =
     in
     Some value
   with Not_found -> None
-
-(* [string -> ] TomlTypes.TTable t *)
-
-(* setters *)
-
-(* set value parent -> parent *)
-    (*
-let modify lens f parent =
-  match lens.get parent with
-  | Some old_value  -> begin
-      let new_value = f old_value in
-      Some (lens.set new_value parent)
-    end        
-  | None  -> None
-
-let set_key (key, new_value) (value:TomlTypes.value) =
-  match value with
-  | TomlTypes.TTable t ->
-    Some (TomlTypes.TTable (TomlTypes.Table.add (TomlTypes.Table.Key.bare_key_of_string key)
-            (new_value) t))
-  | _ -> None
-
-       *)
 
 type ('a, 'b) lens = {
   get: 'a -> 'b option;
@@ -241,30 +157,6 @@ let safe_replace idx new_value lst =
   let initial_idx = 0 in
   replace_func initial_head initial_tail initial_idx
    
-(*
-let index idx =
-  {
-    get = (fun (value:TomlTypes.value) ->
-      match value with
-      | TomlTypes.TArray lst -> begin
-          match safe_nth idx lst with
-          | Some new_lst  -> Some (TomlTypes.TArray new_lst)
-          | None -> None
-        end
-      | _ -> None);
-    set = (fun new_value value ->
-        match value with
-        | TomlTypes.TArray lst ->
-          begin
-            match safe_replace idx new_value lst with
-            | Some new_lst -> Some (TomlTypes.TArray new_lst)
-            | _ -> None
-          end
-        | _ -> None
-      )
-  }
-*)
-
 let (|-) (f:('a -> 'b option)) (g:'b -> 'c option) (x:'a) =
   match f x with
   | Some r -> g r
@@ -290,8 +182,3 @@ let (|--) l1 l2 = compose l2 l1
 let get record lens = lens.get record
 
 let set value record lens = lens.set value record
-
-(*
-    modify: ('b 'c) lens -> ('a 
-    modify: l2 (l1.set) parent
-   *)
