@@ -19,15 +19,15 @@ OCaml parser for TOML [(Tom's Obvious Minimal Language)](https://github.com/mojo
 
 ## A foreword to beginners
 
-New to Ocaml ? Don't worry, just check theses links to begin with:
+New to OCaml ? Don't worry, just check theses links to begin with:
 
-- [Play with Ocaml online and discover the language](http://try.ocamlpro.com/)
-- [See Ocaml code examples](http://rosettacode.org/wiki/Category:OCaml)
+- [Play with OCaml online and discover the language](http://try.ocamlpro.com/)
+- [See OCaml code examples](http://rosettacode.org/wiki/Category:OCaml)
 - [The full official list of Ocaml tutorials](http://ocaml.org/learn/tutorials/)
-- Recommanded tools:
-    - [Ocaml Package Manager](https://opam.ocaml.org) (also install compilers)
-    - [Ocaml IDE](http://www.algo-prog.info/ocaide/install.php)
-    - [Ocaml Interpretor](https://github.com/diml/utop)
+- Recommended tools:
+    - [OCaml Package Manager](https://opam.ocaml.org) (also install compilers)
+    - [OCaml IDE](http://www.algo-prog.info/ocaide/install.php)
+    - [OCaml Interpretor](https://github.com/diml/utop)
 
 ## Dependencies
 
@@ -39,7 +39,7 @@ generate code coverage summary.
 
 ## Install
 
-* Via Opam: `opam install toml`
+* Via OPAM: `opam install toml`
 * From source:
 ```bash
 git clone https://github.com/sagotch/To.ml
@@ -56,12 +56,12 @@ You can build documentation from sources with `make doc`, or browse
 
 ## Usage
 
-`open Toml` in your file(s), and link toml library when compiling. For
+`open Toml` in your file(s), and link the toml library when compiling. For
 instance, using ocamlbuild:
 ```bash
 ocamlbuild -use-ocamlfind -package toml foo.byte
 ```
-or using an ocaml toplevel (like utop):
+or using an OCaml toplevel (like utop):
 ```bash
 $ utop
 utop # #use "topfind";;
@@ -71,31 +71,69 @@ utop # #require "toml";; (* now you can use the Toml module *)
 ### Reading Toml data
 
 ```ocaml
-utop # let parsed_toml = Toml.Parser.from_string "key=[1,2]";;
-val parsed_toml : Toml.Value.table = <abstr>
+utop # (* This will return either `Ok $tomltable or `Error $error_with_location
+*)
+let ok_or_error = Toml.Parser.from_string "key=[1,2]";;
+val ok_or_error : Toml.Parser.result = `Ok <abstr> 
 
-utop # Toml.to_int_array (Toml.key "key") parsed_toml;;
-- : int list = [1; 2]
+utop # (* You can use the 'unsafe' combinator to get the result directly, or an
+exception if a parsing error occurred *)
+let parsed_toml = Toml.Parser.(from_string "key=[1,2]" |> unsafe);;
+val parsed_toml : TomlTypes.table = <abstr>
+
+utop # (* Use simple pattern matching to read the value *)
+TomlTypes.Table.find (Toml.key "key") parsed_toml;;
+- : TomlTypes.value = TomlTypes.TArray (TomlTypes.NodeInt [1; 2])
 ```
 
 ### Writing Toml data
 
 ```ocaml
-# let toml_data = Toml.Table.empty |> Toml.Table.add
-  (Toml.key "key") (Toml.of_int_array [1;2]);;
-val toml_data : Toml.Value.value Toml.Table.t = <abstr>
+utop # let toml_data = Toml.of_key_values [
+    Toml.key "ints", TomlTypes.TArray (TomlTypes.NodeInt [1; 2]);
+    Toml.key "string", TomlTypes.TString "string value";
+];;
+val toml_data : TomlTypes.table = <abstr>
 
-# let buffer = Buffer.create 100;;
-val buffer : Buffer.t = <abstr>
+utop # Toml.Printer.string_of_table toml_data;;
+- : bytes = "ints = [1, 2]\nstring = \"string value\"\n"
+```
 
-# let formatter = Format.formatter_of_buffer buffer;;
-val formatter : Format.formatter = <abstr>
+### Lenses
 
-# Toml.Printer.table formatter toml_data;;
-- : unit = ()
+Through lenses, it is possible to read/write deeply nested data with ease.
+The TomlLenses module provides partial lenses (that is, lenses returning
+`option` types) to manipulate Toml data structures.
 
-# Buffer.contents buffer;;
-- : bytes = "key = [1, 2]\n"
+```ocaml
+utop # let toml_data = Toml.Parser.(from_string "
+[this.is.a.deeply.nested.table]
+answer=42" |> unsafe);;
+val toml_data : TomlTypes.table = <abstr>
+
+utop # TomlLenses.(get toml_data (
+  key "this" |-- table
+  |-- key "is" |-- table
+  |-- key "a" |-- table
+  |-- key "deeply" |-- table
+  |-- key "nested" |-- table
+  |-- key "table" |-- table
+  |-- key "answer"|-- int ));;
+- : int option = Some 42
+
+utop # let maybe_toml_data' = TomlLenses.(set 2015 toml_data (
+  key "this" |-- table
+  |-- key "is" |-- table
+  |-- key "a" |-- table
+  |-- key "deeply" |-- table
+  |-- key "nested" |-- table
+  |-- key "table" |-- table
+  |-- key "answer"|-- int ));;
+val maybe_toml_data' : TomlTypes.table option = Some <abstr>
+
+utop # Toml.Printer.string_of_table toml_data';;
+- : bytes = "[this.is.a.deeply.nested.table]\nanswer = 2015\n"
+
 ```
 
 ## Limitations
