@@ -162,7 +162,6 @@ let (|-) (f:('a -> 'b option)) (g:'b -> 'c option) (x:'a) =
   | Some r -> g r
   | None -> None
 
-(* original: ('a, 'b) t -> ('b -> 'b) -> 'a -> 'a *)
 let modify (l:('a, 'b) lens) (f:('b -> 'b option)) (a:'a) =
   match l.get a with
   | Some old_value -> begin
@@ -171,6 +170,8 @@ let modify (l:('a, 'b) lens) (f:('b -> 'b option)) (a:'a) =
       | None -> None
     end
   | None -> None
+
+let update f value lens = modify lens f value
 
 let compose (l1:('a, 'b) lens) (l2:('c, 'a)lens) = {
     get = l2.get |- l1.get;
