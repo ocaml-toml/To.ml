@@ -1,8 +1,5 @@
 open TomlTypes
 
-module TomlMap = TomlTypes.Table
-module TomlKey = TomlTypes.Table.Key
-
 let maybe_escape_char formatter ch =
   match ch with
   | '"'  -> Format.pp_print_string formatter "\\\""
@@ -73,9 +70,9 @@ let rec print_array formatter toml_array sections =
          * Don't print the intermediate sections, if all values are arrays of tables,
          * print [[x.y.z]] as appropriate instead of [[x]][[y]][[z]]
          *)
-        if not (TomlMap.for_all is_array_of_table tbl)
+        if not (TomlTypes.Table.for_all is_array_of_table tbl)
         then Format.fprintf formatter "[[%s]]\n"
-            (sections |> List.map TomlKey.to_string |> String.concat ".");
+            (sections |> List.map TomlTypes.Table.Key.to_string |> String.concat ".");
         print_table formatter tbl sections) values
   | NodeEmpty         -> Format.pp_print_string formatter "[]"
 and print_table formatter toml_table sections =
@@ -84,14 +81,14 @@ and print_table formatter toml_table sections =
      * top-level values in a section by accident
      *)
   let (table_with_table_values, table_with_non_table_values) =
-    TomlMap.partition is_table toml_table
+    TomlTypes.Table.partition is_table toml_table
   in
   let print_key_value key value =
     print_value_with_key formatter key value sections
   in
   (* iter() guarantees that keys are returned in ascending order *)
-  TomlMap.iter print_key_value table_with_non_table_values;
-  TomlMap.iter print_key_value table_with_table_values
+  TomlTypes.Table.iter print_key_value table_with_non_table_values;
+  TomlTypes.Table.iter print_key_value table_with_table_values
 
 and print_value formatter toml_value sections =
   match toml_value with
@@ -110,15 +107,15 @@ and print_value_with_key formatter key toml_value sections =
        * Don't print the intermediate sections, if all values are tables,
        * print [x.y.z] as appropriate instead of [x][y][z]
        *)
-      if not (TomlMap.for_all is_table value)
+      if not (TomlTypes.Table.for_all is_table value)
       then Format.fprintf formatter "[%s]\n"
-          (sections_with_key |> List.map TomlKey.to_string |> String.concat ".");
+          (sections_with_key |> List.map TomlTypes.Table.Key.to_string |> String.concat ".");
       (sections_with_key, false)
     | TArray (NodeTable tables) ->
       let sections_with_key = sections @ [key] in
       (sections_with_key, false)
     | _             ->
-      Format.fprintf formatter "%s = " (TomlKey.to_string key);
+      Format.fprintf formatter "%s = " (TomlTypes.Table.Key.to_string key);
       (sections, true)
   in
   print_value formatter toml_value sections';
