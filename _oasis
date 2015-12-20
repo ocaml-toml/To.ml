@@ -39,7 +39,6 @@ Library toml
     BuildDepends: str, unix, ISO8601
     FindlibName: toml
     Install: true
-    #InternalModules: TomlInternal, TomlLexer, TomlParser, TomlPrinter, TomlUnicode
     InternalModules: TomlLexer, TomlParser, TomlUnicode, TomlPrinter
     Modules: Toml, TomlTypes, TomlLenses
     Path: src/
