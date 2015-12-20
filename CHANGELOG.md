@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.0.0
+
+* Reintroduces public data types (major breaking change).
+* Exception-safe parsing interface.
+* Add lenses for accessing/updating nested data.
+
 ## 3.0.0
 
 * Add support for version 0.4 of the language.
