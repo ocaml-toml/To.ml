@@ -2,7 +2,7 @@
 # DO NOT EDIT (digest: 85a51678cdb9fb6891e57db98993c828)
 version = "4.0.0"
 description = "Toml parser"
-requires = "str unix ISO8601"
+requires = "unix ISO8601"
 archive(byte) = "toml.cma"
 archive(byte, plugin) = "toml.cma"
 archive(native) = "toml.cmxa"
