@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 2d380aa0596cbc947763c8e1160b2a04)
+# DO NOT EDIT (digest: 85e9eb649b7e8d570ef59eb5fa2a616b)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -19,6 +19,13 @@ true: annot, bin_annot
 <src/*.ml{,i,y}>: package(ISO8601)
 <src/*.ml{,i,y}>: package(str)
 <src/*.ml{,i,y}>: package(unix)
+# Library toml_cconv
+"cconv/toml_cconv.cmxs": use_toml_cconv
+<cconv/*.ml{,i,y}>: package(ISO8601)
+<cconv/*.ml{,i,y}>: package(cconv)
+<cconv/*.ml{,i,y}>: package(str)
+<cconv/*.ml{,i,y}>: package(unix)
+<cconv/*.ml{,i,y}>: use_toml
 # Executable test_toml
 "tests/suite.byte": package(ISO8601)
 "tests/suite.byte": package(bisect)

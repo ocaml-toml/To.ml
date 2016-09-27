@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 85a51678cdb9fb6891e57db98993c828)
+# DO NOT EDIT (digest: 17be49d4ab6e3d254de2de4d02156d52)
 version = "4.0.0"
 description = "Toml parser"
 requires = "str unix ISO8601"
@@ -8,5 +8,15 @@ archive(byte, plugin) = "toml.cma"
 archive(native) = "toml.cmxa"
 archive(native, plugin) = "toml.cmxs"
 exists_if = "toml.cma"
+package "cconv" (
+ version = "4.0.0"
+ description = "cconv encoder/decoder for Toml parser"
+ requires = "cconv toml"
+ archive(byte) = "toml_cconv.cma"
+ archive(byte, plugin) = "toml_cconv.cma"
+ archive(native) = "toml_cconv.cmxa"
+ archive(native, plugin) = "toml_cconv.cmxs"
+ exists_if = "toml_cconv.cma"
+)
 # OASIS_STOP
 

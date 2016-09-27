@@ -136,6 +136,33 @@ utop # Toml.Printer.string_of_table toml_data';;
 
 ```
 
+### PPX support
+
+To.ml supports ppx via [cconv](https://github.com/c-cube/cconv)
+
+``` ocaml
+utop # #require "cconv.ppx";;
+utop # #require "toml.cconv";;
+
+utop # type t = { ints : int list; string : string } [@@deriving cconv];;
+type t = { ints : int list; string : string; }                                                  
+val encode : t CConv.Encode.encoder = {CConv.Encode.emit = <fun>}                               
+val decode : t CConv.Decode.decoder =
+  {CConv.Decode.dec =
+    {CConv.Decode.accept_unit = <fun>; accept_bool = <fun>;
+     accept_float = <fun>; accept_int = <fun>; accept_int32 = <fun>;
+     accept_int64 = <fun>; accept_nativeint = <fun>; accept_char = <fun>;
+     accept_string = <fun>; accept_list = <fun>; accept_option = <fun>;
+     accept_record = <fun>; accept_tuple = <fun>; accept_sum = <fun>}}
+
+utop # let toml = Toml.Parser.(from_string "ints = [1, 2]\nstring = \"string value\"\n"
+                               |> unsafe);;
+val toml : TomlTypes.table = <abstr>
+
+utop # TomlCconv.decode_exn decode toml;;
+- : t = {ints = [1; 2]; string = "string value"}
+```
+
 ## Limitations
 
 * Keys don't quite follow the Toml standard. Both section keys (eg,
