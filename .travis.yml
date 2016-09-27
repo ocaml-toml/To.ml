@@ -4,12 +4,13 @@
 language: c
 sudo: required
 install: wget https://raw.githubusercontent.com/ocaml/ocaml-ci-scripts/master/.travis-opam.sh
+install: wget https://raw.githubusercontent.com/ocaml/ocaml-ci-scripts/master/.travis-docgen.sh
 
 script:
-  - bash -ex .travis-opam.sh
+  - PACKAGE="toml" TESTS=true bash -ex .travis-opam.sh
+  - bash -ex .travis-docgen.sh
 
 env:
-  - OCAML_VERSION=4.00
   - OCAML_VERSION=4.01
   - OCAML_VERSION=4.02
   - OCAML_VERSION=4.03
