@@ -27,3 +27,5 @@ after_script:
 
 notifications:
   email: false
+
+secure: "ZeEU8rPn/O7BFsPuFXhWAmuOGJaFZIIclgQkWrGiHFqWAxU6ivKWKotQ25ulhyMuHy1tx/QRrQBWFaGrYAFUWlz4DnGXhYKYE0H5slJCMWMS++mEHNHlQYrNQoTmApI2fTxDMPhm3L+JxEggi9iJaU2/u91wynu8jraxiL+X17w="
