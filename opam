@@ -4,7 +4,7 @@ available: [ ocaml-version >= "4.01.0" ]
 
 version: "4.0.0"
 
-authors: [ "Julien Sagot" "Emmanuel Surleau" "mackwic" ]
+authors: [ "Julien Sagot" "Emmanuel Surleau" "mackwic" "Andrew Rudenko"]
 
 maintainer: "support@toml.epimeros.org"
 
@@ -18,6 +18,8 @@ install: [ [ make "install" ] ]
 remove: [ "ocamlfind" "remove" "toml" ]
 
 depends: [ "ocamlfind" "menhir" "ISO8601" ]
+
+depopts: [ "cconv" ]
 
 bug-reports: "https://github.com/mackwic/To.ml/issues"
 

@@ -13,6 +13,7 @@ Authors:
     Julien Sagot
     Emmanuel Surleau
     mackwic
+    Andrew Rudenko
 Maintainers: the TOML ML <contact@toml.epimeros.org>
 Homepage: http://mackwic.github.io/To.ml/
 
@@ -45,6 +46,20 @@ Library toml
     XMETAEnable: true
     XMETADescription: Toml parser
     XMETARequires: str, unix, ISO8601
+
+###############################################################################
+# Cconv encoder / decoder                                                     #
+###############################################################################
+Library toml_cconv
+    BuildDepends: cconv, toml
+    FindlibParent: toml
+    FindlibName: cconv
+    Install: true
+    Modules: TomlCconv
+    Path: cconv/
+    XMETAEnable: true
+    XMETADescription: cconv encoder/decoder for Toml parser
+    XMETARequires: cconv, toml
 
 ###############################################################################
 # Test executables                                                            #

@@ -6912,7 +6912,8 @@ let setup_t =
           license_file = Some "LICENCE";
           copyrights = [];
           maintainers = ["the TOML ML <contact@toml.epimeros.org>"];
-          authors = ["Julien Sagot\nEmmanuel Surleau\nmackwic"];
+          authors =
+            ["Julien Sagot\nEmmanuel Surleau\nmackwic\nAndrew Rudenko"];
           homepage = Some "http://mackwic.github.io/To.ml/";
           synopsis = "pure OCaml library for TOML v0.4.0";
           description =
