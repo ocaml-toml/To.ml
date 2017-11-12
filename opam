@@ -4,7 +4,7 @@ available: [ ocaml-version >= "4.01.0" ]
 
 version: "4.0.0"
 
-authors: [ "Julien Sagot" "Emmanuel Surleau" "mackwic" "Andrew Rudenko"]
+authors: [ "Julien Sagot" "Emmanuel Surleau" "mackwic" "Andrew Rudenko" "orbifx"]
 
 maintainer: "support@toml.epimeros.org"
 
