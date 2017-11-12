@@ -13,7 +13,6 @@ env:
 
 os:
   - linux
-  - osx
 
 after_script:
   - opam install -y ocveralls
