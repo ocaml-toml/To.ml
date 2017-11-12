@@ -15,8 +15,7 @@ build: [ [ "./configure"  "--prefix=%{prefix}%" ]
 
 install: [ [ make "install" ] ]
 
-build-test: [ [ "./configure" "--prefix=%{prefix}%" "--enable-tests" ]
-              [ make "test" ] ]
+build-test: [ [ make "test" ] ]
 
 remove: [ "ocamlfind" "remove" "toml" ]
 
