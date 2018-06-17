@@ -1,0 +1,8 @@
+
+(executable
+  ((name test_toml)
+   (libraries (ounit toml bisect))))
+   
+(executable
+  ((name parser_with_coverage)
+   (libraries (ounit toml bisect))))

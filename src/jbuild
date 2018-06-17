@@ -1,0 +1,12 @@
+
+(library
+  ((name toml)
+   (public_name toml)
+   (libraries (str unix ISO8601))
+   (wrapped false)))
+
+(menhir
+  (;(flags (--infer))
+   (modules (tomlParser))))
+
+(ocamllex (tomlLexer))

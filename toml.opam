@@ -1,6 +1,6 @@
 opam-version: "1.2"
 
-available: [ ocaml-version >= "4.01.0" ]
+available: [ ocaml-version >= "4.02.0" ]
 
 version: "4.0.0"
 
@@ -10,19 +10,13 @@ maintainer: "support@toml.epimeros.org"
 
 homepage: "http://mackwic.github.io/To.ml/"
 
-build: [ [ "./configure"  "--prefix=%{prefix}%" ]
-         [ make "build" ] ]
+build: [ "jbuilder" "build" "-p" name]
 
-install: [ [ make "install" ] ]
-
-build-test: [ [ make "test" ] ]
-
-remove: [ "ocamlfind" "remove" "toml" ]
+build-test: [
+  ["jbuilder" "runtest"]
+]
 
 depends: [ "ocamlfind" "menhir" "ISO8601" ]
-
-depopts: [ "cconv" ]
-
 bug-reports: "https://github.com/mackwic/To.ml/issues"
 
 dev-repo: "https://github.com/mackwic/To.ml.git"
