@@ -2,7 +2,7 @@ all:
 	jbuilder build @install
 
 test:
-	jbuilder runtest
+	jbuilder runtest --force
 
 clean:
 	jbuilder clean
