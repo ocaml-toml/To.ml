@@ -1,11 +1,11 @@
 all:
-	jbuilder build @install
+	dune build @install
 
 test:
-	jbuilder runtest --force
+	dune runtest --force
 
 clean:
-	jbuilder clean
+	dune clean
 
 doc:
-	jbuilder build @doc
+	dune build @doc

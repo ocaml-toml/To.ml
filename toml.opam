@@ -4,9 +4,9 @@ version: "4.0.0"
 authors: [ "Julien Sagot" "Emmanuel Surleau" "mackwic" "Andrew Rudenko" "orbifx"]
 maintainer: "support@toml.epimeros.org"
 homepage: "http://mackwic.github.io/To.ml/"
-build: [ "jbuilder" "build" "-p" name]
+build: [ "dune" "build" "-p" name]
 build-test: [
-  ["jbuilder" "runtest"]
+  ["dune" "runtest"]
 ]
 depends: [
   "dune" {build}

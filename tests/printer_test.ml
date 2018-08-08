@@ -1,5 +1,4 @@
 open OUnit
-open Utils
 open TomlTypes
 
 let test fn expected testing =
@@ -77,8 +76,7 @@ let suite =
       "empty date array" >::
         test_date_array "[]" [] ;
       "date array" >::
-        (let open UnixLabels in
-         test_date_array "[1979-05-27T07:32:00+00:00, \
+        (test_date_array "[1979-05-27T07:32:00+00:00, \
                           1979-05-27T08:38:40+00:00]"
                          [ 296638320.; 296642320.]) ;
 

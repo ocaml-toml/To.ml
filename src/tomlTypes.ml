@@ -33,7 +33,7 @@ module Table = struct
                             then raise (Bad_key s)) s ;
       KeyBare s
 
-    (** FIXME: Ensure that: *)
+    (* FIXME: Ensure that: *)
     (** Quoted keys follow the exact same rules as basic strings. *)
     let quoted_key_of_string s = KeyQuoted s
 
