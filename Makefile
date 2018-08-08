@@ -1,8 +1,8 @@
 build:
-	dune build @install -p toml
+	dune build toml.install
 
 build-cconv:
-	dune build @install -p toml-cconv
+	dune build toml-cconv.install
 
 test:
 	dune runtest --force
