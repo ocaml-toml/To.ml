@@ -44,7 +44,7 @@ generate code coverage summary.
 ```bash
 git clone https://github.com/sagotch/To.ml
 cd To.ml
-make build
+make all
 make install
 ```
 make install may need sudo.
