@@ -1,6 +1,0 @@
-
-(library
-  ((name tomlCconv)
-   (public_name toml-cconv)
-   (libraries (toml cconv))
-   (wrapped false)))
