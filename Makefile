@@ -11,10 +11,10 @@ clean:
 	dune clean
 
 install: build
-	dune install -p toml
+	dune install toml
 
 install-cconv: build-cconv
-	dune install -p toml-cconv
+	dune install toml-cconv
 
 doc:
 	dune build @doc

@@ -49,10 +49,22 @@ make install
 ```
 make install may need sudo.
 
+### `Toml-cconv`
+
+A second library for encoding/decoding with [cconv](https://github.com/c-cube/cconv)
+can be installed if `cconv` is present:
+
+* Via OPAM: `opam install toml-cconv`
+* From source:
+```bash
+make build-cconv
+make install-cconv
+```
+
 ## Documentation
 
-You can build documentation from sources with `make doc`, or browse
-[github pages](http://mackwic.github.io/To.ml/) of the project.
+You can build documentation from sources with `make doc`, if `odoc` is installed,
+or browse [github pages](http://mackwic.github.io/To.ml/) of the project.
 
 ## Usage
 
