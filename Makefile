@@ -1,3 +1,6 @@
+all: build test
+all-cconv: build-cconv test
+
 build:
 	dune build toml.install
 
@@ -9,6 +12,9 @@ test:
 
 clean:
 	dune clean
+
+install-dependencies:
+	opam install --yes menhir cconv bisect oUnit odoc
 
 install: build
 	dune install toml

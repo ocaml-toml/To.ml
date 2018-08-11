@@ -44,8 +44,9 @@ generate code coverage summary.
 ```bash
 git clone https://github.com/sagotch/To.ml
 cd To.ml
-make all
-make install
+make install-dependencies # install To.ml dev dependencies
+make all 		  # build and test
+make install              # do the local installation
 ```
 make install may need sudo.
 
@@ -57,7 +58,8 @@ can be installed if `cconv` is present:
 * Via OPAM: `opam install toml-cconv`
 * From source:
 ```bash
-make build-cconv
+make install-dependencies
+make all-cconv
 make install-cconv
 ```
 
@@ -184,7 +186,9 @@ following characters: space, '\t', '\n', '\r', '.', '[', ']', '"' and '#'.
 ## Contributing
 
 - Fork this repository
-- `oasis setup && ./configure --enable-tests --enable-report && make test`
+- You will need `opam` and `dune`
+- Fetch the dependencies with `make install-dependencies`
+- Test with `make test`
 - Submit a PR *or* open an issue so that we can create a branch and a
   PR associated to it.
   This is better because then, all the Toml maintainers can push commits
