@@ -9,10 +9,10 @@ install: wget https://raw.githubusercontent.com/ocaml/ocaml-ci-scripts/master/.t
 script: bash -ex .travis-opam.sh
 
 env:
-  - OCAML_VERSION=4.02
-  - OCAML_VERSION=4.03
-  - OCAML_VERSION=4.06
-  - OCAML_VERSION=4.07
+  - OCAML_VERSION=4.02 OPAM_VERSION=1.2.0
+  - OCAML_VERSION=4.03 OPAM_VERSION=1.2.0
+  - OCAML_VERSION=4.06 OPAM_VERSION=1.2.0
+  - OCAML_VERSION=4.07 OPAM_VERSION=1.2.0
 
 os:
   - linux
