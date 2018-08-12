@@ -1,7 +1,7 @@
 # Toml (OCaml parser for TOML)
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mackwic/To.ml?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Build Status](https://travis-ci.org/mackwic/To.ml.png?branch=master)](https://travis-ci.org/mackwic/To.ml)
+[![Build Status](https://travis-ci.org/ocaml-toml/To.ml.png?branch=master)](https://travis-ci.org/ocaml-toml/To.ml)
 [![Coverage Status](https://coveralls.io/repos/mackwic/To.ml/badge.png?branch=master)](https://coveralls.io/r/mackwic/To.ml?branch=master)
 
 OCaml parser for TOML [(Tom's Obvious Minimal Language)](https://github.com/mojombo/toml) v0.4.0.
