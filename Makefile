@@ -1,41 +1,26 @@
-# OASIS_START
-# DO NOT EDIT (digest: a3c674b4239234cbbe53afe090018954)
+all: build test
+all-cconv: build-cconv test
 
-SETUP = ocaml setup.ml
+build:
+	dune build toml.install
 
-build: setup.data
-	$(SETUP) -build $(BUILDFLAGS)
+build-cconv:
+	dune build toml-cconv.install
 
-doc: setup.data build
-	$(SETUP) -doc $(DOCFLAGS)
-
-test: setup.data build
-	$(SETUP) -test $(TESTFLAGS)
-
-all:
-	$(SETUP) -all $(ALLFLAGS)
-
-install: setup.data
-	$(SETUP) -install $(INSTALLFLAGS)
-
-uninstall: setup.data
-	$(SETUP) -uninstall $(UNINSTALLFLAGS)
-
-reinstall: setup.data
-	$(SETUP) -reinstall $(REINSTALLFLAGS)
+test:
+	dune runtest --force
 
 clean:
-	$(SETUP) -clean $(CLEANFLAGS)
+	dune clean
 
-distclean:
-	$(SETUP) -distclean $(DISTCLEANFLAGS)
+install-dependencies:
+	opam install --yes menhir cconv bisect oUnit odoc
 
-setup.data:
-	$(SETUP) -configure $(CONFIGUREFLAGS)
+install: build
+	dune install toml
 
-configure:
-	$(SETUP) -configure $(CONFIGUREFLAGS)
+install-cconv: build-cconv
+	dune install toml-cconv
 
-.PHONY: build doc test all install uninstall reinstall clean distclean configure
-
-# OASIS_STOP
+doc:
+	dune build @doc

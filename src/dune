@@ -1,0 +1,13 @@
+
+(library
+  (name toml)
+  (public_name toml)
+  (libraries str unix ISO8601)
+  (flags (:standard -w -27-26-32))
+  (wrapped false))
+
+(menhir
+  ;(flags (--infer))
+  (modules tomlParser))
+
+(ocamllex tomlLexer)

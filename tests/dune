@@ -1,0 +1,19 @@
+
+(executable
+  (name test_toml)
+  (libraries oUnit toml threads bisect))
+
+(alias
+  (name runtest)
+  (deps test_toml.exe ./example.toml ./example4.toml)
+  (action (run ./test_toml.exe)))
+
+(alias
+  (name runtest)
+  (deps test_toml.exe)
+  (action
+    (progn
+      (setenv BISECT_FILE coverage
+              (run ./test_toml.exe))
+      (run sh -c "bisect-report -I .*.eobjs -verbose -html report coverage*.out")
+      )))
