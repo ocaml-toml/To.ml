@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.0.0
+
+* migration to dune
+* split between toml and toml-cconv
+* compatibility with safe-string for OCaml 4.06
+* remove dependency on str
+
 ## 4.0.0
 
 * Reintroduces public data types (major breaking change).
