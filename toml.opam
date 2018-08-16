@@ -5,6 +5,7 @@ authors: [ "Julien Sagot" "Emmanuel Surleau" "mackwic" "Andrew Rudenko" "orbifx"
 maintainer: "support@toml.epimeros.org"
 homepage: "http://mackwic.github.io/To.ml/"
 build: [ "dune" "build" "-p" name]
+license: "LGPL3"
 build-test: [
   ["dune" "runtest"]
 ]
