@@ -35,7 +35,15 @@ module Parser = struct
       `Error (msg, location)
   let from_string s = parse (Lexing.from_string s) "<string>"
   let from_channel c = parse (Lexing.from_channel c) "<channel>"
-  let from_filename f = parse (open_in f |> Lexing.from_channel) f
+  let from_filename f =
+    let ch = open_in f in
+    try
+      let res = parse (ch |> Lexing.from_channel) f in
+      close_in ch;
+      res
+    with e ->
+      close_in_noerr ch;
+      raise e
 
   exception Error of (string * location)
 
