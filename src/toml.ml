@@ -36,13 +36,13 @@ module Parser = struct
   let from_string s = parse (Lexing.from_string s) "<string>"
   let from_channel c = parse (Lexing.from_channel c) "<channel>"
   let from_filename f =
-    let ch = open_in f in
+    let c = open_in f in
     try
-      let res = parse (ch |> Lexing.from_channel) f in
-      close_in ch;
+      let res = parse (Lexing.from_channel c) f in
+      close_in c;
       res
     with e ->
-      close_in_noerr ch;
+      close_in_noerr c;
       raise e
 
   exception Error of (string * location)
