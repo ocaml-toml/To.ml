@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>TomlLenses (toml.TomlLenses)</title><link rel="stylesheet" href="../../odoc.css"/><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><script src="../../highlight.pack.js"></script><script>hljs.initHighlightingOnLoad();</script></head><body><div class="content"><header><nav><a href="../index.html">Up</a> – <a href="../index.html">toml</a> &#x00BB; TomlLenses</nav><h1>Module <code>TomlLenses</code></h1><p>Partial lenses (returns <code>option</code>) for accessing TOML structures. They make it possible to read/write deeply nested immutable values.</p></header><dl><dt class="spec type" id="type-lens"><a href="#type-lens" class="anchor"></a><code><span class="keyword">type </span>('a, 'b) lens</code><code><span class="keyword"> = </span></code><code>{</code><table class="record"><tr id="type-lens.get" class="anchored"><td class="def field"><a href="#type-lens.get" class="anchor"></a><code>get : <span class="type-var">'a</span> <span>&#45;&gt;</span> <span class="type-var">'b</span> option;</code></td></tr><tr id="type-lens.set" class="anchored"><td class="def field"><a href="#type-lens.set" class="anchor"></a><code>set : <span class="type-var">'b</span> <span>&#45;&gt;</span> <span class="type-var">'a</span> <span>&#45;&gt;</span> <span class="type-var">'a</span> option;</code></td></tr></table><code>}</code></dt></dl><dl><dt class="spec value" id="val-get"><a href="#val-get" class="anchor"></a><code><span class="keyword">val </span>get : <span class="type-var">'a</span> <span>&#45;&gt;</span> (<span class="type-var">'a</span>, <span class="type-var">'b</span>) <a href="index.html#type-lens">lens</a> <span>&#45;&gt;</span> <span class="type-var">'b</span> option</code></dt><dd><p>Extracts a value from some Toml data using a lens. Returns <code>Some value</code> if the underlying data matched the lens, or <code>None</code>.</p><p>Example:</p><pre><code class="ml">utop # let toml_data = Toml.Parser.(from_string &quot;
+[this.is.a.deeply.nested.table]
+answer=42&quot; |&gt; unsafe);;
+val toml_data : TomlTypes.table = &lt;abstr&gt;
+
+utop # TomlLenses.(get toml_data (
+  key &quot;this&quot; |-- table
+  |-- key &quot;is&quot; |-- table
+  |-- key &quot;a&quot; |-- table
+  |-- key &quot;deeply&quot; |-- table
+  |-- key &quot;nested&quot; |-- table
+  |-- key &quot;table&quot; |-- table
+  |-- key &quot;answer&quot;|-- int ));;
+- : int option = Some 42</code></pre><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-set"><a href="#val-set" class="anchor"></a><code><span class="keyword">val </span>set : <span class="type-var">'b</span> <span>&#45;&gt;</span> <span class="type-var">'a</span> <span>&#45;&gt;</span> (<span class="type-var">'a</span>, <span class="type-var">'b</span>) <a href="index.html#type-lens">lens</a> <span>&#45;&gt;</span> <span class="type-var">'a</span> option</code></dt><dd><p>Replaces an existing value in some Toml data using a lens. Returns <code>Some value</code> if the underlying data matched the lens, or <code>None</code>.</p><p>Example:</p><pre><code class="ml">utop # let toml_data = Toml.Parser.(from_string &quot;
+[this.is.a.deeply.nested.table]
+answer=42&quot; |&gt; unsafe);;
+val toml_data : TomlTypes.table = &lt;abstr&gt;
+
+utop # let maybe_toml_data' = TomlLenses.(set 2015 toml_data (
+  key &quot;this&quot; |-- table
+  |-- key &quot;is&quot; |-- table
+  |-- key &quot;a&quot; |-- table
+  |-- key &quot;deeply&quot; |-- table
+  |-- key &quot;nested&quot; |-- table
+  |-- key &quot;table&quot; |-- table
+  |-- key &quot;answer&quot;|-- int ));;
+val maybe_toml_data' : TomlTypes.table option = Some &lt;abstr&gt;
+
+utop # let (Some toml_data') = maybe_toml_data';;
+val toml_data' : TomlTypes.table = &lt;abstr&gt;
+
+utop # Toml.Printer.string_of_table toml_data';;
+- : bytes = &quot;[this.is.a.deeply.nested.table]\nanswer = 2015\n&quot;</code></pre><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-update"><a href="#val-update" class="anchor"></a><code><span class="keyword">val </span>update : (<span class="type-var">'b</span> <span>&#45;&gt;</span> <span class="type-var">'b</span> option) <span>&#45;&gt;</span> <span class="type-var">'a</span> <span>&#45;&gt;</span> (<span class="type-var">'a</span>, <span class="type-var">'b</span>) <a href="index.html#type-lens">lens</a> <span>&#45;&gt;</span> <span class="type-var">'a</span> option</code></dt><dd><p>Applies a function on an existing value in some Toml data. Returns <code>Some value</code> if the underlying data matched the lens, or <code>None</code>.</p><p>Example:</p><pre><code class="ml">utop # let toml_data = Toml.Parser.(from_string &quot;
+  [[table.of.mixed_values]]
+  int=0
+  str=\&quot;a\&quot;
+  [[table.of.mixed_values]]
+  str=\&quot;b\&quot;
+  [[table.of.mixed_values]]
+  int=3
+&quot; |&gt; unsafe);;
+val toml_data : TomlTypes.table = &lt;abstr&gt;
+
+utop # let maybe_toml_data' =  TomlLenses.(update
+  (fun ts -&gt; Some (
+    List.map (fun t -&gt;
+      (** Add 'int=42' to each table which doesn't already have an 'int' key *)
+      if not (TomlTypes.Table.mem (Toml.key &quot;int&quot;) t) then
+        TomlTypes.Table.add (Toml.key &quot;int&quot;) (TomlTypes.TInt 42) t
+      else t) ts))
+  toml_data
+  (key &quot;table&quot; |-- table
+   |-- key &quot;of&quot; |-- table
+   |-- key &quot;mixed_values&quot; |-- array |-- tables));;
+val maybe_toml_data' : TomlTypes.table option = Some &lt;abstr&gt;
+
+utop # let (Some toml_data') = maybe_toml_data';;
+val toml_data' : TomlTypes.table = &lt;abstr&gt;
+
+utop # print_endline @@ Toml.Printer.string_of_table toml_data';;
+
+[[table.of.mixed_values]]
+int = 0
+str = &quot;a&quot;
+[[table.of.mixed_values]]
+int = 42
+str = &quot;b&quot;
+[[table.of.mixed_values]]
+int = 3
+- : unit = ()</code></pre><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-compose"><a href="#val-compose" class="anchor"></a><code><span class="keyword">val </span>compose : (<span class="type-var">'a</span>, <span class="type-var">'b</span>) <a href="index.html#type-lens">lens</a> <span>&#45;&gt;</span> (<span class="type-var">'c</span>, <span class="type-var">'a</span>) <a href="index.html#type-lens">lens</a> <span>&#45;&gt;</span> (<span class="type-var">'c</span>, <span class="type-var">'b</span>) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens composition.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-(|--)"><a href="#val-(|--)" class="anchor"></a><code><span class="keyword">val </span>(|--) : (<span class="type-var">'a</span>, <span class="type-var">'b</span>) <a href="index.html#type-lens">lens</a> <span>&#45;&gt;</span> (<span class="type-var">'b</span>, <span class="type-var">'c</span>) <a href="index.html#type-lens">lens</a> <span>&#45;&gt;</span> (<span class="type-var">'a</span>, <span class="type-var">'c</span>) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Flipped lens composition.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-key"><a href="#val-key" class="anchor"></a><code><span class="keyword">val </span>key : string <span>&#45;&gt;</span> (<a href="../TomlTypes/index.html#type-table">TomlTypes.table</a>, <a href="../TomlTypes/index.html#type-value">TomlTypes.value</a>) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens to a particular value in a table.</p><dl><dt>raises TomlTypes.Table.Key.Bad_key</dt><dd><p>if the key contains invalid characters.</p></dd></dl><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-field"><a href="#val-field" class="anchor"></a><code><span class="keyword">val </span>field : string <span>&#45;&gt;</span> (<a href="../TomlTypes/index.html#type-table">TomlTypes.table</a>, <a href="../TomlTypes/index.html#type-table">TomlTypes.table</a>) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Combines the <code>key</code> and <code>table</code> lenses, for the common case of nested tables.</p><dl><dt>raises TomlTypes.Table.Key.Bad_key</dt><dd><p>if the key contains invalid characters.</p></dd></dl><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-string"><a href="#val-string" class="anchor"></a><code><span class="keyword">val </span>string : (<a href="../TomlTypes/index.html#type-value">TomlTypes.value</a>, string) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens to a string value.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-bool"><a href="#val-bool" class="anchor"></a><code><span class="keyword">val </span>bool : (<a href="../TomlTypes/index.html#type-value">TomlTypes.value</a>, bool) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens to a boolean value.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-int"><a href="#val-int" class="anchor"></a><code><span class="keyword">val </span>int : (<a href="../TomlTypes/index.html#type-value">TomlTypes.value</a>, int) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens to an int value.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-float"><a href="#val-float" class="anchor"></a><code><span class="keyword">val </span>float : (<a href="../TomlTypes/index.html#type-value">TomlTypes.value</a>, float) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens to a float value.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-date"><a href="#val-date" class="anchor"></a><code><span class="keyword">val </span>date : (<a href="../TomlTypes/index.html#type-value">TomlTypes.value</a>, float) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens to a date value.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-array"><a href="#val-array" class="anchor"></a><code><span class="keyword">val </span>array : (<a href="../TomlTypes/index.html#type-value">TomlTypes.value</a>, <a href="../TomlTypes/index.html#type-array">TomlTypes.array</a>) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens to an array value.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-table"><a href="#val-table" class="anchor"></a><code><span class="keyword">val </span>table : (<a href="../TomlTypes/index.html#type-value">TomlTypes.value</a>, <a href="../TomlTypes/index.html#type-table">TomlTypes.table</a>) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens to a table value.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-strings"><a href="#val-strings" class="anchor"></a><code><span class="keyword">val </span>strings : (<a href="../TomlTypes/index.html#type-array">TomlTypes.array</a>, string list) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens to an array of strings.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-bools"><a href="#val-bools" class="anchor"></a><code><span class="keyword">val </span>bools : (<a href="../TomlTypes/index.html#type-array">TomlTypes.array</a>, bool list) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens to an array of booleans.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-ints"><a href="#val-ints" class="anchor"></a><code><span class="keyword">val </span>ints : (<a href="../TomlTypes/index.html#type-array">TomlTypes.array</a>, int list) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens to an array of ints.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-floats"><a href="#val-floats" class="anchor"></a><code><span class="keyword">val </span>floats : (<a href="../TomlTypes/index.html#type-array">TomlTypes.array</a>, float list) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens to an array of floats.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-dates"><a href="#val-dates" class="anchor"></a><code><span class="keyword">val </span>dates : (<a href="../TomlTypes/index.html#type-array">TomlTypes.array</a>, float list) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens to an array of dates.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-tables"><a href="#val-tables" class="anchor"></a><code><span class="keyword">val </span>tables : (<a href="../TomlTypes/index.html#type-array">TomlTypes.array</a>, <a href="../TomlTypes/index.html#type-table">TomlTypes.table</a> list) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens to an array of tables.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl><dl><dt class="spec value" id="val-arrays"><a href="#val-arrays" class="anchor"></a><code><span class="keyword">val </span>arrays : (<a href="../TomlTypes/index.html#type-array">TomlTypes.array</a>, <a href="../TomlTypes/index.html#type-array">TomlTypes.array</a> list) <a href="index.html#type-lens">lens</a></code></dt><dd><p>Lens to an array of arrays.</p><dl><dt>since</dt><dd>4.0.0</dd></dl></dd></dl></div></body></html>
