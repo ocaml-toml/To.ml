@@ -6,6 +6,8 @@
 
 OCaml parser for TOML [(Tom's Obvious Minimal Language)](https://github.com/mojombo/toml) v0.4.0.
 
+[Online documentation](http://ocaml-toml.github.io/To.ml/)
+
 ## Table of contents
 
 - [A foreword to beginners](#a-foreword-to-beginners)
@@ -66,7 +68,7 @@ make install-cconv
 ## Documentation
 
 You can build documentation from sources with `make doc`, if `odoc` is installed,
-or browse [github pages](http://mackwic.github.io/To.ml/) of the project.
+or browse [github pages](http://ocaml-toml.github.io/To.ml/) of the project.
 
 ## Usage
 
