@@ -48,9 +48,14 @@ module Table = struct
       | KeyBare k -> k
       | KeyQuoted k -> "\"" ^ k ^ "\""
 
+    let unsafe_string t =
+      match t with
+      | KeyBare s 
+      | KeyQuoted s -> s
+
     (** Compare x y returns 0 if x is equal to y, a negative integer if x is
         less than y, and a positive integer if x is greater than y. *)
-    let compare m1 m2 = String.compare (to_string m1) (to_string m2)
+    let compare m1 m2 = String.compare (unsafe_string m1) (unsafe_string m2)
   end
 
   include Map.Make (Key)
