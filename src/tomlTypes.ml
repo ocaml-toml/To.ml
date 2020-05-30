@@ -20,17 +20,18 @@ module Table = struct
 
     (** Bare keys only allow [A-Za-z0-9_-].
         @raise Type.Key.Bad_key if other char is found. *)
+    let validate_bare_key s =
+      String.iter (function
+        | 'a' .. 'z'
+        | 'A' .. 'Z'
+        | '0' .. '9'
+        | '_'
+        | '-' -> ()
+        | _ -> raise (Bad_key s))
+      s
+
     let bare_key_of_string s =
-      String.iter (fun c -> let c = Char.code c in
-                            if ( c < 48 (* 0 *)
-                                 && c <> 45 (* - *) )
-                               || ( c > 57 (* 0 *)
-                                    && c < 65 (* A *) )
-                               || ( c > 90 (* Z *)
-                                    && c < 97 (* a *)
-                                    && c <> 95 (* _ *) )
-                               || ( c > 122)
-                            then raise (Bad_key s)) s ;
+      validate_bare_key s;
       KeyBare s
 
     (* FIXME: Ensure that: *)
