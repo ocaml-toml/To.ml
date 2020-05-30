@@ -96,6 +96,6 @@ module Printer = struct
 
 end
 
-let key = TomlTypes.Table.Key.bare_key_of_string
+let key = TomlTypes.Table.Key.of_string
 
 let of_key_values = TomlTypes.Table.of_key_values

@@ -122,8 +122,8 @@ group_header:
  | LBRACK key_path RBRACK               { Regular, $2 }
 
 key:
- | STRING { Table.Key.quoted_key_of_string $1 }
- | KEY    { Table.Key.bare_key_of_string $1 }
+ | STRING { Table.Key.of_string $1 }
+ | KEY    { Table.Key.of_string $1 }
 
 key_path: k = separated_nonempty_list (DOT, key) { k }
 

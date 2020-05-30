@@ -1,8 +1,6 @@
 let safe_find key table =
   try
-    let value = TomlTypes.Table.find (TomlTypes.Table.Key.bare_key_of_string
-                                        key) table
-    in
+    let value = TomlTypes.Table.find (TomlTypes.Table.Key.of_string key) table in
     Some value
   with Not_found -> None
 
@@ -15,7 +13,7 @@ let key k =
   {
     get = (fun value -> safe_find k value);
     set = (fun new_value value ->
-          Some (TomlTypes.Table.add (TomlTypes.Table.Key.bare_key_of_string k)
+          Some (TomlTypes.Table.add (TomlTypes.Table.Key.of_string k)
                                     (new_value) value)
       )
   }
