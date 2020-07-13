@@ -137,8 +137,11 @@ value:
   | STRING { TString($1) }
   | DATE { TDate $1 }
   | LBRACK array_start { TArray($2) }
-  | LBRACE; key_values = inline_table_key_values; RBRACE {
-    TTable (to_table key_values []) }
+  | inline_table { TTable($1) }
+
+inline_table:
+  LBRACE; key_values = inline_table_key_values; RBRACE {
+  to_table key_values [] }
 
 inline_table_key_values:
   key_values = separated_list(COMMA, keyValue) { key_values }
@@ -151,6 +154,7 @@ array_start:
   | STRING array_end(STRING) { NodeString($1 :: $2) }
   | DATE array_end(DATE) { NodeDate($1 :: $2) }
   | LBRACK array_start nested_array_end { NodeArray($2 :: $3) }
+  | inline_table array_end(inline_table) { NodeTable($1 :: $2) }
 
 array_end(param):
     COMMA param array_end(param) { $2 :: $3 }

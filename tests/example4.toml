@@ -240,3 +240,15 @@ color = "gray"
 
   [[fruit.variety]]
     name = "plantain"
+
+
+################################################################################
+## Array of Inline Tables
+
+# Inline table syntax can be used in combination with array syntax.
+
+[array.inline]
+
+points = [ { x = 1, y = 2, z = 3 },
+           { x = 7, y = 8, z = 9 },
+           { x = 2, y = 4, z = 8 } ]
