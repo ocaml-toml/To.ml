@@ -214,7 +214,7 @@ let expected =
                 ];
             ]);
         ];
-      ]);
+      ])
   ]
 >>>>>>> d87863d (Add support for arrays of inline tables)
 
