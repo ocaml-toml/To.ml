@@ -80,6 +80,9 @@ and literal_string buff = parse
 
 and multiline_literal_string buff = parse
                                   | "'''"  { STRING (Buffer.contents buff)}
+                                  | t_eol as eol { Buffer.add_string buff eol ;
+                                                   update_loc lexbuf ;
+                                                   multiline_literal_string buff lexbuf }
                                   | _ as c { Buffer.add_char buff c ;
                                              multiline_literal_string buff lexbuf }
 
