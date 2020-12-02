@@ -6,14 +6,14 @@ let test fn expected testing =
                          expected
                          (Toml.Printer.string_of_value (fn testing))
 
-let test_string = test (fun v -> TString v) 
+let test_string = test (fun v -> TString v)
 let test_bool = test (fun v -> TBool v)
 let test_int = test (fun v -> TInt v)
 let test_float = test (fun v -> TFloat v)
 let test_date = test (fun v -> TDate v)
 
 let test_int_array = test (fun v -> TArray (NodeInt v))
-let test_bool_array = test (fun v -> TArray (NodeBool v)) 
+let test_bool_array = test (fun v -> TArray (NodeBool v))
 let test_float_array = test (fun v -> TArray (NodeFloat v))
 let test_string_array = test (fun v -> TArray (NodeString v))
 let test_date_array = test (fun v -> TArray (NodeDate v))
@@ -33,7 +33,7 @@ let suite =
       "values string" >::
         test_string  "\"string value\"" "string value" ;
       "string with control chars" >::
-        test_string "\"str\\\\ing\\t\\n\\u0002\\\"\"" "str\\ing\t\n\002\"" ;
+        test_string "'''\nstr\\ing\t\n\002\"'''" "str\\ing\t\n\002\"" ;
       "string with accented chars" >::
         test_string "\"\195\169\"" "\195\169" ;
       "boolean true" >::

@@ -25,9 +25,32 @@ let print_float formatter value =
     Format.pp_print_float formatter value
 
 let print_string formatter value =
-  Format.pp_print_char formatter '"' ;
-  String.iter (maybe_escape_char formatter) value ;
-  Format.pp_print_char formatter '"'
+  let has_newline = ref false in
+  let has_quote = ref false in
+  let has_doublequote = ref false in
+  String.iter (function
+    | '\n' -> has_newline := true
+    | '\'' -> has_quote := true
+    | '"' -> has_doublequote := true
+    | _ -> ()
+    ) value;
+  match (!has_newline, !has_doublequote, !has_quote) with
+  | true, false, _ ->
+    Format.pp_print_string formatter {|"""\n|};
+      String.iter
+        (function
+          | '\n' -> Format.pp_print_char formatter '\n'
+          | c -> maybe_escape_char formatter c)
+        value;
+    Format.pp_print_string formatter {|"""|}
+  | true, true, false ->
+      Format.pp_print_string formatter "'''\n";
+      Format.pp_print_string formatter value;
+      Format.pp_print_string formatter "'''"
+  | _ ->
+      Format.pp_print_char formatter '"';
+      String.iter (maybe_escape_char formatter) value;
+      Format.pp_print_char formatter '"'
 
 let print_date fmt d =
   ISO8601.Permissive.pp_datetimezone fmt (d, 0.)
