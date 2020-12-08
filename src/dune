@@ -1,13 +1,10 @@
-
 (library
-  (name toml)
-  (public_name toml)
-  (libraries str unix ISO8601)
-  (flags (:standard -w -27-26-32))
-  (wrapped false))
+ (public_name toml)
+ (modules compare lenses lexer menhir_parser min parser printer types unicode)
+ (private_modules menhir_parser)
+ (libraries str unix ISO8601))
 
 (menhir
-  ;(flags (--infer))
-  (modules tomlParser))
+ (modules menhir_parser))
 
-(ocamllex tomlLexer)
+(ocamllex lexer)

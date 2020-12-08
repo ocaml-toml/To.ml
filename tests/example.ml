@@ -1,58 +1,73 @@
 open OUnit
-open TomlTypes
+open Toml.Types
 open Utils
 
 (* This test file expects example.toml from official toml repo read *)
 let toml = Toml.Parser.(from_filename "./example.toml" |> unsafe)
 
 let expected =
-  Toml.of_key_values
-    [ Toml.key "title",
-      TString "TOML Example" ;
-
-      Toml.key "owner",
-        TTable (Toml.of_key_values
-          [ Toml.key "name", TString "Tom Preston-Werner";
-            Toml.key "organization", TString "GitHub";
-            Toml.key "bio", TString "GitHub Cofounder & CEO\n\
-                                Likes tater tots and beer.";
-            Toml.key "dob", TDate 296638320. (* 1979-05-27T07:32:00 *) ]) ;
-
-      Toml.key "database",
-        TTable (Toml.of_key_values
-          [ Toml.key "server", TString "192.168.1.1" ;
-            Toml.key "ports", TArray (NodeInt [8001; 8001; 8002]) ;
-            Toml.key "connection_max", TInt 5000;
-            Toml.key "enabled", TBool true]) ;
-
-      Toml.key "servers",
-        TTable (Toml.of_key_values
-          [ Toml.key "alpha",
-            TTable (Toml.of_key_values [Toml.key "ip", TString "10.0.0.1" ;
-                                   Toml.key "dc", TString "eqdc10" ]) ;
-            Toml.key "beta",
-            TTable (Toml.of_key_values [Toml.key "ip", TString "10.0.0.2";
-                                   Toml.key "dc", TString "eqdc10";
-                                   Toml.key "country", TString "中国" ] )]) ;
-
-      Toml.key "clients",
-        TTable (Toml.of_key_values
-          [ Toml.key "data", TArray (NodeArray[
-                          NodeString ["gamma"; "delta"];
-                          NodeInt [1; 2] ]);
-            Toml.key "hosts", TArray (NodeString ["alpha"; "omega"]) ]);
-
-      Toml.key "products",
-        TArray (NodeTable [ Toml.of_key_values [
-                           Toml.key "name", TString "Hammer";
-                           Toml.key "sku", TInt 738594937];
-                       Toml.of_key_values [
-                           Toml.key "name", TString "Nail";
-                           Toml.key "sku", TInt 284758393;
-                           Toml.key "color", TString "gray"] ]) ;
+  Toml.Min.of_key_values
+    [ (Toml.Min.key "title", TString "TOML Example")
+    ; ( Toml.Min.key "owner"
+      , TTable
+          (Toml.Min.of_key_values
+             [ (Toml.Min.key "name", TString "Tom Preston-Werner")
+             ; (Toml.Min.key "organization", TString "GitHub")
+             ; ( Toml.Min.key "bio"
+               , TString "GitHub Cofounder & CEO\nLikes tater tots and beer." )
+             ; (Toml.Min.key "dob", TDate 296638320.)
+               (* 1979-05-27T07:32:00 *)
+             ]) )
+    ; ( Toml.Min.key "database"
+      , TTable
+          (Toml.Min.of_key_values
+             [ (Toml.Min.key "server", TString "192.168.1.1")
+             ; (Toml.Min.key "ports", TArray (NodeInt [ 8001; 8001; 8002 ]))
+             ; (Toml.Min.key "connection_max", TInt 5000)
+             ; (Toml.Min.key "enabled", TBool true)
+             ]) )
+    ; ( Toml.Min.key "servers"
+      , TTable
+          (Toml.Min.of_key_values
+             [ ( Toml.Min.key "alpha"
+               , TTable
+                   (Toml.Min.of_key_values
+                      [ (Toml.Min.key "ip", TString "10.0.0.1")
+                      ; (Toml.Min.key "dc", TString "eqdc10")
+                      ]) )
+             ; ( Toml.Min.key "beta"
+               , TTable
+                   (Toml.Min.of_key_values
+                      [ (Toml.Min.key "ip", TString "10.0.0.2")
+                      ; (Toml.Min.key "dc", TString "eqdc10")
+                      ; (Toml.Min.key "country", TString "中国")
+                      ]) )
+             ]) )
+    ; ( Toml.Min.key "clients"
+      , TTable
+          (Toml.Min.of_key_values
+             [ ( Toml.Min.key "data"
+               , TArray
+                   (NodeArray
+                      [ NodeString [ "gamma"; "delta" ]; NodeInt [ 1; 2 ] ]) )
+             ; (Toml.Min.key "hosts", TArray (NodeString [ "alpha"; "omega" ]))
+             ]) )
+    ; ( Toml.Min.key "products"
+      , TArray
+          (NodeTable
+             [ Toml.Min.of_key_values
+                 [ (Toml.Min.key "name", TString "Hammer")
+                 ; (Toml.Min.key "sku", TInt 738594937)
+                 ]
+             ; Toml.Min.of_key_values
+                 [ (Toml.Min.key "name", TString "Nail")
+                 ; (Toml.Min.key "sku", TInt 284758393)
+                 ; (Toml.Min.key "color", TString "gray")
+                 ]
+             ]) )
     ]
 
-
 let suite =
-  "Official example.toml file" >:::
-    [ "example.toml parsing" >:: (fun () -> assert_table_equal toml expected); ]
+  "Official example.toml file"
+  >::: [ ("example.toml parsing" >:: fun () -> assert_table_equal toml expected)
+       ]
