@@ -1,4 +1,4 @@
-# toml
+# toml [![Actions Status](https://github.com/ocamlpro/toml/workflows/build/badge.svg)](https://github.com/ocamlpro/toml/actions)
 
 [OCaml] parser for [TOML].
 
@@ -79,7 +79,7 @@ utop # Toml.Printer.string_of_table toml_data';;
 
 ## PPX support
 
-To.ml supports ppx via [cconv]:
+`toml` supports ppx via [cconv]:
 
 ``` ocaml
 utop # #require "cconv.ppx";;
