@@ -4,13 +4,9 @@
 
 ## Documentation
 
-- [online documentation]
+Have a look at the [online documentation]. Otherwise, here's a quickstart guide.
 
-## `toml_cconv`
-
-A second library, `toml_cconv` for encoding/decoding with [cconv] can be installed if `cconv` is present.
-
-## Reading TOML data
+### Reading TOML data
 
 ```ocaml
 utop # (* This will return either `Ok $tomltable or `Error $error_with_location *)
@@ -27,7 +23,7 @@ Toml.Types.Table.find (Toml.Min.key "key") parsed_toml;;
 - : Toml.Types.value = Toml.Types.TArray (Toml.Types.NodeInt [1; 2])
 ```
 
-## Writing TOML data
+### Writing TOML data
 
 ```ocaml
 utop # let toml_data = Toml.of_key_values [
@@ -40,7 +36,7 @@ utop # Toml.Printer.string_of_table toml_data;;
 - : bytes = "ints = [1, 2]\nstring = \"string value\"\n"
 ```
 
-## Lenses
+### Lenses
 
 Through lenses, it is possible to read/write deeply nested data with ease.
 The Toml.Lenses module provides partial lenses (that is, lenses returning
@@ -77,7 +73,9 @@ utop # Toml.Printer.string_of_table toml_data';;
 
 ```
 
-## PPX support
+### PPX support
+
+A second library, `toml_cconv` for encoding/decoding with [cconv] can be installed if `cconv` is present.
 
 `toml` supports ppx via [cconv]:
 
@@ -106,9 +104,9 @@ utop # Toml_cconv.decode_exn decode toml;;
 
 ## Limitations
 
-* Keys don't quite follow the Toml standard. Both section keys (eg,
+* Keys don't quite follow the TOML standard. Both section keys (eg,
 `[key1.key2]`) and ordinary keys (`key=...`) may not contain the
-following characters: space, '\t', '\n', '\r', '.', '[', ']', '"' and '#'.
+following characters: space, `\t`, `\n`, `\r`, `.`, `[`, `]`, `"` and `#`.
 
 [cconv]: https://github.com/c-cube/cconv
 [OCaml]: https://ocaml.org/
