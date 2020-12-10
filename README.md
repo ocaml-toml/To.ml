@@ -73,7 +73,7 @@ utop # Toml.Printer.string_of_table toml_data';;
 
 ```
 
-### PPX support
+### `toml_cconv`
 
 A second library, `toml_cconv` for encoding/decoding with [cconv] can be installed if `cconv` is present.
 
