@@ -1,0 +1,39 @@
+name: doc-deploy
+on:
+  push:
+    branches:
+      - master
+jobs:
+  doc-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - name: setup-ocaml
+        uses: avsm/setup-ocaml@v1
+        with:
+          ocaml-version: 4.10.0
+      - name: setup-doc
+        run: |
+          sudo apt install -yqq python3-sphinx python3-sphinx-rtd-theme
+          opam install -y dune odoc
+      - run: opam pin add . -y --no-action
+      - run: opam depext -y toml toml_cconv
+      - run: opam install -y ./*.opam --deps-only --with-test
+      - run: opam upgrade --fixup
+      - name: build-doc
+        run: |
+          mkdir -p _doc
+          opam exec -- dune build @doc
+          rsync -auv _build/default/_doc/_html/. _drom/docs/doc/.
+          touch _doc/.nojekyll
+      - name: deploy-doc
+        uses: JamesIves/github-pages-deploy-action@3.6.2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: _doc/
+          CLEAN: true
