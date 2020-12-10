@@ -107,9 +107,9 @@ let to_table key_values key_value_groups =
 
 %start toml
 
-%type <TomlTypes.table> toml
-%type <Table.Key.t * TomlTypes.value> keyValue
-%type <TomlTypes.array> array_start
+%type <Types.table> toml
+%type <Table.Key.t * Types.value> keyValue
+%type <Types.array> array_start
 
 %%
 (* Grammar rules *)
