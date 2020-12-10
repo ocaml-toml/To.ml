@@ -1,5 +1,12 @@
 # Changelog
 
+## 6.0
+
+* change the structure of the toml library and rename some modules
+* rename toml-cconv to toml_cconv
+* improve print_string output
+* switch to GitHub actions and deploy documentation on gh-pages
+
 ## 5.0.0
 
 * migration to dune
