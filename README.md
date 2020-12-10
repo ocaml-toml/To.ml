@@ -1,6 +1,6 @@
 # toml [![Actions Status](https://github.com/ocamlpro/toml/workflows/build/badge.svg)](https://github.com/ocamlpro/toml/actions)
 
-[OCaml] parser for [TOML].
+[OCaml] library for [TOML].
 
 ## Documentation
 
@@ -110,5 +110,5 @@ following characters: space, `\t`, `\n`, `\r`, `.`, `[`, `]`, `"` and `#`.
 
 [cconv]: https://github.com/c-cube/cconv
 [OCaml]: https://ocaml.org/
-[online documentation]: http://ocaml-toml.github.io/To.ml/
+[online documentation]: https://ocamlpro.github.io/toml/
 [TOML]: https://toml.io
