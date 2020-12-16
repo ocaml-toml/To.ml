@@ -1,7 +1,7 @@
 opam-version: "2.0"
 authors: [ "Julien Sagot" "Emmanuel Surleau" "mackwic" "Andrew Rudenko" "orbifx" "c-cube"]
 maintainer: "OCamlPro <contact@ocamlpro.com>"
-homepage: "https://ocaml-toml.github.io/to.ml/"
+homepage: "https://ocaml-toml.github.io/To.ml/"
 synopsis: "Interface between cconv and toml"
 description: "Allows to use TOML encoding/decoding with cconv"
 build: [ "dune" "build" "-p" name]

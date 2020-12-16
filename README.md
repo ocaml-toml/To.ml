@@ -122,7 +122,7 @@ If you want to add your project, feel free to open a PR.
 [drom]: https://ocamlpro.github.io/drom/
 [hll]: https://hg.sr.ht/~mmatalka/hll
 [OCaml]: https://ocaml.org/
-[online documentation]: https://ocaml-toml.github.io/toml/
+[online documentation]: https://ocaml-toml.github.io/To.ml/
 [pds]: https://hg.sr.ht/~mmatalka/pds
 [snabela]: https://bitbucket.org/acslab/snabela
 [soupault]: https://soupault.neocities.org/

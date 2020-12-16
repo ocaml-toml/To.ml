@@ -1,7 +1,7 @@
 opam-version: "2.0"
 authors: [ "Julien Sagot" "Emmanuel Surleau" "mackwic" "Andrew Rudenko" "orbifx" "c-cube"]
 maintainer: "OCamlPro <contact@ocamlpro.com>"
-homepage: "https://ocamlpro.github.io/toml/"
+homepage: "https://ocamlpro.github.io/To.ml/"
 synopsis: "TOML parser"
 description: "The toml library provides a parser and serializer for Tom's Obvious Minimal Language v0.4.0, a minimal configuration file format. Helpful getters to retrieve data as OCaml primitive types are also supplied"
 build: [ "dune" "build" "-p" name]
@@ -15,5 +15,5 @@ depends: [
   "odoc" {with-doc}
   "ISO8601"
 ]
-bug-reports: "https://github.com/ocamlpro/toml/issues"
-dev-repo: "git+ttps://github.com/ocamlpro/toml.git"
+bug-reports: "https://github.com/ocaml-toml/to.ml/issues"
+dev-repo: "git+ttps://github.com/ocaml-toml/to.ml.git"
