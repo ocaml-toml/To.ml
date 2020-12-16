@@ -1,6 +1,6 @@
 # Changelog
 
-## 6.0
+## 6.0.0
 
 * change the structure of the toml library and rename some modules
 * rename toml-cconv to toml_cconv
