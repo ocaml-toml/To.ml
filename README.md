@@ -1,4 +1,4 @@
-# toml [![Actions Status](https://github.com/ocamlpro/toml/workflows/build/badge.svg)](https://github.com/ocamlpro/toml/actions)
+# toml [![Actions Status](https://github.com/ocaml-toml/to.ml/workflows/build/badge.svg)](https://github.com/ocaml-toml/to.ml/actions)
 
 [OCaml] library for [TOML].
 
@@ -39,7 +39,7 @@ utop # Toml.Printer.string_of_table toml_data;;
 ### Lenses
 
 Through lenses, it is possible to read/write deeply nested data with ease.
-The Toml.Lenses module provides partial lenses (that is, lenses returning
+The `Toml.Lenses` module provides partial lenses (that is, lenses returning
 `option` types) to manipulate TOML data structures.
 
 ```ocaml
@@ -110,5 +110,5 @@ following characters: space, `\t`, `\n`, `\r`, `.`, `[`, `]`, `"` and `#`.
 
 [cconv]: https://github.com/c-cube/cconv
 [OCaml]: https://ocaml.org/
-[online documentation]: https://ocamlpro.github.io/toml/
+[online documentation]: https://ocaml-toml.github.io/toml/
 [TOML]: https://toml.io
