@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+* treat quoted and bare keys the same with respect to comparison
+* bump minimal OCaml version to 4.07
+
 ## 6.0.0
 
 * change the structure of the toml library and rename some modules
