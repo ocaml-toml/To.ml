@@ -7,8 +7,8 @@ description: "The toml library provides a parser and serializer for Tom's Obviou
 build: [ "dune" "build" "-p" name]
 license: "LGPL3"
 depends: [
-  "ocaml" {>= "4.02"}
-  "dune"
+  "ocaml" {>= "4.07"}
+  "dune" {>= "1.2"}
   "menhir" {build}
   "ounit" {with-test}
   "bisect" {with-test}
