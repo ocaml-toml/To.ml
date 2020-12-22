@@ -30,6 +30,14 @@ jobs:
           opam exec -- dune build @doc
           rsync -auv _build/default/_doc/_html/. _doc/.
           touch _doc/.nojekyll
+      - name: coverage
+        run: |
+          mkdir -p _coverage
+          opam exec -- dune clean
+          BISECT_ENABLE=YES opam exec -- dune runtest --no-buffer --force > /dev/null
+          opam exec -- bisect-ppx-report html
+          mkdir -p _doc/coverage
+          mv _coverage/* _doc/coverage
       - name: deploy-doc
         uses: JamesIves/github-pages-deploy-action@3.6.2
         with:

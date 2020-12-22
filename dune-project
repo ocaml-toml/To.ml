@@ -30,7 +30,7 @@
    (>= 1.10))
   (menhir :build)
   (ounit :with-test)
-  (bisect :with-test)
+  (bisect_ppx :with-test)
   (odoc :with-doc)
   (ISO8601
    (>= 0.2))))
