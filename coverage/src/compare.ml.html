@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Coverage report</title>
+    <link rel="stylesheet" href="../coverage.css" />
+    <script src="../highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <div id="header">
+      <h1>
+        <a href="../index.html">
+          <span class="dirname">src/</span>compare.ml
+        </a>
+      </h1>
+      <h2>81.25%</h2>
+    </div>
+    <div id="navbar">
+      <span class="unvisited" style="top:25.00%"></span>
+      <span class="unvisited" style="top:37.50%"></span>
+      <span class="unvisited" style="top:41.67%"></span>
+    </div>
+    <div id="report">
+      <div id="lines-layer">
+        <pre>
+<a id="L1"></a><span > </span>
+<a id="L2"></a><span class="visited"> </span>
+<a id="L3"></a><span class="visited"> </span>
+<a id="L4"></a><span > </span>
+<a id="L5"></a><span class="visited"> </span>
+<a id="L6"></a><span class="unvisited"> </span>
+<a id="L7"></a><span > </span>
+<a id="L8"></a><span class="visited"> </span>
+<a id="L9"></a><span class="unvisited"> </span>
+<a id="L10"></a><span class="unvisited"> </span>
+<a id="L11"></a><span class="visited"> </span>
+<a id="L12"></a><span > </span>
+<a id="L13"></a><span > </span>
+<a id="L14"></a><span class="visited"> </span>
+<a id="L15"></a><span class="visited"> </span>
+<a id="L16"></a><span class="visited"> </span>
+<a id="L17"></a><span class="visited"> </span>
+<a id="L18"></a><span > </span>
+<a id="L19"></a><span > </span>
+<a id="L20"></a><span class="visited"> </span>
+<a id="L21"></a><span class="visited"> </span>
+<a id="L22"></a><span class="visited"> </span>
+<a id="L23"></a><span > </span>
+<a id="L24"></a><span class="visited"> </span>
+</pre>
+      </div>
+      <div id="text-layer">
+        <pre id="line-numbers">
+<a href="#L1"> 1</a>
+<a href="#L2"> 2</a>
+<a href="#L3"> 3</a>
+<a href="#L4"> 4</a>
+<a href="#L5"> 5</a>
+<a href="#L6"> 6</a>
+<a href="#L7"> 7</a>
+<a href="#L8"> 8</a>
+<a href="#L9"> 9</a>
+<a href="#L10">10</a>
+<a href="#L11">11</a>
+<a href="#L12">12</a>
+<a href="#L13">13</a>
+<a href="#L14">14</a>
+<a href="#L15">15</a>
+<a href="#L16">16</a>
+<a href="#L17">17</a>
+<a href="#L18">18</a>
+<a href="#L19">19</a>
+<a href="#L20">20</a>
+<a href="#L21">21</a>
+<a href="#L22">22</a>
+<a href="#L23">23</a>
+<a href="#L24">24</a>
+</pre>
+<pre><code class="ocaml">let rec list_compare ~f l1 l2 =
+  <span data-count="21">m</span>atch (l1, l2) with
+  | <span data-count="14">h</span>ead1 :: tail1, head2 :: tail2 -&gt;
+    let comp_result = f head1 head2 in
+    <span data-count="14">i</span>f comp_result != 0 then
+      <span data-count="0">c</span>omp_result
+    else
+      <span data-count="14">l</span>ist_compare ~f tail1 tail2
+  | <span data-count="0">[</span>], _head2 :: _tail2 -&gt; -1
+  | <span data-count="0">_</span>head1 :: _tail1, [] -&gt; 1
+  | <span data-count="7">[</span>], [] -&gt; 0
+
+let rec value (x : Types.value) (y : Types.value) =
+  <span data-count="147">m</span>atch (x, y) with
+  | <span data-count="16">T</span>Array x, TArray y -&gt; array x y
+  | <span data-count="39">T</span>Table x, TTable y -&gt; table x y
+  | <span data-count="92">_</span>, _ -&gt; compare x y
+
+and array (x : Types.array) (y : Types.array) =
+  <span data-count="16">m</span>atch (x, y) with
+  | <span data-count="7">N</span>odeTable nt1, NodeTable nt2 -&gt; list_compare ~f:table nt1 nt2
+  | <span data-count="9">_</span> -&gt; compare x y
+
+and table (x : Types.table) (y : Types.table) = <span data-count="62">T</span>ypes.Table.compare value x y
+</code></pre>
+      </div>
+    </div>
+    <script src="../coverage.js"></script>
+  </body>
+</html>
