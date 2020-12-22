@@ -4,59 +4,42 @@ module Table = struct
   module Key : sig
     type t
 
-    exception Bad_key of string
-
     val compare : t -> t -> int
 
-    val bare_key_of_string : string -> t
-
-    val quoted_key_of_string : string -> t
+    val of_string : string -> t
 
     val to_string : t -> string
   end = struct
-    (** A strongly-typed key. *)
-    type t =
-      | KeyBare of string
-      | KeyQuoted of string
+    type t = string
 
-    (** Exception thrown when an invalid character is found in a key.*)
-    exception Bad_key of string
-
-    (** Bare keys only allow [A-Za-z0-9_-].
-
-        @raise Type.Key.Bad_key if other char is found. *)
-    let validate_bare_key s =
-      String.iter (function
+    (** Bare keys only allow [A-Za-z0-9_-]. *)
+    let is_bare t =
+      let valid_so_far = ref true in
+      let i = ref 0 in
+      while !valid_so_far && !i < String.length t do
+        match String.unsafe_get t !i with
         | 'a' .. 'z'
         | 'A' .. 'Z'
         | '0' .. '9'
         | '_'
-        | '-' -> ()
-        | _ -> raise (Bad_key s))
-      s
+        | '-' -> incr i
+        | _c -> valid_so_far := false
+      done;
+      !valid_so_far
 
-    let bare_key_of_string s =
-      validate_bare_key s;
-      KeyBare s
+    let of_string t = t
 
-    (* FIXME: Ensure that: *)
+    (* This function needs to go to more effort to escape non-bare strings. The
+       current implementation does not conform to the spec as it will not
+       escape, e.g., question marks. *)
+    let to_string t =
+      if is_bare t
+      then t
+      else "\"" ^ t ^ "\""
 
-    (** Quoted keys follow the exact same rules as basic strings. *)
-    let quoted_key_of_string s = KeyQuoted s
-
-    let to_string = function
-      | KeyBare k -> k
-      | KeyQuoted k -> "\"" ^ k ^ "\""
-
-    let unsafe_string t =
-      match t with
-      | KeyBare s 
-      | KeyQuoted s -> s
-
-    (** Compare x y returns 0 if x is equal to y, a negative integer if x is
-        less than y, and a positive integer if x is greater than y. *)
-    let compare m1 m2 = String.compare (unsafe_string m1) (unsafe_string m2)
+    let compare = String.compare
   end
+
 
   include Map.Make (Key)
 

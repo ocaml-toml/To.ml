@@ -1,7 +1,7 @@
 let safe_find key table =
   try
     let value =
-      Types.Table.find (Types.Table.Key.bare_key_of_string key) table
+      Types.Table.find (Types.Table.Key.of_string key) table
     in
     Some value
   with Not_found -> None
@@ -17,7 +17,7 @@ let key k =
       (fun new_value value ->
         Some
           (Types.Table.add
-             (Types.Table.Key.bare_key_of_string k)
+             (Types.Table.Key.of_string k)
              new_value value))
   }
 
