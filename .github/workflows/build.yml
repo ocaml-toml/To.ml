@@ -22,15 +22,19 @@ jobs:
             ocaml-version: 4.07.0
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout code
+      - name: checkout
         uses: actions/checkout@v2
-      - name: Use OCaml ${{ matrix.ocaml-version }}
+      - name: setup-ocaml
         uses: avsm/setup-ocaml@v1
         with:
           ocaml-version: ${{ matrix.ocaml-version }}
-      - run: opam pin add . -y --no-action
-      - run: opam depext -y toml toml_cconv
-      - run: opam install -y ./*.opam --deps-only --with-test
-      - run: opam upgrade --fixup
-      - run: opam exec -- dune build @install
-      - run: opam exec -- dune runtest
+      - name: setup
+        run: |
+          opam pin add . -y --no-action
+          opam depext -y toml toml_cconv
+          opam install -y ./*.opam --deps-only --with-test
+          opam upgrade --fixup
+      - name: build
+        run: opam exec -- dune build @install
+      - name: test
+        run: opam exec -- dune runtest

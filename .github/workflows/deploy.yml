@@ -22,17 +22,14 @@ jobs:
           opam depext -y toml toml_cconv
           opam install -y ./*.opam --deps-only --with-test --with-doc
           opam upgrade --fixup
+          touch doc/.nojekyll
       - name: api
         run: |
-          touch doc/.nojekyll
           opam exec -- dune build @doc
-          mkdir -p doc/api
-          mv _build/default/_doc/_html/* doc/api/
+          mv _build/default/_doc/_html doc/api
       - name: coverage
         run: |
-          find . -name '*.coverage' | xargs rm -f
-          opam exec -- dune runtest --instrument-with bisect_ppx --force
-          mkdir -p doc/coverage
+          opam exec -- dune runtest --instrument-with bisect_ppx
           opam exec -- bisect-ppx-report html -o doc/coverage
       - name: deploy
         uses: JamesIves/github-pages-deploy-action@3.6.2
