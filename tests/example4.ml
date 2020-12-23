@@ -159,9 +159,10 @@ let expected =
     ; ( Toml.Min.key "datetime"
       , TTable
           (Toml.Min.of_key_values
-             [ (Toml.Min.key "key1", TDate 296638320.)
+             [ (Toml.Min.key "key1", TDate 296611200.)
              ; (Toml.Min.key "key2", TDate 296638320.)
-             ; (Toml.Min.key "key3", TDate 296638320.999999)
+             ; (Toml.Min.key "key3", TDate 296638320.)
+             ; (Toml.Min.key "key4", TDate 296638320.999999)
              ]) )
     ; ( Toml.Min.key "array"
       , TTable
