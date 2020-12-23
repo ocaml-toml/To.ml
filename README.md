@@ -1,4 +1,4 @@
-# toml [![Actions Status](https://github.com/ocaml-toml/to.ml/workflows/build/badge.svg)](https://github.com/ocaml-toml/to.ml/actions)
+# toml [![build status](https://github.com/ocaml-toml/to.ml/workflows/build/badge.svg)](https://github.com/ocaml-toml/to.ml/actions) [![coverage percentage](https://raw.githubusercontent.com/ocaml-toml/To.ml/gh-pages/coverage/badge.svg)](https://ocaml-toml.github.io/To.ml/coverage/)
 
 [OCaml] library for [TOML].
 

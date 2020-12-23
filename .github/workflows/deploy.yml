@@ -4,7 +4,7 @@ on:
     branches:
       - master
 jobs:
-  doc-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -31,6 +31,15 @@ jobs:
         run: |
           opam exec -- dune runtest --instrument-with bisect_ppx
           opam exec -- bisect-ppx-report html -o doc/coverage
+      - name: coverage-badge
+        run: |
+          text=coverage
+          percentage=$(opam exec -- bisect-ppx-report summary | sed -E 's/.*\((..).*/\1/g')
+          color=$(printf "%x%x%x" $((255-$percentage)) $((155+$percentage)) 85)
+          icon=codecov
+          url="https://badgen.net/badge/$text/$percentage%25/$color?icon=$icon"
+          curl $url > doc/coverage/badge.svg
+          cat doc/coverage/badge.svg | grep title
       - name: deploy
         uses: JamesIves/github-pages-deploy-action@3.6.2
         with:
