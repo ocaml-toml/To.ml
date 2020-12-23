@@ -1,20 +1,3 @@
-<svg width="112.3" height="20" viewBox="0 0 1123 200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="coverage: 67%">
-  <title>coverage: 67%</title>
-  <linearGradient id="a" x2="0" y2="100%">
-    <stop offset="0" stop-opacity=".1" stop-color="#EEE"/>
-    <stop offset="1" stop-opacity=".1"/>
-  </linearGradient>
-  <mask id="m"><rect width="1123" height="200" rx="30" fill="#FFF"/></mask>
-  <g mask="url(#m)">
-    <rect width="763" height="200" fill="#555"/>
-    <rect width="360" height="200" fill="#bcde55" x="763"/>
-    <rect width="1123" height="200" fill="url(#a)"/>
-  </g>
-  <g aria-hidden="true" fill="#fff" text-anchor="start" font-family="Verdana,DejaVu Sans,sans-serif" font-size="110">
-    <text x="220" y="148" textLength="503" fill="#000" opacity="0.25">coverage</text>
-    <text x="210" y="138" textLength="503">coverage</text>
-    <text x="818" y="148" textLength="260" fill="#000" opacity="0.25">67%</text>
-    <text x="808" y="138" textLength="260">67%</text>
-  </g>
-  <image x="40" y="35" width="130" height="130" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMTYxLjg0IDI3LjJBODguOTMgODguOTMgMCAwMDk4LjUxIDFDNDkuMSAxLjAzIDguODggNDEuMjggOC44NCA5MC43bC0uMDIgMTUuMiAxMS44LTguMDVhNDcuNjIgNDcuNjIgMCAwMTM1LjQ3LTcuNThBNDYgNDYgMCAwMTc5LjQ5IDEwMmE2My4zIDYzLjMgMCAwMTUuMjktOS40OCA2MS42NyA2MS42NyAwIDAxMi42Ni0zLjZBNjEuMjQgNjEuMjQgMCAwMDU4LjggNzUuNDRhNjMuMjYgNjMuMjYgMCAwMC0xMS4yOS0xLjAyIDYxLjg4IDYxLjg4IDAgMDAtMjIuNiA0LjI1IDc0Ljc4IDc0Ljc4IDAgMDE3My42Ny02Mi42IDczLjkzIDczLjkzIDAgMDE1Mi42MiAyMS43OSA3My41NiA3My41NiAwIDAxMjAuODYgNDAuNjkgNjIuNzQgNjIuNzQgMCAwMC0yMi43LTQuM2wtMS4wOS0uMDFhNjMuNjkgNjMuNjkgMCAwMC02LjQ2LjQzYy0uNC4wNC0uOC4xLTEuMi4xNi0uOTYuMTMtMS45Mi4yOC0yLjg3LjQ1bC0xLjI2LjI0Yy0uOTcuMi0xLjkzLjQyLTIuODguNjZsLTEuMDMuMjZjLTEuMi4zMy0yLjM5LjY5LTMuNTYgMS4wOGwtLjIxLjA3Yy0yLjY3LjktNS4yNSAyLTcuNzUgMy4yNWwtLjIuMWE2MC43IDYwLjcgMCAwMC0zLjQ0IDEuOWwtLjI4LjE2YTYwLjI4IDYwLjI4IDAgMDAtMTYuMTYgMTQuMTZjLS45NyAxLjItMS45IDIuNDQtMi43OSAzLjczYTY0IDY0IDAgMDAtNC4zMiA3LjM5bC0uMDkuMThhNjEuNjIgNjEuNjIgMCAwMC02LjQgMjguNDN2Ljg0YTU2LjQ3IDU2LjQ3IDAgMDAuMjggNC4zMmwuMiAxLjY4LjEzIDEuMDhhNjEuOSA2MS45IDAgMDAyNS45NCA0Mi4yNGwxLjcxIDEuMS4wMi0uMDRhNjIuMDIgNjIuMDIgMCAwMDI1LjM3IDkuNDJsMS4yMi4xNiA5LjA5LTE0LjU4LTMuMjctLjA5Yy0yNS4xNC0uNjktNDUuNTgtMjEuNy00NS41OC00Ni44NWE0Ni45MyA0Ni45MyAwIDAxNDQuMDItNDYuOGwxLjU2LS4wNWMxMC4wMS0uMjYgMTkuODcgMi43IDI4LjI0IDguNGwxMS43NSA4IC4wMi0xNS4xMmE4OC45NiA4OC45NiAwIDAwLTI2LjIyLTYzLjQiLz48L3N2Zz4="/>
-</svg>
+An error occurred with this application.
+
+NO_RESPONSE_FROM_FUNCTION
