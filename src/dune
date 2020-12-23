@@ -3,10 +3,8 @@
  (modules compare lenses lexer menhir_parser min parser printer types unicode)
  (private_modules menhir_parser)
  (libraries str unix ISO8601)
- (preprocess
-  (pps bisect_ppx -- --conditional --exclusions src/bisect.exclude))
- (preprocessor_deps
-  (file bisect.exclude)))
+ (instrumentation
+  (backend bisect_ppx)))
 
 (menhir
  (modules menhir_parser))

@@ -1,4 +1,4 @@
-(lang dune 1.10)
+(lang dune 2.7)
 
 (using menhir 1.0)
 
@@ -12,9 +12,9 @@
 (source
  (github ocaml-toml/To.ml))
 
-(homepage https://github.com/ocaml-toml/To.ml/)
+(homepage https://ocaml-toml.github.io/To.ml/)
 
-(documentation https://ocaml-toml.github.io/To.ml/)
+(documentation https://ocaml-toml.github.io/To.ml/api/)
 
 (generate_opam_files true)
 
@@ -27,10 +27,13 @@
   (ocaml
    (>= 4.07))
   (dune
-   (>= 1.10))
+   (>= 2.7))
   (menhir :build)
   (ounit :with-test)
-  (bisect_ppx :with-test)
+  (bisect_ppx
+   (and
+    :with-test
+    (>= "2.5")))
   (odoc :with-doc)
   (ISO8601
    (>= 0.2))))
@@ -43,8 +46,12 @@
   (ocaml
    (>= 4.07))
   (dune
-   (>= 1.10))
+   (>= 2.7))
   (toml
    (>= 6.0))
+  (bisect_ppx
+   (and
+    :with-test
+    (>= "2.5")))
   (cconv
    (>= 0.5))))
