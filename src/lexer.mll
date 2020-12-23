@@ -28,11 +28,11 @@ let t_key     = ['A'-'Z''a'-'z''0'-'9''_''-']+
                 let t_date    = t_digit t_digit t_digit t_digit
                     '-' t_digit t_digit
                     '-' t_digit t_digit
-                    ['T' 't']
-                    t_digit t_digit
-                    ':' t_digit t_digit
-                    ':' t_digit t_digit ('.' t_digit+)?
-                    (['Z' 'z'] | (['+' '-'] t_digit t_digit ':' t_digit t_digit))
+                    (['T' 't']
+                     t_digit t_digit
+                     ':' t_digit t_digit
+                     ':' t_digit t_digit ('.' t_digit+)?
+                     (['Z' 'z'] | (['+' '-'] t_digit t_digit ':' t_digit t_digit)))?
 
 (** RFC 3339 date of form 1979-05-27T07:32:00.42+00:00 *)
 
@@ -51,7 +51,7 @@ let t_unicode = t_alphanum t_alphanum t_alphanum t_alphanum
                 }
               | t_float as value   { FLOAT (float_of_string value) }
               | t_bool as value  { BOOL (bool_of_string value) }
-              | t_date as date { DATE (fst (ISO8601.Permissive.datetime_tz date)) }
+              | t_date as date { DATE (fst (ISO8601.Permissive.datetime_tz ~reqtime:false date)) }
               | t_white+ { tomlex lexbuf }
               | t_eol { update_loc lexbuf;tomlex lexbuf }
               | '=' { EQUAL }
