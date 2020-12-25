@@ -3343,7 +3343,7 @@ open Menhir_parser
 open Lexing
 
 let update_loc lexbuf =
-  <span data-count="343">l</span>et pos = lexbuf.lex_curr_p in
+  <span data-count="344">l</span>et pos = lexbuf.lex_curr_p in
   lexbuf.lex_curr_p &lt;- { pos with
                          pos_lnum = pos.pos_lnum + 1;
                          pos_bol = pos.pos_cnum;
@@ -3377,7 +3377,7 @@ let __ocaml_lex_tables = {
     \001\000\255\255\255\255\255\255\001\000\001\000\255\255\018\000\
     \001\000\001\000\018\000\001\000\255\255\018\000\018\000\000\000\
     \000\000\255\255\001\000\255\255\255\255\018\000\018\000\018\000\
-    \018\000\018\000\018\000\018\000\018\000\018\000\018\000\018\000\
+    \018\000\018\000\018\000\018\000\018\000\003\000\018\000\018\000\
     \018\000\255\255\255\255\255\255\255\255\255\255\255\255\255\255\
     \255\255\255\255\255\255\255\255\255\255\255\255\255\255\000\000\
     \018\000\000\000\000\000\000\000\018\000\018\000\002\000\018\000\
@@ -4623,12 +4623,12 @@ let __ocaml_lex_tables = {
 }
 
 let rec tomlex lexbuf =
-  <span data-count="1719">l</span>exbuf.Lexing.lex_mem &lt;- Array.mak<span data-count="1719">e</span> 8 (-1);(* L=2 [4] &lt;- p ; [3] &lt;- p ;  *)
+  <span data-count="1725">l</span>exbuf.Lexing.lex_mem &lt;- Array.mak<span data-count="1725">e</span> 8 (-1);(* L=2 [4] &lt;- p ; [3] &lt;- p ;  *)
   lexbuf.Lexing.lex_mem.(4) &lt;- lexbuf.Lexing.lex_curr_pos ;
-  <span data-count="1719">l</span>exbuf.Lexing.lex_mem.(3) &lt;- lexbuf.Lexing.lex_curr_pos ;
- <span data-count="1719">_</span>_ocaml_lex_tomlex_rec lexbuf 0
+  <span data-count="1725">l</span>exbuf.Lexing.lex_mem.(3) &lt;- lexbuf.Lexing.lex_curr_pos ;
+ <span data-count="1725">_</span>_ocaml_lex_tomlex_rec lexbuf 0
 and __ocaml_lex_tomlex_rec lexbuf __ocaml_lex_state =
-  <span data-count="1732">m</span>atch Lexing.new_engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
+  <span data-count="1738">m</span>atch Lexing.new_engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | <span data-count="64">0</span> -&gt;
 let
 # 21 "src/lexer.mll"
@@ -4685,27 +4685,27 @@ let
                                  <span data-count="13">(</span> BOOL (bool_of_strin<span data-count="13">g</span> value) )
 # 1349 "src/lexer.ml"
 
-  | <span data-count="5">3</span> -&gt;
+  | <span data-count="6">3</span> -&gt;
 let
 # 54 "src/lexer.mll"
                           date
 # 1355 "src/lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
 # 54 "src/lexer.mll"
-                               <span data-count="5">(</span> DATE (fs<span data-count="5">t</span> (ISO8601.Permissive.datetime_t<span data-count="5">z</span> date)) )
+                               <span data-count="6">(</span> DATE (fs<span data-count="6">t</span> (ISO8601.Permissive.datetime_t<span data-count="6">z</span> ~reqtime:false date)) )
 # 1359 "src/lexer.ml"
 
-  | <span data-count="383">4</span> -&gt;
+  | <span data-count="385">4</span> -&gt;
 # 55 "src/lexer.mll"
                          ( tomlex lexbuf )
 # 1364 "src/lexer.ml"
 
-  | <span data-count="327">5</span> -&gt;
+  | <span data-count="328">5</span> -&gt;
 # 56 "src/lexer.mll"
-                      ( update_loc lexbuf;<span data-count="327">t</span>omlex lexbuf )
+                      ( update_loc lexbuf;<span data-count="328">t</span>omlex lexbuf )
 # 1369 "src/lexer.ml"
 
-  | <span data-count="163">6</span> -&gt;
+  | <span data-count="164">6</span> -&gt;
 # 57 "src/lexer.mll"
                     ( EQUAL )
 # 1374 "src/lexer.ml"
@@ -4779,14 +4779,14 @@ let
                                           ( tomlex lexbuf )
 # 1443 "src/lexer.ml"
 
-  | <span data-count="252">1</span>8 -&gt;
+  | <span data-count="253">1</span>8 -&gt;
 let
 # 73 "src/lexer.mll"
                          value
 # 1449 "src/lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
 # 73 "src/lexer.mll"
-                               <span data-count="252">(</span> KEY (value) )
+                               <span data-count="253">(</span> KEY (value) )
 # 1453 "src/lexer.ml"
 
   | <span data-count="42">1</span>9 -&gt;

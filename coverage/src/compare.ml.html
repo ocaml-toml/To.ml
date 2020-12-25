@@ -90,10 +90,10 @@
   | <span data-count="7">[</span>], [] -&gt; 0
 
 let rec value (x : Types.value) (y : Types.value) =
-  <span data-count="147">m</span>atch (x, y) with
+  <span data-count="148">m</span>atch (x, y) with
   | <span data-count="16">T</span>Array x, TArray y -&gt; array x y
   | <span data-count="39">T</span>Table x, TTable y -&gt; table x y
-  | <span data-count="92">_</span>, _ -&gt; compare x y
+  | <span data-count="93">_</span>, _ -&gt; compare x y
 
 and array (x : Types.array) (y : Types.array) =
   <span data-count="16">m</span>atch (x, y) with

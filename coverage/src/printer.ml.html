@@ -464,7 +464,7 @@ let print_string formatter value =
     <span data-count="114">S</span>tring.iter (maybe_escape_cha<span data-count="114">r</span> formatter) value;
     <span data-count="114">F</span>ormat.pp_print_char formatter '"'
 
-let print_date fmt d = <span data-count="14">I</span>SO8601.Permissive.pp_datetimezone fmt (d, 0.)
+let print_date fmt d = <span data-count="16">I</span>SO8601.Permissive.pp_datetimezone fmt (d, 0.)
 
 (* This function is a shim for [Format.pp_print_list] from ocaml 4.02 *)
 let pp_print_list ~pp_sep print_item_func formatter values =
@@ -482,7 +482,7 @@ let pp_print_list ~pp_sep print_item_func formatter values =
 let is_table _ = function
   | <span data-count="121">T</span>Table _ -&gt; true
   | <span data-count="22">T</span>Array (NodeTable _) -&gt; true
-  | <span data-count="272">_</span> -&gt; false
+  | <span data-count="274">_</span> -&gt; false
 
 let is_array_of_table _ = function
   | <span data-count="1">T</span>Array (NodeTable _) -&gt; true
@@ -527,24 +527,24 @@ and print_table formatter toml_table sections =
     Types.Table.partition is_table toml_table
   in
   <span data-count="144">l</span>et print_key_value key value =
-    <span data-count="317">p</span>rint_value_with_key formatter key value sections
+    <span data-count="319">p</span>rint_value_with_key formatter key value sections
   in
   (* iter() guarantees that keys are returned in ascending order *)
   Types.Table.iter print_key_value table_with_non_table_values;
   <span data-count="144">T</span>ypes.Table.iter print_key_value table_with_table_values
 
 and print_value formatter toml_value sections =
-  <span data-count="355">m</span>atch toml_value with
+  <span data-count="357">m</span>atch toml_value with
   | <span data-count="14">T</span>Bool value -&gt; print_bool formatter value
   | <span data-count="64">T</span>Int value -&gt; print_int formatter value
   | <span data-count="22">T</span>Float value -&gt; print_float formatter value
   | <span data-count="103">T</span>String value -&gt; print_string formatter value
-  | <span data-count="12">T</span>Date value -&gt; print_date formatter value
+  | <span data-count="14">T</span>Date value -&gt; print_date formatter value
   | <span data-count="49">T</span>Array value -&gt; print_array formatter value sections
   | <span data-count="91">T</span>Table value -&gt; print_table formatter value sections
 
 and print_value_with_key formatter key toml_value sections =
-  <span data-count="317">l</span>et sections', add_linebreak =
+  <span data-count="319">l</span>et sections', add_linebreak =
     match toml_value with
     | <span data-count="87">T</span>Table value -&gt;
       let sections_with_key = sections @ [ key ] in
@@ -561,12 +561,12 @@ and print_value_with_key formatter key toml_value sections =
     | <span data-count="18">T</span>Array (NodeTable _tables) -&gt;
       let sections_with_key = sections @ [ key ] in
       (sections_with_key, false)
-    | <span data-count="212">_</span> -&gt;
-      Format.fprintf formatter "%s = " (Types.Table.Key.to_strin<span data-count="212">g</span> key);
-      <span data-count="212">(</span>sections, true)
+    | <span data-count="214">_</span> -&gt;
+      Format.fprintf formatter "%s = " (Types.Table.Key.to_strin<span data-count="214">g</span> key);
+      <span data-count="214">(</span>sections, true)
   in
   print_value formatter toml_value sections';
-  <span data-count="317">i</span>f add_linebreak then <span data-count="212">F</span>ormat.pp_print_char formatter '\n'
+  <span data-count="319">i</span>f add_linebreak then <span data-count="214">F</span>ormat.pp_print_char formatter '\n'
 
 let value formatter toml_value =
   <span data-count="38">p</span>rint_value formatter toml_value [];

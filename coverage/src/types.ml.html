@@ -181,27 +181,27 @@ module Table = struct
 
     (** Bare keys only allow [A-Za-z0-9_-]. *)
     let is_bare t =
-      <span data-count="391">l</span>et valid_so_far = ref true in
+      <span data-count="393">l</span>et valid_so_far = ref true in
       let i = ref 0 in
-      while !valid_so_far &amp;&amp; <span data-count="2341">!</span>i &lt; String.lengt<span data-count="2341">h</span> t do
-        <span data-count="1960">m</span>atch String.unsafe_get t !i with
-        | <span data-count="1834">'</span>a' .. 'z'
+      while !valid_so_far &amp;&amp; <span data-count="2351">!</span>i &lt; String.lengt<span data-count="2351">h</span> t do
+        <span data-count="1968">m</span>atch String.unsafe_get t !i with
+        | <span data-count="1840">'</span>a' .. 'z'
         | <span data-count="4">'</span>A' .. 'Z'
-        | <span data-count="89">'</span>0' .. '9'
+        | <span data-count="91">'</span>0' .. '9'
         | <span data-count="23">'</span>_'
-        | <span data-count="0">'</span>-' -&gt; inc<span data-count="1950">r</span> i
+        | <span data-count="0">'</span>-' -&gt; inc<span data-count="1958">r</span> i
         | <span data-count="10">_</span>c -&gt; valid_so_far := false
       done;
       !valid_so_far
 
-    let of_string t = <span data-count="493">t</span>
+    let of_string t = <span data-count="495">t</span>
 
     (* This function needs to go to more effort to escape non-bare strings. The
        current implementation does not conform to the spec as it will not
        escape, e.g., question marks. *)
     let to_string t =
-      <span data-count="391">i</span>f is_bare t
-      then <span data-count="381">t</span>
+      <span data-count="393">i</span>f is_bare t
+      then <span data-count="383">t</span>
       else <span data-count="10">"</span>\"" ^ t ^ "\""
 
     let compare = String.compare
@@ -211,7 +211,7 @@ module Table = struct
   include Map.Make (Key)
 
   let of_key_values key_values =
-    <span data-count="87">L</span>ist.fold_left (fun tbl (key, value) -&gt; <span data-count="175">a</span>dd key value tbl) empty key_values
+    <span data-count="87">L</span>ist.fold_left (fun tbl (key, value) -&gt; <span data-count="176">a</span>dd key value tbl) empty key_values
 end
 
 type array =

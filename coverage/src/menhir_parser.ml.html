@@ -5251,16 +5251,16 @@ let lookup_table root keys =
 (* [add_value t k v] add to the value [v], at the key [k],
  * in the table [t]. Fails if a value is already binded to [k]. *)
 let add_value t k v =
-  <span data-count="157">i</span>f Hashtbl.mem t k
+  <span data-count="158">i</span>f Hashtbl.mem t k
   then <span data-count="0">f</span>ailwith ("add_value")
-  else <span data-count="157">H</span>ashtbl.add t k (Value v)
+  else <span data-count="158">H</span>ashtbl.add t k (Value v)
 
 (* [add_to_table root ks kvs] add [kvs] to table found following path
  * [ks] from [root] table.
  * Use it for a table not in array of tables. *)
 let add_to_table root ks kvs =
   <span data-count="84">l</span>et t = lookup_table root ks in
-  <span data-count="84">L</span>ist.iter (fun (k, v) -&gt; <span data-count="132">a</span>dd_value t k v) kvs
+  <span data-count="84">L</span>ist.iter (fun (k, v) -&gt; <span data-count="133">a</span>dd_value t k v) kvs
 
 (* [add_to_nested_table root ks kvs] add [kvs] to nested
  * table found following path [ks] from [root].
@@ -5294,13 +5294,13 @@ let add_to_nested_table root ks kvs =
 (* Convert a value of local type [t] into a [Value.value]  *)
 let rec convert = function
   | <span data-count="89">T</span>able t   -&gt; TTable (htbl_to_ma<span data-count="89">p</span> t)
-  | <span data-count="155">V</span>alue v   -&gt; v
+  | <span data-count="156">V</span>alue v   -&gt; v
   | <span data-count="10">T</span>ables ts -&gt;
     TArray (NodeTable (List.filter (fun t -&gt; <span data-count="19">H</span>ashtbl.lengt<span data-count="19">h</span> t &gt; 0) ts
                        |&gt; <span data-count="10">L</span>ist.ma<span data-count="10">p</span> htbl_to_map))
 
 and htbl_to_map h =
-  <span data-count="106">H</span>ashtbl.fold (fun k v map -&gt; <span data-count="204">T</span>able.add k (conver<span data-count="204">t</span> v) map)
+  <span data-count="106">H</span>ashtbl.fold (fun k v map -&gt; <span data-count="205">T</span>able.add k (conver<span data-count="205">t</span> v) map)
     h Table.empty
 
 let to_table key_values key_value_groups =
@@ -6752,7 +6752,7 @@ and _menhir_run36 : _menhir_env -&gt; 'ttv_tail -&gt; _menhir_state -&gt; 'ttv_r
 
 and _menhir_goto_value : _menhir_env -&gt; 'ttv_tail -&gt; _menhir_state -&gt; 'tv_value -&gt; 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s _v -&gt;
-    <span data-count="160">l</span>et (_menhir_env : _menhir_env) = _menhir_env in
+    <span data-count="161">l</span>et (_menhir_env : _menhir_env) = _menhir_env in
     let (_menhir_stack : ('freshtv153 * _menhir_state * 'tv_key)) = Obj.magic _menhir_stack in
     let (_menhir_s : _menhir_state) = _menhir_s in
     let (_v : 'tv_value) = _v in
@@ -6781,7 +6781,7 @@ and _menhir_goto_value : _menhir_env -&gt; 'ttv_tail -&gt; _menhir_state -&gt; '
     )) = _v in
     ((let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
     match _menhir_s with
-    | <span data-count="35">M</span>enhirState0 | <span data-count="57">M</span>enhirState21 | <span data-count="49">M</span>enhirState18 -&gt;
+    | <span data-count="35">M</span>enhirState0 | <span data-count="58">M</span>enhirState21 | <span data-count="49">M</span>enhirState18 -&gt;
         let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : 'freshtv139 * _menhir_state * (
 # 111 "src/menhir_parser.mly"
@@ -6791,7 +6791,7 @@ and _menhir_goto_value : _menhir_env -&gt; 'ttv_tail -&gt; _menhir_state -&gt; '
         ((assert (not _menhir_env._menhir_error);
         let _tok = _menhir_env._menhir_token in
         match _tok with
-        | <span data-count="58">K</span>EY _v -&gt;
+        | <span data-count="59">K</span>EY _v -&gt;
             _menhir_run2 _menhir_env (Obj.magic _menhir_stack) MenhirState21 _v
         | <span data-count="0">S</span>TRING _v -&gt;
             _menhir_run1 _menhir_env (Obj.magic _menhir_stack) MenhirState21 _v
@@ -6979,7 +6979,7 @@ and _menhir_goto_separated_nonempty_list_DOT_key_ : _menhir_env -&gt; 'ttv_tail 
 
 and _menhir_goto_list_keyValue_ : _menhir_env -&gt; 'ttv_tail -&gt; _menhir_state -&gt; 'tv_list_keyValue_ -&gt; 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s _v -&gt;
-    <span data-count="235">l</span>et _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    <span data-count="236">l</span>et _menhir_stack = (_menhir_stack, _menhir_s, _v) in
     match _menhir_s with
     | <span data-count="42">M</span>enhirState0 -&gt;
         let (_menhir_env : _menhir_env) = _menhir_env in
@@ -7009,7 +7009,7 @@ and _menhir_goto_list_keyValue_ : _menhir_env -&gt; 'ttv_tail -&gt; _menhir_stat
             assert (not _menhir_env._menhir_error);
             _menhir_env._menhir_error &lt;- true;
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState19) : 'freshtv104)
-    | <span data-count="140">M</span>enhirState21 -&gt;
+    | <span data-count="141">M</span>enhirState21 -&gt;
         let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : ('freshtv107 * _menhir_state * (
 # 111 "src/menhir_parser.mly"
@@ -7038,7 +7038,7 @@ and _menhir_goto_list_keyValue_ : _menhir_env -&gt; 'ttv_tail -&gt; _menhir_stat
 
 and _menhir_goto_key : _menhir_env -&gt; 'ttv_tail -&gt; _menhir_state -&gt; 'tv_key -&gt; 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s _v -&gt;
-    <span data-count="252">l</span>et _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    <span data-count="253">l</span>et _menhir_stack = (_menhir_stack, _menhir_s, _v) in
     match _menhir_s with
     | <span data-count="33">M</span>enhirState5 | <span data-count="36">M</span>enhirState12 | <span data-count="20">M</span>enhirState6 -&gt;
         let (_menhir_env : _menhir_env) = _menhir_env in
@@ -7077,17 +7077,17 @@ and _menhir_goto_key : _menhir_env -&gt; 'ttv_tail -&gt; _menhir_state -&gt; 'tv
             let (_menhir_stack : 'freshtv69 * _menhir_state * 'tv_key) = Obj.magic _menhir_stack in
             ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv70)) : 'freshtv72)
-    | <span data-count="37">M</span>enhirState0 | <span data-count="49">M</span>enhirState18 | <span data-count="8">M</span>enhirState36 | <span data-count="11">M</span>enhirState40 | <span data-count="58">M</span>enhirState21 -&gt;
+    | <span data-count="37">M</span>enhirState0 | <span data-count="49">M</span>enhirState18 | <span data-count="8">M</span>enhirState36 | <span data-count="11">M</span>enhirState40 | <span data-count="59">M</span>enhirState21 -&gt;
         let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : 'freshtv99 * _menhir_state * 'tv_key) = Obj.magic _menhir_stack in
         ((assert (not _menhir_env._menhir_error);
         let _tok = _menhir_env._menhir_token in
         match _tok with
-        | <span data-count="163">E</span>QUAL -&gt;
+        | <span data-count="164">E</span>QUAL -&gt;
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : 'freshtv95 * _menhir_state * 'tv_key) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
-            <span data-count="160">l</span>et _tok = _menhir_env._menhir_token in
+            <span data-count="161">l</span>et _tok = _menhir_env._menhir_token in
             match _tok with
             | <span data-count="7">B</span>OOL _v -&gt;
                 let (_menhir_env : _menhir_env) = _menhir_env in
@@ -7117,7 +7117,7 @@ and _menhir_goto_key : _menhir_env -&gt; 'ttv_tail -&gt; _menhir_state -&gt; 'tv
 # 1990 "src/menhir_parser.ml"
                  in
                 _menhir_goto_value _menhir_env _menhir_stack _menhir_s _v) : 'freshtv74)) : 'freshtv76)
-            | <span data-count="5">D</span>ATE _v -&gt;
+            | <span data-count="6">D</span>ATE _v -&gt;
                 let (_menhir_env : _menhir_env) = _menhir_env in
                 let (_menhir_stack : 'freshtv79) = Obj.magic _menhir_stack in
                 let (_menhir_s : _menhir_state) = MenhirState24 in
@@ -7127,7 +7127,7 @@ and _menhir_goto_key : _menhir_env -&gt; 'ttv_tail -&gt; _menhir_state -&gt; 'tv
 # 2000 "src/menhir_parser.ml"
                 )) = _v in
                 ((let _menhir_env = _menhir_discard _menhir_env in
-                <span data-count="5">l</span>et (_menhir_env : _menhir_env) = _menhir_env in
+                <span data-count="6">l</span>et (_menhir_env : _menhir_env) = _menhir_env in
                 let (_menhir_stack : 'freshtv77) = Obj.magic _menhir_stack in
                 let (_menhir_s : _menhir_state) = _menhir_s in
                 let ((_1 : (
@@ -7518,8 +7518,8 @@ and _menhir_run2 : _menhir_env -&gt; 'ttv_tail -&gt; _menhir_state -&gt; (
 # 2391 "src/menhir_parser.ml"
 ) -&gt; 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s _v -&gt;
-    <span data-count="252">l</span>et _menhir_env = _menhir_discard _menhir_env in
-    <span data-count="252">l</span>et (_menhir_env : _menhir_env) = _menhir_env in
+    <span data-count="253">l</span>et _menhir_env = _menhir_discard _menhir_env in
+    <span data-count="253">l</span>et (_menhir_env : _menhir_env) = _menhir_env in
     let (_menhir_stack : 'freshtv3) = Obj.magic _menhir_stack in
     let (_menhir_s : _menhir_state) = _menhir_s in
     let ((_1 : (
@@ -7533,17 +7533,17 @@ and _menhir_run2 : _menhir_env -&gt; 'ttv_tail -&gt; _menhir_state -&gt; (
     )) = _v in
     ((let _v : 'tv_key = 
 # 126 "src/menhir_parser.mly"
-          ( Table.Key.of_strin<span data-count="252">g</span> _1 )
+          ( Table.Key.of_strin<span data-count="253">g</span> _1 )
 # 2410 "src/menhir_parser.ml"
      in
     _menhir_goto_key _menhir_env _menhir_stack _menhir_s _v) : 'freshtv4)
 
 and _menhir_discard : _menhir_env -&gt; _menhir_env =
   fun _menhir_env -&gt;
-    <span data-count="936">l</span>et lexer = _menhir_env._menhir_lexer in
+    <span data-count="939">l</span>et lexer = _menhir_env._menhir_lexer in
     let lexbuf = _menhir_env._menhir_lexbuf in
     let _tok = lexer lexbuf in
-    <span data-count="933">{</span>
+    <span data-count="936">{</span>
       _menhir_lexer = lexer;
       _menhir_lexbuf = lexbuf;
       _menhir_token = _tok;
