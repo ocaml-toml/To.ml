@@ -448,10 +448,10 @@ let print_string formatter value =
     value;
   <span data-count="125">m</span>atch (!has_newline, !has_doublequote, !has_quote) with
   | <span data-count="10">t</span>rue, false, _ -&gt;
-    Format.pp_print_string formatter {|"""\n|};
+    Format.pp_print_string formatter {|"""|};
     <span data-count="10">S</span>tring.iter
       (function
-        | <span data-count="16">'</span>\n' -&gt; Format.pp_print_char formatter '\n'
+        | <span data-count="16">'</span>\n' -&gt; Format.pp_print_newline formatter ()
         | <span data-count="296">c</span> -&gt; maybe_escape_char formatter c)
       value;
     <span data-count="10">F</span>ormat.pp_print_string formatter {|"""|}
