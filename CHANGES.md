@@ -6,6 +6,7 @@
 * bump minimal OCaml version to 4.07
 * add support for arrays of inline tables
 * add support for dates without times
+* fix printer bug with triple quotes
 
 ## 6.0.0
 

@@ -38,10 +38,10 @@ let print_string formatter value =
     value;
   match (!has_newline, !has_doublequote, !has_quote) with
   | true, false, _ ->
-    Format.pp_print_string formatter {|"""\n|};
+    Format.pp_print_string formatter {|"""|};
     String.iter
       (function
-        | '\n' -> Format.pp_print_char formatter '\n'
+        | '\n' -> Format.pp_print_newline formatter ()
         | c -> maybe_escape_char formatter c)
       value;
     Format.pp_print_string formatter {|"""|}
