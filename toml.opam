@@ -21,7 +21,8 @@ depends: [
   "dune" {>= "2.7" & >= "2.7"}
   "menhir" {build}
   "ounit" {with-test}
-  "bisect_ppx" {with-test & >= "2.5"}
+  "bisect_ppx" {with-test & >= "2.5" & dev}
+  "ocb" {with-test & >= "0.1" & dev}
   "odoc" {with-doc}
   "ISO8601" {>= "0.2"}
 ]

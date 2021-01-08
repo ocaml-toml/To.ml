@@ -33,7 +33,13 @@
   (bisect_ppx
    (and
     :with-test
-    (>= "2.5")))
+    (>= "2.5")
+    :dev))
+  (ocb
+   (and
+    :with-test
+    (>= "0.1")
+    :dev))
   (odoc :with-doc)
   (ISO8601
    (>= 0.2))))
