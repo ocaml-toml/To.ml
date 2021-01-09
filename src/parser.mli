@@ -37,7 +37,7 @@ val from_channel : in_channel -> result
 
 (** Given a filename, returns a [result].
 
-    @raise Pervasives.Sys_error if the file could not be opened.
+    @raise Stdlib.Sys_error if the file could not be opened.
     @since 2.0.0 *)
 val from_filename : string -> result
 

@@ -17,7 +17,7 @@ type ('a, 'b) lens =
       answer=42" |> unsafe);;
       val toml_data : Types.table = <abstr>
 
-      utop # TomlLenses.(get toml_data (
+      utop # Toml.Lenses.(get toml_data (
         key "this" |-- table
         |-- key "is" |-- table
         |-- key "a" |-- table
@@ -41,7 +41,7 @@ val get : 'a -> ('a, 'b) lens -> 'b option
       answer=42" |> unsafe);;
       val toml_data : Types.table = <abstr>
 
-      utop # let maybe_toml_data' = TomlLenses.(set 2015 toml_data (
+      utop # let maybe_toml_data' = Toml.Lenses.(set 2015 toml_data (
         key "this" |-- table
         |-- key "is" |-- table
         |-- key "a" |-- table
@@ -77,7 +77,7 @@ val set : 'b -> 'a -> ('a, 'b) lens -> 'a option
       " |> unsafe);;
       val toml_data : Types.table = <abstr>
 
-      utop # let maybe_toml_data' =  TomlLenses.(update
+      utop # let maybe_toml_data' =  Toml.Lenses.(update
         (fun ts -> Some (
           List.map (fun t ->
             (** Add 'int=42' to each table which doesn't already have an 'int' key *)
