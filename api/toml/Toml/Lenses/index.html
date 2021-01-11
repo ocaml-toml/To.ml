@@ -4,7 +4,7 @@
 answer=42&quot; |&gt; unsafe);;
 val toml_data : Types.table = &lt;abstr&gt;
 
-utop # TomlLenses.(get toml_data (
+utop # Toml.Lenses.(get toml_data (
   key &quot;this&quot; |-- table
   |-- key &quot;is&quot; |-- table
   |-- key &quot;a&quot; |-- table
@@ -17,7 +17,7 @@ utop # TomlLenses.(get toml_data (
 answer=42&quot; |&gt; unsafe);;
 val toml_data : Types.table = &lt;abstr&gt;
 
-utop # let maybe_toml_data' = TomlLenses.(set 2015 toml_data (
+utop # let maybe_toml_data' = Toml.Lenses.(set 2015 toml_data (
   key &quot;this&quot; |-- table
   |-- key &quot;is&quot; |-- table
   |-- key &quot;a&quot; |-- table
@@ -42,7 +42,7 @@ utop # Toml.Printer.string_of_table toml_data';;
 &quot; |&gt; unsafe);;
 val toml_data : Types.table = &lt;abstr&gt;
 
-utop # let maybe_toml_data' =  TomlLenses.(update
+utop # let maybe_toml_data' =  Toml.Lenses.(update
   (fun ts -&gt; Some (
     List.map (fun t -&gt;
       (** Add 'int=42' to each table which doesn't already have an 'int' key *)
