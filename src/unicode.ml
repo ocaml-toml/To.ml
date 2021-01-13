@@ -16,18 +16,18 @@ let to_utf8 u =
   in
   if dec > 0xFFFF then
     failwith ("Invalid escaped unicode \\u" ^ u)
-  else if dec > 0x7FF then begin
+  else if dec > 0x7FF then (
     let s = Bytes.of_string "\224\128\128" in
     update_byte s 2 "0b00111111" 0;
     update_byte s 1 "0b00111111" 6;
     update_byte s 0 "0b00001111" 12;
     Bytes.to_string s
-  end else if dec > 0x7F then begin
+  ) else if dec > 0x7F then (
     let s = Bytes.of_string "\192\128" in
     update_byte s 1 "0b00111111" 0;
     update_byte s 0 "0b00011111" 6;
     Bytes.to_string s
-  end else
+  ) else
     let s = Bytes.of_string "\000" in
     update_byte s 0 "0b01111111" 0;
     Bytes.to_string s

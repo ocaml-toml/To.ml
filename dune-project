@@ -29,7 +29,7 @@
   (dune
    (>= 2.7))
   (menhir :build)
-  (ounit :with-test)
+  (ounit2 :with-test)
   (bisect_ppx
    (and
     :with-test
