@@ -1,9 +1,8 @@
-open OUnit
 open Toml.Types
 open Utils
 
-(* This test file expects example.toml from official toml repo read *)
-let toml = Toml.Parser.(from_filename "./example.toml" |> unsafe)
+(* This test file expects official_example.toml from official toml repo read *)
+let toml = Toml.Parser.(from_filename "./official_example.toml" |> unsafe)
 
 let expected =
   Toml.Min.of_key_values
@@ -67,7 +66,4 @@ let expected =
              ]) )
     ]
 
-let suite =
-  "Official example.toml file"
-  >::: [ ("example.toml parsing" >:: fun () -> assert_table_equal toml expected)
-       ]
+let () = assert_table_equal toml expected

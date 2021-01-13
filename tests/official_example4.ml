@@ -1,9 +1,8 @@
-open OUnit
 open Toml.Types
 open Utils
 
-(* This test file expects example.toml from official toml repo read *)
-let toml = Toml.Parser.(from_filename "./example4.toml" |> unsafe)
+(* This test file expects official_example4.toml from official toml repo read *)
+let toml = Toml.Parser.(from_filename "./official_example4.toml" |> unsafe)
 
 let expected =
   Toml.Min.of_key_values
@@ -178,28 +177,29 @@ let expected =
                )
              ; (Toml.Min.key "key5", TArray (NodeInt [ 1; 2; 3 ]))
              ; (Toml.Min.key "key6", TArray (NodeInt [ 1; 2 ]))
-             ; (Toml.Min.key "inline", TTable
-                  (Toml.Min.of_key_values
-                     [ (Toml.Min.key "points",
-                        TArray
-                          (NodeTable
-                             [ Toml.Min.of_key_values
-                                 [ (Toml.Min.key "x", TInt 1)
-                                 ; (Toml.Min.key "y", TInt 2)
-                                 ; (Toml.Min.key "z", TInt 3)
-                                 ]
-                             ; Toml.Min.of_key_values
-                                 [ (Toml.Min.key "x", TInt 7)
-                                 ; (Toml.Min.key "y", TInt 8)
-                                 ; (Toml.Min.key "z", TInt 9)
-                                 ]
-                             ; Toml.Min.of_key_values
-                                 [ (Toml.Min.key "x", TInt 2)
-                                 ; (Toml.Min.key "y", TInt 4)
-                                 ; (Toml.Min.key "z", TInt 8)
-                                 ]
-                             ])
-                       ) ]) )
+             ; ( Toml.Min.key "inline"
+               , TTable
+                   (Toml.Min.of_key_values
+                      [ ( Toml.Min.key "points"
+                        , TArray
+                            (NodeTable
+                               [ Toml.Min.of_key_values
+                                   [ (Toml.Min.key "x", TInt 1)
+                                   ; (Toml.Min.key "y", TInt 2)
+                                   ; (Toml.Min.key "z", TInt 3)
+                                   ]
+                               ; Toml.Min.of_key_values
+                                   [ (Toml.Min.key "x", TInt 7)
+                                   ; (Toml.Min.key "y", TInt 8)
+                                   ; (Toml.Min.key "z", TInt 9)
+                                   ]
+                               ; Toml.Min.of_key_values
+                                   [ (Toml.Min.key "x", TInt 2)
+                                   ; (Toml.Min.key "y", TInt 4)
+                                   ; (Toml.Min.key "z", TInt 8)
+                                   ]
+                               ]) )
+                      ]) )
              ]) )
     ; ( Toml.Min.key "products"
       , TArray
@@ -246,7 +246,4 @@ let expected =
              ]) )
     ]
 
-let suite =
-  "Official example.toml file"
-  >::: [ ("example4.toml parsing" >:: fun () -> assert_table_equal toml expected)
-       ]
+let () = assert_table_equal toml expected

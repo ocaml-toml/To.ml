@@ -22,7 +22,8 @@ module Table = struct
         | 'A' .. 'Z'
         | '0' .. '9'
         | '_'
-        | '-' -> incr i
+        | '-' ->
+          incr i
         | _c -> valid_so_far := false
       done;
       !valid_so_far
@@ -33,13 +34,13 @@ module Table = struct
        current implementation does not conform to the spec as it will not
        escape, e.g., question marks. *)
     let to_string t =
-      if is_bare t
-      then t
-      else "\"" ^ t ^ "\""
+      if is_bare t then
+        t
+      else
+        "\"" ^ t ^ "\""
 
     let compare = String.compare
   end
-
 
   include Map.Make (Key)
 

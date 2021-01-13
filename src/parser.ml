@@ -43,13 +43,9 @@ let from_channel c = parse (Lexing.from_channel c) "<channel>"
 
 let from_filename f =
   let c = open_in f in
-  try
-    let res = parse (Lexing.from_channel c) f in
-    close_in c;
-    res
-  with e ->
-    close_in_noerr c;
-    raise e
+  let res = parse (Lexing.from_channel c) f in
+  close_in c;
+  res
 
 exception Error of (string * location)
 

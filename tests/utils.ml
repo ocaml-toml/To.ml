@@ -44,3 +44,5 @@ let test_int = assert_equal ~printer:string_of_int
 let test_float = assert_equal ~printer:string_of_float
 
 let test_bool = assert_equal ~printer:string_of_bool
+
+let unsafe_from_string s = Toml.Parser.from_string s |> Toml.Parser.unsafe
