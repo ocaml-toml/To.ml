@@ -13,7 +13,7 @@ let key k =
   { get = (fun value -> safe_find k value)
   ; set =
       (fun new_value value ->
-        Some (Types.Table.add (Types.Table.Key.of_string k) new_value value))
+        Some (Types.Table.add (Types.Table.Key.of_string k) new_value value) )
   }
 
 let bool =
@@ -21,7 +21,7 @@ let bool =
       (fun (value : Types.value) ->
         match value with
         | Types.TBool v -> Some v
-        | _ -> None)
+        | _ -> None )
   ; set = (fun new_value _value -> Some (Types.TBool new_value))
   }
 
@@ -30,7 +30,7 @@ let int =
       (fun (value : Types.value) ->
         match value with
         | Types.TInt v -> Some v
-        | _ -> None)
+        | _ -> None )
   ; set = (fun new_value _value -> Some (Types.TInt new_value))
   }
 
@@ -39,7 +39,7 @@ let float =
       (fun (value : Types.value) ->
         match value with
         | Types.TFloat v -> Some v
-        | _ -> None)
+        | _ -> None )
   ; set = (fun new_value _value -> Some (Types.TFloat new_value))
   }
 
@@ -48,7 +48,7 @@ let string =
       (fun (value : Types.value) ->
         match value with
         | Types.TString v -> Some v
-        | _ -> None)
+        | _ -> None )
   ; set = (fun new_value _value -> Some (Types.TString new_value))
   }
 
@@ -57,7 +57,7 @@ let date =
       (fun (value : Types.value) ->
         match value with
         | Types.TDate v -> Some v
-        | _ -> None)
+        | _ -> None )
   ; set = (fun new_value _value -> Some (Types.TDate new_value))
   }
 
@@ -66,7 +66,7 @@ let array =
       (fun (value : Types.value) ->
         match value with
         | Types.TArray v -> Some v
-        | _ -> None)
+        | _ -> None )
   ; set = (fun new_value _value -> Some (Types.TArray new_value))
   }
 
@@ -75,7 +75,7 @@ let table =
       (fun (value : Types.value) ->
         match value with
         | Types.TTable v -> Some v
-        | _ -> None)
+        | _ -> None )
   ; set = (fun new_value _value -> Some (Types.TTable new_value))
   }
 
@@ -85,7 +85,7 @@ let strings =
         match value with
         | Types.NodeString v -> Some v
         | Types.NodeEmpty -> Some []
-        | _ -> None)
+        | _ -> None )
   ; set = (fun new_value _value -> Some (Types.NodeString new_value))
   }
 
@@ -95,7 +95,7 @@ let bools =
         match value with
         | Types.NodeBool v -> Some v
         | Types.NodeEmpty -> Some []
-        | _ -> None)
+        | _ -> None )
   ; set = (fun new_value _value -> Some (Types.NodeBool new_value))
   }
 
@@ -105,7 +105,7 @@ let ints =
         match value with
         | Types.NodeInt v -> Some v
         | Types.NodeEmpty -> Some []
-        | _ -> None)
+        | _ -> None )
   ; set = (fun new_value _value -> Some (Types.NodeInt new_value))
   }
 
@@ -115,7 +115,7 @@ let floats =
         match value with
         | Types.NodeFloat v -> Some v
         | Types.NodeEmpty -> Some []
-        | _ -> None)
+        | _ -> None )
   ; set = (fun new_value _value -> Some (Types.NodeFloat new_value))
   }
 
@@ -125,7 +125,7 @@ let dates =
         match value with
         | Types.NodeDate v -> Some v
         | Types.NodeEmpty -> Some []
-        | _ -> None)
+        | _ -> None )
   ; set = (fun new_value _value -> Some (Types.NodeDate new_value))
   }
 
@@ -135,7 +135,7 @@ let arrays =
         match value with
         | Types.NodeArray v -> Some v
         | Types.NodeEmpty -> Some []
-        | _ -> None)
+        | _ -> None )
   ; set = (fun new_value _value -> Some (Types.NodeArray new_value))
   }
 
@@ -145,7 +145,7 @@ let tables =
         match value with
         | Types.NodeTable v -> Some v
         | Types.NodeEmpty -> Some []
-        | _ -> None)
+        | _ -> None )
   ; set = (fun new_value _value -> Some (Types.NodeTable new_value))
   }
 

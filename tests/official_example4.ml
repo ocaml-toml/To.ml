@@ -13,7 +13,7 @@ let expected =
              ; ( Toml.Min.key "subtable"
                , TTable
                    (Toml.Min.of_key_values
-                      [ (Toml.Min.key "key", TString "another value") ]) )
+                      [ (Toml.Min.key "key", TString "another value") ] ) )
              ; ( Toml.Min.key "inline"
                , TTable
                    (Toml.Min.of_key_values
@@ -22,15 +22,15 @@ let expected =
                             (Toml.Min.of_key_values
                                [ (Toml.Min.key "first", TString "Tom")
                                ; (Toml.Min.key "last", TString "Preston-Werner")
-                               ]) )
+                               ] ) )
                       ; ( Toml.Min.key "point"
                         , TTable
                             (Toml.Min.of_key_values
                                [ (Toml.Min.key "x", TInt 1)
                                ; (Toml.Min.key "y", TInt 2)
-                               ]) )
-                      ]) )
-             ]) )
+                               ] ) )
+                      ] ) )
+             ] ) )
     ; ( Toml.Min.key "x"
       , TTable
           (Toml.Min.of_key_values
@@ -42,9 +42,9 @@ let expected =
                             (Toml.Min.of_key_values
                                [ ( Toml.Min.key "w"
                                  , TTable (Toml.Min.of_key_values []) )
-                               ]) )
-                      ]) )
-             ]) )
+                               ] ) )
+                      ] ) )
+             ] ) )
     ; ( Toml.Min.key "string"
       , TTable
           (Toml.Min.of_key_values
@@ -55,7 +55,7 @@ let expected =
                         , TString
                             "I'm a string. \"You can quote me\". Name\tJosé\n\
                              Location\tSF." )
-                      ]) )
+                      ] ) )
              ; ( Toml.Min.key "multiline"
                , TTable
                    (Toml.Min.of_key_values
@@ -77,8 +77,8 @@ let expected =
                                  , TString
                                      "The quick brown fox jumps over the lazy \
                                       dog." )
-                               ]) )
-                      ]) )
+                               ] ) )
+                      ] ) )
              ; ( Toml.Min.key "literal"
                , TTable
                    (Toml.Min.of_key_values
@@ -102,10 +102,10 @@ let expected =
                                         ; "   All other whitespace"
                                         ; "   is preserved."
                                         ; ""
-                                        ]) )
-                               ]) )
-                      ]) )
-             ]) )
+                                        ] ) )
+                               ] ) )
+                      ] ) )
+             ] ) )
     ; ( Toml.Min.key "integer"
       , TTable
           (Toml.Min.of_key_values
@@ -119,8 +119,8 @@ let expected =
                       [ (Toml.Min.key "key1", TInt 1_000)
                       ; (Toml.Min.key "key2", TInt 5_349_221)
                       ; (Toml.Min.key "key3", TInt 1_2_3_4_5)
-                      ]) )
-             ]) )
+                      ] ) )
+             ] ) )
     ; ( Toml.Min.key "float"
       , TTable
           (Toml.Min.of_key_values
@@ -130,31 +130,31 @@ let expected =
                       [ (Toml.Min.key "key1", TFloat 1.0)
                       ; (Toml.Min.key "key2", TFloat 3.1415)
                       ; (Toml.Min.key "key3", TFloat (-0.01))
-                      ]) )
+                      ] ) )
              ; ( Toml.Min.key "exponent"
                , TTable
                    (Toml.Min.of_key_values
                       [ (Toml.Min.key "key1", TFloat 5e+22)
                       ; (Toml.Min.key "key2", TFloat 1e6)
                       ; (Toml.Min.key "key3", TFloat (-2E-2))
-                      ]) )
+                      ] ) )
              ; ( Toml.Min.key "both"
                , TTable
                    (Toml.Min.of_key_values
-                      [ (Toml.Min.key "key", TFloat 6.626e-34) ]) )
+                      [ (Toml.Min.key "key", TFloat 6.626e-34) ] ) )
              ; ( Toml.Min.key "underscores"
                , TTable
                    (Toml.Min.of_key_values
                       [ (Toml.Min.key "key1", TFloat 9_224_617.445_991_228_313)
                       ; (Toml.Min.key "key2", TFloat 1e1_000)
-                      ]) )
-             ]) )
+                      ] ) )
+             ] ) )
     ; ( Toml.Min.key "boolean"
       , TTable
           (Toml.Min.of_key_values
              [ (Toml.Min.key "True", TBool true)
              ; (Toml.Min.key "False", TBool false)
-             ]) )
+             ] ) )
     ; ( Toml.Min.key "datetime"
       , TTable
           (Toml.Min.of_key_values
@@ -162,7 +162,7 @@ let expected =
              ; (Toml.Min.key "key2", TDate 296638320.)
              ; (Toml.Min.key "key3", TDate 296638320.)
              ; (Toml.Min.key "key4", TDate 296638320.999999)
-             ]) )
+             ] ) )
     ; ( Toml.Min.key "array"
       , TTable
           (Toml.Min.of_key_values
@@ -198,9 +198,9 @@ let expected =
                                    ; (Toml.Min.key "y", TInt 4)
                                    ; (Toml.Min.key "z", TInt 8)
                                    ]
-                               ]) )
-                      ]) )
-             ]) )
+                               ] ) )
+                      ] ) )
+             ] ) )
     ; ( Toml.Min.key "products"
       , TArray
           (NodeTable
@@ -213,7 +213,7 @@ let expected =
                  ; (Toml.Min.key "sku", TInt 284758393)
                  ; (Toml.Min.key "color", TString "gray")
                  ]
-             ]) )
+             ] ) )
     ; ( Toml.Min.key "fruit"
       , TArray
           (NodeTable
@@ -224,7 +224,7 @@ let expected =
                        (Toml.Min.of_key_values
                           [ (Toml.Min.key "color", TString "red")
                           ; (Toml.Min.key "shape", TString "round")
-                          ]) )
+                          ] ) )
                  ; ( Toml.Min.key "variety"
                    , TArray
                        (NodeTable
@@ -232,7 +232,7 @@ let expected =
                               [ (Toml.Min.key "name", TString "red delicious") ]
                           ; Toml.Min.of_key_values
                               [ (Toml.Min.key "name", TString "granny smith") ]
-                          ]) )
+                          ] ) )
                  ]
              ; Toml.Min.of_key_values
                  [ (Toml.Min.key "name", TString "banana")
@@ -241,9 +241,9 @@ let expected =
                        (NodeTable
                           [ Toml.Min.of_key_values
                               [ (Toml.Min.key "name", TString "plantain") ]
-                          ]) )
+                          ] ) )
                  ]
-             ]) )
+             ] ) )
     ]
 
 let () = assert_table_equal toml expected

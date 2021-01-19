@@ -276,11 +276,10 @@ let () =
 
 let () =
   (* ISO8601 currently doesn't support dates < 1970 ; by chance it works on Unix so we only enable this test in that case *)
-  if Sys.os_type = "Unix" then begin
+  if Sys.os_type = "Unix" then
     let tbl = unsafe_from_string "[imatable] imakey=[1956-11-23]" in
     let out = get tbl (field "imatable" |-- key "imakey" |-- array |-- dates) in
     assert (out = Some [ -413596800. ])
-  end
 
 let () =
   let tbl = unsafe_from_string "[imatable] imakey=[8]" in
@@ -289,7 +288,7 @@ let () =
 
 let () =
   (* ISO8601 currently doesn't support dates < 1970 ; by chance it works on Unix so we only enable this test in that case *)
-  if Sys.os_type = "Unix" then begin
+  if Sys.os_type = "Unix" then
     let tbl = unsafe_from_string "[imatable] imakey=[1969-07-23]" in
     let out =
       update
@@ -300,9 +299,10 @@ let () =
     match out with
     | None -> assert false
     | Some tbl ->
-      let out = get tbl (field "imatable" |-- key "imakey" |-- array |-- dates) in
+      let out =
+        get tbl (field "imatable" |-- key "imakey" |-- array |-- dates)
+      in
       assert (out = Some [ 95. ])
-  end
 
 let () =
   let tbl = unsafe_from_string "[imatable] imakey=[]" in

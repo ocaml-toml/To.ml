@@ -83,7 +83,7 @@ let () =
     [ ( Toml.Min.key "dog"
       , TTable
           (Toml.Min.of_key_values
-             [ (Toml.Min.key "type", TString "golden retriever") ]) )
+             [ (Toml.Min.key "type", TString "golden retriever") ] ) )
     ]
 
 let () =
@@ -95,14 +95,14 @@ let () =
              [ ( Toml.Min.key "tater"
                , TTable
                    (Toml.Min.of_key_values
-                      [ (Toml.Min.key "type", TString "pug") ]) )
-             ]) )
+                      [ (Toml.Min.key "type", TString "pug") ] ) )
+             ] ) )
     ];
   assert_equal
     ~printer:(fun x -> x)
     ""
     (Toml.Printer.string_of_table
-       (Toml.Min.of_key_values [ (Toml.Min.key "dog", TArray (NodeTable [])) ]));
+       (Toml.Min.of_key_values [ (Toml.Min.key "dog", TArray (NodeTable [])) ]) );
   test_table
     [ "[[dog]]"; "[dog.tater]"; "type = \"pug\"" ]
     [ ( Toml.Min.key "dog"
@@ -112,9 +112,9 @@ let () =
                  [ ( Toml.Min.key "tater"
                    , TTable
                        (Toml.Min.of_key_values
-                          [ (Toml.Min.key "type", TString "pug") ]) )
+                          [ (Toml.Min.key "type", TString "pug") ] ) )
                  ]
-             ]) )
+             ] ) )
     ];
   test_table
     [ "[[dog]]"
@@ -132,7 +132,7 @@ let () =
                  [ ( Toml.Min.key "tater"
                    , TTable
                        (Toml.Min.of_key_values
-                          [ (Toml.Min.key "type", TString "pug") ]) )
+                          [ (Toml.Min.key "type", TString "pug") ] ) )
                  ]
              ; Toml.Min.of_key_values
                  [ ( Toml.Min.key "dalmatian"
@@ -142,9 +142,9 @@ let () =
                               [ (Toml.Min.key "number", TInt 1) ]
                           ; Toml.Min.of_key_values
                               [ (Toml.Min.key "number", TInt 2) ]
-                          ]) )
+                          ] ) )
                  ]
-             ]) )
+             ] ) )
     ]
 
 let () =
@@ -165,7 +165,7 @@ let () =
            (NodeTable
               [ Toml.Min.of_key_values [ (Toml.Min.key "number", TInt 1) ]
               ; Toml.Min.of_key_values [ (Toml.Min.key "number", TInt 2) ]
-              ])))
+              ] ) ) )
 
 let () =
   let level3_table =

@@ -68,7 +68,7 @@ let () =
        ( "Error in <string> at line 1 at column 6 (position 6): "
          ^ "Forbidden escaped char"
        , { Toml.Parser.source = "<string>"; line = 1; column = 6; position = 6 }
-       ))
+       ) )
     (fun () -> unsafe_from_string "key=\"\\j\"");
   assert_raises
     (Toml.Parser.Error
@@ -78,7 +78,7 @@ let () =
          ; line = 1
          ; column = 30
          ; position = 30
-         } ))
+         } ) )
     (fun () -> unsafe_from_string "key=\"This string is not termin")
 
 let () =
@@ -116,7 +116,8 @@ let () =
     ( match find "key" toml with
     | TArray
         (NodeArray
-          [ NodeInt [ 1; 2 ]; NodeString [ "a"; "b"; "c"; "d" ]; NodeEmpty ]) ->
+          [ NodeInt [ 1; 2 ]; NodeString [ "a"; "b"; "c"; "d" ]; NodeEmpty ] )
+      ->
       true
     | _ -> false )
 
@@ -163,7 +164,7 @@ let () =
              [ (Toml.Min.key "field1", TInt 10)
              ; (Toml.Min.key "field2", TInt 20)
              ]
-         ])
+         ] )
   in
   let b = TTable (Toml.Min.of_key_values [ (Toml.Min.key "c", c) ]) in
   let a = TTable (Toml.Min.of_key_values [ (Toml.Min.key "b", b) ]) in
@@ -234,7 +235,7 @@ let () =
          ; line = 6
          ; column = 11
          ; position = 63
-         } ))
+         } ) )
     (fun () -> ignore (unsafe_from_string str))
 
 let () =
@@ -283,7 +284,7 @@ let () =
             (Toml.Min.of_key_values
                [ (Toml.Min.key "it_key1", TInt 1)
                ; (Toml.Min.key "it_key2", TString "2")
-               ]) )
+               ] ) )
       ]
   in
   assert_table_equal expected toml
@@ -314,8 +315,8 @@ let () =
                  , TTable
                      (Toml.Min.of_key_values
                         [ (Toml.Min.key "nested_it_key", TString "nested value")
-                        ]) )
-               ]) )
+                        ] ) )
+               ] ) )
       ]
   in
   assert_table_equal expected toml
@@ -332,7 +333,7 @@ let () =
          ; line = 3
          ; column = 16
          ; position = 27
-         } ))
+         } ) )
     (fun () -> ignore (unsafe_from_string str))
 
 let () =

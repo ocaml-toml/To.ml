@@ -34,7 +34,7 @@ let print_string formatter value =
       | '\n' -> has_newline := true
       | '\'' -> has_quote := true
       | '"' -> has_doublequote := true
-      | _ -> ())
+      | _ -> () )
     value;
   match (!has_newline, !has_doublequote, !has_quote) with
   | true, false, _ ->
@@ -42,7 +42,7 @@ let print_string formatter value =
     String.iter
       (function
         | '\n' -> Format.pp_print_newline formatter ()
-        | c -> maybe_escape_char formatter c)
+        | c -> maybe_escape_char formatter c )
       value;
     Format.pp_print_string formatter {|"""|}
   | true, true, false ->
@@ -66,7 +66,7 @@ let pp_print_list ~pp_sep print_item_func formatter values =
     List.iter
       (fun v ->
         pp_sep formatter ();
-        print_item_func formatter v)
+        print_item_func formatter v )
       l
 
 let is_table _ = function
@@ -93,7 +93,7 @@ let rec print_array formatter toml_array sections =
   | NodeDate values -> print_list values ~f:print_date
   | NodeArray values ->
     print_list values ~f:(fun formatter arr ->
-        print_array formatter arr sections)
+        print_array formatter arr sections )
   | NodeTable values ->
     List.iter
       (fun tbl ->
@@ -104,7 +104,7 @@ let rec print_array formatter toml_array sections =
         if not (Types.Table.for_all is_array_of_table tbl) then
           Format.fprintf formatter "[[%s]]\n"
             (sections |> List.map Types.Table.Key.to_string |> String.concat ".");
-        print_table formatter tbl sections)
+        print_table formatter tbl sections )
       values
   | NodeEmpty -> Format.pp_print_string formatter "[]"
 

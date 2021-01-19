@@ -6,7 +6,7 @@ let assert_table_equal expected testing =
     ~printer:(fun x ->
       let buf = Buffer.create 42 in
       Toml.Printer.table (Format.formatter_of_buffer buf) x;
-      Buffer.contents buf)
+      Buffer.contents buf )
     expected testing
 
 let force_opt opt =

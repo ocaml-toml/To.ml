@@ -44,7 +44,7 @@ let source =
           | `Float f -> dec.D.accept_float src f
           | `String s -> dec.D.accept_string src s
           | `List l -> dec.D.accept_list src l
-          | `Assoc l -> dec.D.accept_record src l)
+          | `Assoc l -> dec.D.accept_record src l )
     }
   in
   src
