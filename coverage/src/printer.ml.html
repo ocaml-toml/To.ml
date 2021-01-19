@@ -440,7 +440,7 @@ let print_string formatter value =
       | <span data-count="19">'</span>\n' -&gt; has_newline := true
       | <span data-count="4">'</span>\'' -&gt; has_quote := true
       | <span data-count="9">'</span>"' -&gt; has_doublequote := true
-      | <span data-count="1512">_</span> -&gt; ())
+      | <span data-count="1512">_</span> -&gt; () )
     value;
   <span data-count="126">m</span>atch (!has_newline, !has_doublequote, !has_quote) with
   | <span data-count="10">t</span>rue, false, _ -&gt;
@@ -448,7 +448,7 @@ let print_string formatter value =
     <span data-count="10">S</span>tring.iter
       (function
         | <span data-count="16">'</span>\n' -&gt; Format.pp_print_newline formatter ()
-        | <span data-count="296">c</span> -&gt; maybe_escape_char formatter c)
+        | <span data-count="296">c</span> -&gt; maybe_escape_char formatter c )
       value;
     <span data-count="10">F</span>ormat.pp_print_string formatter {|"""|}
   | <span data-count="1">t</span>rue, true, false -&gt;
@@ -472,7 +472,7 @@ let pp_print_list ~pp_sep print_item_func formatter values =
     <span data-count="37">L</span>ist.iter
       (fun v -&gt;
         <span data-count="49">p</span>p_sep formatter ();
-        <span data-count="49">p</span>rint_item_func formatter v)
+        <span data-count="49">p</span>rint_item_func formatter v )
       l
 
 let is_table _ = function
@@ -499,7 +499,7 @@ let rec print_array formatter toml_array sections =
   | <span data-count="2">N</span>odeDate values -&gt; print_list values ~f:print_date
   | <span data-count="9">N</span>odeArray values -&gt;
     print_list values ~f:(fun formatter arr -&gt;
-        <span data-count="15">p</span>rint_array formatter arr sections)
+        <span data-count="15">p</span>rint_array formatter arr sections )
   | <span data-count="18">N</span>odeTable values -&gt;
     List.iter
       (fun tbl -&gt;
@@ -510,7 +510,7 @@ let rec print_array formatter toml_array sections =
         <span data-count="33">i</span>f not (Types.Table.for_al<span data-count="33">l</span> is_array_of_table tbl) then
           <span data-count="32">F</span>ormat.fprint<span data-count="32">f</span> formatter "[[%s]]\n"
             (sections |&gt; List.map Types.Table.Key.to_string |&gt; <span data-count="32">S</span>tring.conca<span data-count="32">t</span> ".");
-        <span data-count="33">p</span>rint_table formatter tbl sections)
+        <span data-count="33">p</span>rint_table formatter tbl sections )
       values
   | <span data-count="1">N</span>odeEmpty -&gt; Format.pp_print_string formatter "[]"
 

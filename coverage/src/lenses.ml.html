@@ -393,7 +393,7 @@ let key k =
   <span data-count="168">{</span> get = (fun value -&gt; <span data-count="226">s</span>afe_find k value)
   ; set =
       (fun new_value value -&gt;
-        <span data-count="28">S</span>ome (Types.Table.ad<span data-count="28">d</span> (Types.Table.Key.of_strin<span data-count="28">g</span> k) new_value value))
+        <span data-count="28">S</span>ome (Types.Table.ad<span data-count="28">d</span> (Types.Table.Key.of_strin<span data-count="28">g</span> k) new_value value) )
   }
 
 let bool =
@@ -401,7 +401,7 @@ let bool =
       (fun (value : Types.value) -&gt;
         <span data-count="9">m</span>atch value with
         | <span data-count="7">T</span>ypes.TBool v -&gt; Some v
-        | <span data-count="2">_</span> -&gt; None)
+        | <span data-count="2">_</span> -&gt; None )
   ; set = (fun new_value _value -&gt; <span data-count="2">S</span>ome (Types.TBool new_value))
   }
 
@@ -410,7 +410,7 @@ let int =
       (fun (value : Types.value) -&gt;
         <span data-count="10">m</span>atch value with
         | <span data-count="9">T</span>ypes.TInt v -&gt; Some v
-        | <span data-count="1">_</span> -&gt; None)
+        | <span data-count="1">_</span> -&gt; None )
   ; set = (fun new_value _value -&gt; <span data-count="1">S</span>ome (Types.TInt new_value))
   }
 
@@ -419,7 +419,7 @@ let float =
       (fun (value : Types.value) -&gt;
         <span data-count="12">m</span>atch value with
         | <span data-count="11">T</span>ypes.TFloat v -&gt; Some v
-        | <span data-count="1">_</span> -&gt; None)
+        | <span data-count="1">_</span> -&gt; None )
   ; set = (fun new_value _value -&gt; <span data-count="1">S</span>ome (Types.TFloat new_value))
   }
 
@@ -428,7 +428,7 @@ let string =
       (fun (value : Types.value) -&gt;
         <span data-count="19">m</span>atch value with
         | <span data-count="18">T</span>ypes.TString v -&gt; Some v
-        | <span data-count="1">_</span> -&gt; None)
+        | <span data-count="1">_</span> -&gt; None )
   ; set = (fun new_value _value -&gt; <span data-count="1">S</span>ome (Types.TString new_value))
   }
 
@@ -437,7 +437,7 @@ let date =
       (fun (value : Types.value) -&gt;
         <span data-count="2">m</span>atch value with
         | <span data-count="1">T</span>ypes.TDate v -&gt; Some v
-        | <span data-count="1">_</span> -&gt; None)
+        | <span data-count="1">_</span> -&gt; None )
   ; set = (fun new_value _value -&gt; <span data-count="1">S</span>ome (Types.TDate new_value))
   }
 
@@ -446,7 +446,7 @@ let array =
       (fun (value : Types.value) -&gt;
         <span data-count="50">m</span>atch value with
         | <span data-count="49">T</span>ypes.TArray v -&gt; Some v
-        | <span data-count="1">_</span> -&gt; None)
+        | <span data-count="1">_</span> -&gt; None )
   ; set = (fun new_value _value -&gt; <span data-count="8">S</span>ome (Types.TArray new_value))
   }
 
@@ -455,7 +455,7 @@ let table =
       (fun (value : Types.value) -&gt;
         <span data-count="95">m</span>atch value with
         | <span data-count="94">T</span>ypes.TTable v -&gt; Some v
-        | <span data-count="1">_</span> -&gt; None)
+        | <span data-count="1">_</span> -&gt; None )
   ; set = (fun new_value _value -&gt; <span data-count="14">S</span>ome (Types.TTable new_value))
   }
 
@@ -465,7 +465,7 @@ let strings =
         <span data-count="5">m</span>atch value with
         | <span data-count="2">T</span>ypes.NodeString v -&gt; Some v
         | <span data-count="2">T</span>ypes.NodeEmpty -&gt; Some []
-        | <span data-count="1">_</span> -&gt; None)
+        | <span data-count="1">_</span> -&gt; None )
   ; set = (fun new_value _value -&gt; <span data-count="1">S</span>ome (Types.NodeString new_value))
   }
 
@@ -475,7 +475,7 @@ let bools =
         <span data-count="8">m</span>atch value with
         | <span data-count="5">T</span>ypes.NodeBool v -&gt; Some v
         | <span data-count="2">T</span>ypes.NodeEmpty -&gt; Some []
-        | <span data-count="1">_</span> -&gt; None)
+        | <span data-count="1">_</span> -&gt; None )
   ; set = (fun new_value _value -&gt; <span data-count="1">S</span>ome (Types.NodeBool new_value))
   }
 
@@ -485,7 +485,7 @@ let ints =
         <span data-count="5">m</span>atch value with
         | <span data-count="3">T</span>ypes.NodeInt v -&gt; Some v
         | <span data-count="1">T</span>ypes.NodeEmpty -&gt; Some []
-        | <span data-count="1">_</span> -&gt; None)
+        | <span data-count="1">_</span> -&gt; None )
   ; set = (fun new_value _value -&gt; <span data-count="1">S</span>ome (Types.NodeInt new_value))
   }
 
@@ -495,7 +495,7 @@ let floats =
         <span data-count="5">m</span>atch value with
         | <span data-count="3">T</span>ypes.NodeFloat v -&gt; Some v
         | <span data-count="1">T</span>ypes.NodeEmpty -&gt; Some []
-        | <span data-count="1">_</span> -&gt; None)
+        | <span data-count="1">_</span> -&gt; None )
   ; set = (fun new_value _value -&gt; <span data-count="1">S</span>ome (Types.NodeFloat new_value))
   }
 
@@ -505,7 +505,7 @@ let dates =
         <span data-count="5">m</span>atch value with
         | <span data-count="3">T</span>ypes.NodeDate v -&gt; Some v
         | <span data-count="1">T</span>ypes.NodeEmpty -&gt; Some []
-        | <span data-count="1">_</span> -&gt; None)
+        | <span data-count="1">_</span> -&gt; None )
   ; set = (fun new_value _value -&gt; <span data-count="1">S</span>ome (Types.NodeDate new_value))
   }
 
@@ -515,7 +515,7 @@ let arrays =
         <span data-count="5">m</span>atch value with
         | <span data-count="3">T</span>ypes.NodeArray v -&gt; Some v
         | <span data-count="1">T</span>ypes.NodeEmpty -&gt; Some []
-        | <span data-count="1">_</span> -&gt; None)
+        | <span data-count="1">_</span> -&gt; None )
   ; set = (fun new_value _value -&gt; <span data-count="1">S</span>ome (Types.NodeArray new_value))
   }
 
@@ -525,7 +525,7 @@ let tables =
         <span data-count="8">m</span>atch value with
         | <span data-count="5">T</span>ypes.NodeTable v -&gt; Some v
         | <span data-count="2">T</span>ypes.NodeEmpty -&gt; Some []
-        | <span data-count="1">_</span> -&gt; None)
+        | <span data-count="1">_</span> -&gt; None )
   ; set = (fun new_value _value -&gt; <span data-count="1">S</span>ome (Types.NodeTable new_value))
   }
 
