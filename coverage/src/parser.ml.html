@@ -14,14 +14,11 @@
           <span class="dirname">src/</span>parser.ml
         </a>
       </h1>
-      <h2>72.73%</h2>
+      <h2>90.00%</h2>
     </div>
     <div id="navbar">
-      <span class="some-visited" style="top:33.33%"></span>
-      <span class="unvisited" style="top:40.00%"></span>
-      <span class="unvisited" style="bottom:30.00%"></span>
-      <span class="unvisited" style="bottom:16.67%"></span>
-      <span class="unvisited" style="bottom:13.33%"></span>
+      <span class="some-visited" style="top:35.71%"></span>
+      <span class="unvisited" style="top:42.86%"></span>
     </div>
     <div id="report">
       <div id="lines-layer">
@@ -67,25 +64,21 @@
 <a id="L39"></a><span > </span>
 <a id="L40"></a><span class="visited"> </span>
 <a id="L41"></a><span > </span>
-<a id="L42"></a><span class="unvisited"> </span>
+<a id="L42"></a><span class="visited"> </span>
 <a id="L43"></a><span > </span>
 <a id="L44"></a><span > </span>
 <a id="L45"></a><span class="visited"> </span>
 <a id="L46"></a><span class="visited"> </span>
 <a id="L47"></a><span class="visited"> </span>
 <a id="L48"></a><span class="visited"> </span>
-<a id="L49"></a><span class="visited"> </span>
-<a id="L50"></a><span class="unvisited"> </span>
+<a id="L49"></a><span > </span>
+<a id="L50"></a><span > </span>
 <a id="L51"></a><span > </span>
-<a id="L52"></a><span class="unvisited"> </span>
+<a id="L52"></a><span > </span>
 <a id="L53"></a><span > </span>
-<a id="L54"></a><span > </span>
-<a id="L55"></a><span > </span>
-<a id="L56"></a><span > </span>
-<a id="L57"></a><span > </span>
-<a id="L58"></a><span class="visited"> </span>
-<a id="L59"></a><span class="visited"> </span>
-<a id="L60"></a><span class="visited"> </span>
+<a id="L54"></a><span class="visited"> </span>
+<a id="L55"></a><span class="visited"> </span>
+<a id="L56"></a><span class="visited"> </span>
 </pre>
       </div>
       <div id="text-layer">
@@ -146,10 +139,6 @@
 <a href="#L54">54</a>
 <a href="#L55">55</a>
 <a href="#L56">56</a>
-<a href="#L57">57</a>
-<a href="#L58">58</a>
-<a href="#L59">59</a>
-<a href="#L60">60</a>
 </pre>
 <pre><code class="ocaml">open Lexing
 
@@ -166,9 +155,9 @@ type result =
   ]
 
 let parse lexbuf source =
-  <span data-count="45">t</span>ry
+  <span data-count="91">t</span>ry
     let result = Menhir_parser.toml Lexer.tomlex lexbuf in
-    <span data-count="41">`</span>Ok result
+    <span data-count="87">`</span>Ok result
   with
   | (<span data-count="0">M</span>enhir_parser.Error | <span data-count="4">F</span>ailure _) as error -&gt;
     let formatted_error_msg =
@@ -190,26 +179,22 @@ let parse lexbuf source =
     in
     <span data-count="4">`</span>Error (msg, location)
 
-let from_string s = <span data-count="43">p</span>arse (Lexing.from_strin<span data-count="43">g</span> s) "&lt;string&gt;"
+let from_string s = <span data-count="88">p</span>arse (Lexing.from_strin<span data-count="88">g</span> s) "&lt;string&gt;"
 
-let from_channel c = <span data-count="0">p</span>arse (Lexing.from_channe<span data-count="0">l</span> c) "&lt;channel&gt;"
+let from_channel c = <span data-count="1">p</span>arse (Lexing.from_channe<span data-count="1">l</span> c) "&lt;channel&gt;"
 
 let from_filename f =
   <span data-count="2">l</span>et c = open_in f in
-  <span data-count="2">t</span>ry
-    let res = parse (Lexing.from_channe<span data-count="2">l</span> c) f in
-    <span data-count="2">c</span>lose_in c;
-    <span data-count="2">r</span>es
-  with <span data-count="0">e</span> -&gt;
-    close_in_noerr c;
-    <span data-count="0">r</span>aise e
+  <span data-count="2">l</span>et res = parse (Lexing.from_channe<span data-count="2">l</span> c) f in
+  <span data-count="2">c</span>lose_in c;
+  <span data-count="2">r</span>es
 
 exception Error of (string * location)
 
 (** A combinator to force the result. Raise [Error] if the result was [`Ok] *)
 let unsafe result =
-  <span data-count="45">m</span>atch result with
-  | <span data-count="41">`</span>Ok toml_table -&gt; toml_table
+  <span data-count="90">m</span>atch result with
+  | <span data-count="86">`</span>Ok toml_table -&gt; toml_table
   | <span data-count="4">`</span>Error (msg, location) -&gt; raise (Error (msg, location))
 </code></pre>
       </div>
