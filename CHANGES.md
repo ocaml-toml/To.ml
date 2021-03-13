@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 7.0.0
+
 * treat quoted and bare keys the same with respect to comparison
 * bump minimal OCaml version to 4.07
 * add support for arrays of inline tables
