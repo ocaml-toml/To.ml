@@ -1,7 +1,5 @@
 (lang dune 2.7)
 
-(using menhir 1.0)
-
 (license LGPL3)
 
 (authors "Julien Sagot" "Emmanuel Surleau" "mackwic" "Andrew Rudenko"
