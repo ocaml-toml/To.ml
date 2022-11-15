@@ -1,4 +1,7 @@
 (lang dune 2.7)
+(name toml)
+
+(using menhir 2.0)
 
 (license LGPL3)
 
