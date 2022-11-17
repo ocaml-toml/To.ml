@@ -10,7 +10,7 @@
   printer
   types
   unicode)
- (private_modules menhir_parser)
+ (private_modules lexer menhir_parser)
  (libraries str unix ISO8601)
  (instrumentation
   (backend bisect_ppx --exclusions src/bisect.exclude)
