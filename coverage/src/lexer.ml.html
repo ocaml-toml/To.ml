@@ -4643,36 +4643,36 @@ let __ocaml_lex_tables = {
 }
 
 let rec tomlex lexbuf =
-  <span data-count="2140">l</span>exbuf.Lexing.lex_mem &lt;- Array.mak<span data-count="2140">e</span> 8 (-1);(* L=2 [4] &lt;- p ; [3] &lt;- p ;  *)
+  <span data-count="2174">l</span>exbuf.Lexing.lex_mem &lt;- Array.mak<span data-count="2174">e</span> 8 (-1);(* L=2 [4] &lt;- p ; [3] &lt;- p ;  *)
   lexbuf.Lexing.lex_mem.(4) &lt;- lexbuf.Lexing.lex_curr_pos ;
-  <span data-count="2140">l</span>exbuf.Lexing.lex_mem.(3) &lt;- lexbuf.Lexing.lex_curr_pos ;
- <span data-count="2140">_</span>_ocaml_lex_tomlex_rec lexbuf 0
+  <span data-count="2174">l</span>exbuf.Lexing.lex_mem.(3) &lt;- lexbuf.Lexing.lex_curr_pos ;
+ <span data-count="2174">_</span>_ocaml_lex_tomlex_rec lexbuf 0
 and __ocaml_lex_tomlex_rec lexbuf __ocaml_lex_state =
-  <span data-count="2155">m</span>atch Lexing.new_engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
-      | <span data-count="74">0</span> -&gt;
+  <span data-count="2189">m</span>atch Lexing.new_engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
+      | <span data-count="79">0</span> -&gt;
 let
 # 21 "src/lexer.mll"
                            int_sign
 # 1300 "src/lexer.ml"
-= Lexing.sub_lexeme_char_op<span data-count="74">t</span> lexbuf lexbuf.Lexing.lex_mem.(1)
+= Lexing.sub_lexeme_char_op<span data-count="79">t</span> lexbuf lexbuf.Lexing.lex_mem.(1)
 and
 # 21 "src/lexer.mll"
                                                      int_part
 # 1305 "src/lexer.ml"
-= Lexing.sub_lexem<span data-count="74">e</span> lexbuf lexbuf.Lexing.lex_mem.(0) lexbuf.Lexing.lex_curr_pos
+= Lexing.sub_lexem<span data-count="79">e</span> lexbuf lexbuf.Lexing.lex_mem.(0) lexbuf.Lexing.lex_curr_pos
 and
 # 46 "src/lexer.mll"
            value
 # 1310 "src/lexer.ml"
-= Lexing.sub_lexem<span data-count="74">e</span> lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
+= Lexing.sub_lexem<span data-count="79">e</span> lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
 # 46 "src/lexer.mll"
                    (
   let int_string =
     match int_sign with
     | <span data-count="2">S</span>ome '+'  -&gt; int_part
-    | <span data-count="72">_</span>         -&gt; value
+    | <span data-count="77">_</span>         -&gt; value
   in
-  INTEGER (int_of_strin<span data-count="74">g</span> int_string))
+  INTEGER (int_of_strin<span data-count="79">g</span> int_string))
 # 1320 "src/lexer.ml"
 
   | <span data-count="22">1</span> -&gt;
@@ -4715,7 +4715,7 @@ let
                  <span data-count="9">(</span> DATE (fs<span data-count="9">t</span> (ISO8601.Permissive.datetime_t<span data-count="9">z</span> ~reqtime:false date)) )
 # 1360 "src/lexer.ml"
 
-  | <span data-count="430">4</span> -&gt;
+  | <span data-count="431">4</span> -&gt;
 # 56 "src/lexer.mll"
            ( tomlex lexbuf )
 # 1365 "src/lexer.ml"
@@ -4725,17 +4725,17 @@ let
         ( update_loc lexbuf;<span data-count="329">t</span>omlex lexbuf )
 # 1370 "src/lexer.ml"
 
-  | <span data-count="210">6</span> -&gt;
+  | <span data-count="213">6</span> -&gt;
 # 58 "src/lexer.mll"
       ( EQUAL )
 # 1375 "src/lexer.ml"
 
-  | <span data-count="172">7</span> -&gt;
+  | <span data-count="175">7</span> -&gt;
 # 59 "src/lexer.mll"
       ( LBRACK )
 # 1380 "src/lexer.ml"
 
-  | <span data-count="172">8</span> -&gt;
+  | <span data-count="175">8</span> -&gt;
 # 60 "src/lexer.mll"
       ( RBRACK )
 # 1385 "src/lexer.ml"
@@ -4784,12 +4784,12 @@ let
     <span data-count="2">m</span>ultiline_literal_string (Buffer.creat<span data-count="2">e</span> 13) lexbuf )
 # 1429 "src/lexer.ml"
 
-  | <span data-count="46">1</span>5 -&gt;
+  | <span data-count="48">1</span>5 -&gt;
 # 71 "src/lexer.mll"
       ( COMMA )
 # 1434 "src/lexer.ml"
 
-  | <span data-count="36">1</span>6 -&gt;
+  | <span data-count="41">1</span>6 -&gt;
 # 72 "src/lexer.mll"
       ( DOT )
 # 1439 "src/lexer.ml"
@@ -4799,17 +4799,17 @@ let
                             ( tomlex lexbuf )
 # 1444 "src/lexer.ml"
 
-  | <span data-count="344">1</span>8 -&gt;
+  | <span data-count="353">1</span>8 -&gt;
 let
 # 74 "src/lexer.mll"
            value
 # 1450 "src/lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
 # 74 "src/lexer.mll"
-                 <span data-count="344">(</span> KEY (value) )
+                 <span data-count="353">(</span> KEY (value) )
 # 1454 "src/lexer.ml"
 
-  | <span data-count="88">1</span>9 -&gt;
+  | <span data-count="91">1</span>9 -&gt;
 # 75 "src/lexer.mll"
         ( EOF )
 # 1459 "src/lexer.ml"

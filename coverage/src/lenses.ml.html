@@ -380,9 +380,9 @@
 <a href="#L176">176</a>
 </pre>
 <pre><code class="ocaml">let safe_find key table =
-  <span data-count="226">t</span>ry
-    let value = Types.Table.find (Types.Table.Key.of_strin<span data-count="226">g</span> key) table in
-    <span data-count="225">S</span>ome value
+  <span data-count="282">t</span>ry
+    let value = Types.Table.find (Types.Table.Key.of_strin<span data-count="282">g</span> key) table in
+    <span data-count="281">S</span>ome value
   with <span data-count="1">N</span>ot_found -&gt; None
 
 type ('a, 'b) lens =
@@ -391,10 +391,10 @@ type ('a, 'b) lens =
   }
 
 let key k =
-  <span data-count="168">{</span> get = (fun value -&gt; <span data-count="226">s</span>afe_find k value)
+  <span data-count="182">{</span> get = (fun value -&gt; <span data-count="282">s</span>afe_find k value)
   ; set =
       (fun new_value value -&gt;
-        <span data-count="28">S</span>ome (Types.Table.ad<span data-count="28">d</span> (Types.Table.Key.of_strin<span data-count="28">g</span> k) new_value value) )
+        <span data-count="35">S</span>ome (Types.Table.ad<span data-count="35">d</span> (Types.Table.Key.of_strin<span data-count="35">g</span> k) new_value value) )
   }
 
 let bool =
@@ -409,10 +409,10 @@ let bool =
 let int =
   { get =
       (fun (value : Types.value) -&gt;
-        <span data-count="10">m</span>atch value with
-        | <span data-count="9">T</span>ypes.TInt v -&gt; Some v
+        <span data-count="11">m</span>atch value with
+        | <span data-count="10">T</span>ypes.TInt v -&gt; Some v
         | <span data-count="1">_</span> -&gt; None )
-  ; set = (fun new_value _value -&gt; <span data-count="1">S</span>ome (Types.TInt new_value))
+  ; set = (fun new_value _value -&gt; <span data-count="2">S</span>ome (Types.TInt new_value))
   }
 
 let float =
@@ -454,10 +454,10 @@ let array =
 let table =
   { get =
       (fun (value : Types.value) -&gt;
-        <span data-count="95">m</span>atch value with
-        | <span data-count="94">T</span>ypes.TTable v -&gt; Some v
+        <span data-count="143">m</span>atch value with
+        | <span data-count="142">T</span>ypes.TTable v -&gt; Some v
         | <span data-count="1">_</span> -&gt; None )
-  ; set = (fun new_value _value -&gt; <span data-count="14">S</span>ome (Types.TTable new_value))
+  ; set = (fun new_value _value -&gt; <span data-count="20">S</span>ome (Types.TTable new_value))
   }
 
 let strings =
@@ -531,30 +531,30 @@ let tables =
   }
 
 let ( |- ) (f : 'a -&gt; 'b option) (g : 'b -&gt; 'c option) (x : 'a) =
-  <span data-count="313">m</span>atch f x with
-  | <span data-count="312">S</span>ome r -&gt; g r
+  <span data-count="404">m</span>atch f x with
+  | <span data-count="403">S</span>ome r -&gt; g r
   | <span data-count="1">N</span>one -&gt; None
 
 let modify (l : ('a, 'b) lens) (f : 'b -&gt; 'b option) (a : 'a) =
-  <span data-count="59">m</span>atch l.get a with
-  | <span data-count="58">S</span>ome old_value -&gt; (
+  <span data-count="72">m</span>atch l.get a with
+  | <span data-count="71">S</span>ome old_value -&gt; (
     match f old_value with
-    | <span data-count="57">S</span>ome new_value -&gt; l.set new_value a
+    | <span data-count="70">S</span>ome new_value -&gt; l.set new_value a
     | <span data-count="1">N</span>one -&gt; None )
   | <span data-count="1">N</span>one -&gt; None
 
 let update f value lens = <span data-count="10">m</span>odify lens f value
 
 let compose (l1 : ('a, 'b) lens) (l2 : ('c, 'a) lens) =
-  <span data-count="268">{</span> get = l2.get |<span data-count="268">-</span> l1.get; set = (fun v -&gt; <span data-count="49">m</span>odify l2 (l1.se<span data-count="49">t</span> v)) }
+  <span data-count="294">{</span> get = l2.get |<span data-count="294">-</span> l1.get; set = (fun v -&gt; <span data-count="62">m</span>odify l2 (l1.se<span data-count="62">t</span> v)) }
 
-let ( |-- ) l1 l2 = <span data-count="268">c</span>ompose l2 l1
+let ( |-- ) l1 l2 = <span data-count="294">c</span>ompose l2 l1
 
 let field k = <span data-count="36">k</span>e<span data-count="36">y</span> k |-- table
 
-let get record lens = <span data-count="93">l</span>ens.get record
+let get record lens = <span data-count="94">l</span>ens.get record
 
-let set value record lens = <span data-count="6">l</span>ens.set value record
+let set value record lens = <span data-count="7">l</span>ens.set value record
 </code></pre>
       </div>
     </div>

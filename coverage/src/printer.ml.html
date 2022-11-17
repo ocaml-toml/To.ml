@@ -408,21 +408,21 @@
 <pre><code class="ocaml">open Types
 
 let maybe_escape_char formatter ch =
-  <span data-count="1517">m</span>atch ch with
+  <span data-count="1529">m</span>atch ch with
   | <span data-count="8">'</span>"' -&gt; Format.pp_print_string formatter "\\\""
   | <span data-count="24">'</span>\\' -&gt; Format.pp_print_string formatter "\\\\"
   | <span data-count="2">'</span>\n' -&gt; Format.pp_print_string formatter "\\n"
   | <span data-count="4">'</span>\t' -&gt; Format.pp_print_string formatter "\\t"
-  | <span data-count="1479">_</span> -&gt;
+  | <span data-count="1491">_</span> -&gt;
     let code = Char.code ch in
-    <span data-count="1479">i</span>f code &lt;= 31 then
+    <span data-count="1491">i</span>f code &lt;= 31 then
       <span data-count="1">F</span>ormat.fprintf formatter "\\u%04x" code
     else
-      <span data-count="1478">F</span>ormat.pp_print_char formatter ch
+      <span data-count="1490">F</span>ormat.pp_print_char formatter ch
 
 let print_bool formatter value = <span data-count="17">F</span>ormat.pp_print_bool formatter value
 
-let print_int formatter value = <span data-count="109">F</span>ormat.pp_print_int formatter value
+let print_int formatter value = <span data-count="112">F</span>ormat.pp_print_int formatter value
 
 let print_float formatter value =
   <span data-count="24">l</span>et fractional = abs_float (value -. floo<span data-count="24">r</span> value) in
@@ -433,7 +433,7 @@ let print_float formatter value =
     <span data-count="14">F</span>ormat.pp_print_float formatter value
 
 let print_string formatter value =
-  <span data-count="126">l</span>et has_newline = ref false in
+  <span data-count="127">l</span>et has_newline = ref false in
   let has_quote = ref false in
   let has_doublequote = ref false in
   String.iter
@@ -441,9 +441,9 @@ let print_string formatter value =
       | <span data-count="19">'</span>\n' -&gt; has_newline := true
       | <span data-count="4">'</span>\'' -&gt; has_quote := true
       | <span data-count="9">'</span>"' -&gt; has_doublequote := true
-      | <span data-count="1512">_</span> -&gt; () )
+      | <span data-count="1524">_</span> -&gt; () )
     value;
-  <span data-count="126">m</span>atch (!has_newline, !has_doublequote, !has_quote) with
+  <span data-count="127">m</span>atch (!has_newline, !has_doublequote, !has_quote) with
   | <span data-count="10">t</span>rue, false, _ -&gt;
     Format.pp_print_string formatter {|"""|};
     <span data-count="10">S</span>tring.iter
@@ -456,45 +456,45 @@ let print_string formatter value =
     Format.pp_print_string formatter "'''\n";
     <span data-count="1">F</span>ormat.pp_print_string formatter value;
     <span data-count="1">F</span>ormat.pp_print_string formatter "'''"
-  | <span data-count="115">_</span> -&gt;
+  | <span data-count="116">_</span> -&gt;
     Format.pp_print_char formatter '"';
-    <span data-count="115">S</span>tring.iter (maybe_escape_cha<span data-count="115">r</span> formatter) value;
-    <span data-count="115">F</span>ormat.pp_print_char formatter '"'
+    <span data-count="116">S</span>tring.iter (maybe_escape_cha<span data-count="116">r</span> formatter) value;
+    <span data-count="116">F</span>ormat.pp_print_char formatter '"'
 
 let print_date fmt d = <span data-count="16">I</span>SO8601.Permissive.pp_datetimezone fmt (d, 0.)
 
 (* This function is a shim for [Format.pp_print_list] from ocaml 4.02 *)
 let pp_print_list ~pp_sep print_item_func formatter values =
-  <span data-count="46">m</span>atch values with
+  <span data-count="47">m</span>atch values with
   | <span data-count="7">[</span>] -&gt; ()
   | <span data-count="2">[</span> e ] -&gt; print_item_func formatter e
-  | <span data-count="37">e</span> :: l -&gt;
+  | <span data-count="38">e</span> :: l -&gt;
     print_item_func formatter e;
-    <span data-count="37">L</span>ist.iter
+    <span data-count="38">L</span>ist.iter
       (fun v -&gt;
-        <span data-count="49">p</span>p_sep formatter ();
-        <span data-count="49">p</span>rint_item_func formatter v )
+        <span data-count="50">p</span>p_sep formatter ();
+        <span data-count="50">p</span>rint_item_func formatter v )
       l
 
 let is_table _ = function
-  | <span data-count="121">T</span>Table _ -&gt; true
+  | <span data-count="132">T</span>Table _ -&gt; true
   | <span data-count="22">T</span>Array (NodeTable _) -&gt; true
-  | <span data-count="275">_</span> -&gt; false
+  | <span data-count="279">_</span> -&gt; false
 
 let is_array_of_table _ = function
   | <span data-count="1">T</span>Array (NodeTable _) -&gt; true
   | <span data-count="32">_</span> -&gt; false
 
 let rec print_array formatter toml_array sections =
-  <span data-count="65">l</span>et print_list values ~f:print_item_func =
-    <span data-count="46">l</span>et pp_sep formatter () = <span data-count="49">F</span>ormat.pp_print_string formatter ", " in
+  <span data-count="66">l</span>et print_list values ~f:print_item_func =
+    <span data-count="47">l</span>et pp_sep formatter () = <span data-count="50">F</span>ormat.pp_print_string formatter ", " in
     Format.pp_print_char formatter '[';
-    <span data-count="46">p</span>p_print_list ~pp_sep print_item_func formatter values;
-    <span data-count="46">F</span>ormat.pp_print_char formatter ']'
+    <span data-count="47">p</span>p_print_list ~pp_sep print_item_func formatter values;
+    <span data-count="47">F</span>ormat.pp_print_char formatter ']'
   in
   match toml_array with
   | <span data-count="3">N</span>odeBool values -&gt; print_list values ~f:print_bool
-  | <span data-count="20">N</span>odeInt values -&gt; print_list values ~f:print_int
+  | <span data-count="21">N</span>odeInt values -&gt; print_list values ~f:print_int
   | <span data-count="2">N</span>odeFloat values -&gt; print_list values ~f:print_float
   | <span data-count="10">N</span>odeString values -&gt; print_list values ~f:print_string
   | <span data-count="2">N</span>odeDate values -&gt; print_list values ~f:print_date
@@ -520,50 +520,50 @@ and print_table formatter toml_table sections =
    * We need to print non-table values first, otherwise we risk including
    * top-level values in a section by accident
    *)
-  <span data-count="145">l</span>et table_with_table_values, table_with_non_table_values =
+  <span data-count="153">l</span>et table_with_table_values, table_with_non_table_values =
     Types.Table.partition is_table toml_table
   in
-  <span data-count="145">l</span>et print_key_value key value =
-    <span data-count="320">p</span>rint_value_with_key formatter key value sections
+  <span data-count="153">l</span>et print_key_value key value =
+    <span data-count="329">p</span>rint_value_with_key formatter key value sections
   in
   (* iter() guarantees that keys are returned in ascending order *)
   Types.Table.iter print_key_value table_with_non_table_values;
-  <span data-count="145">T</span>ypes.Table.iter print_key_value table_with_table_values
+  <span data-count="153">T</span>ypes.Table.iter print_key_value table_with_table_values
 
 and print_value formatter toml_value sections =
-  <span data-count="359">m</span>atch toml_value with
+  <span data-count="368">m</span>atch toml_value with
   | <span data-count="14">T</span>Bool value -&gt; print_bool formatter value
-  | <span data-count="65">T</span>Int value -&gt; print_int formatter value
+  | <span data-count="66">T</span>Int value -&gt; print_int formatter value
   | <span data-count="22">T</span>Float value -&gt; print_float formatter value
-  | <span data-count="104">T</span>String value -&gt; print_string formatter value
+  | <span data-count="105">T</span>String value -&gt; print_string formatter value
   | <span data-count="14">T</span>Date value -&gt; print_date formatter value
-  | <span data-count="49">T</span>Array value -&gt; print_array formatter value sections
-  | <span data-count="91">T</span>Table value -&gt; print_table formatter value sections
+  | <span data-count="50">T</span>Array value -&gt; print_array formatter value sections
+  | <span data-count="97">T</span>Table value -&gt; print_table formatter value sections
 
 and print_value_with_key formatter key toml_value sections =
-  <span data-count="320">l</span>et sections', add_linebreak =
+  <span data-count="329">l</span>et sections', add_linebreak =
     match toml_value with
-    | <span data-count="87">T</span>Table value -&gt;
+    | <span data-count="93">T</span>Table value -&gt;
       let sections_with_key = sections @ [ key ] in
       (*
        * Don't print the intermediate sections, if all values are tables,
        * print [x.y.z] as appropriate instead of [x][y][z]
        *)
-      if not (Types.Table.for_al<span data-count="87">l</span> is_table value) then
-        <span data-count="60">F</span>ormat.fprint<span data-count="60">f</span> formatter "[%s]\n"
+      if not (Types.Table.for_al<span data-count="93">l</span> is_table value) then
+        <span data-count="61">F</span>ormat.fprint<span data-count="61">f</span> formatter "[%s]\n"
           ( sections_with_key
           |&gt; List.map Types.Table.Key.to_string
-          |&gt; <span data-count="60">S</span>tring.conca<span data-count="60">t</span> "." );
-      <span data-count="87">(</span>sections_with_key, false)
+          |&gt; <span data-count="61">S</span>tring.conca<span data-count="61">t</span> "." );
+      <span data-count="93">(</span>sections_with_key, false)
     | <span data-count="18">T</span>Array (NodeTable _tables) -&gt;
       let sections_with_key = sections @ [ key ] in
       (sections_with_key, false)
-    | <span data-count="215">_</span> -&gt;
-      Format.fprintf formatter "%s = " (Types.Table.Key.to_strin<span data-count="215">g</span> key);
-      <span data-count="215">(</span>sections, true)
+    | <span data-count="218">_</span> -&gt;
+      Format.fprintf formatter "%s = " (Types.Table.Key.to_strin<span data-count="218">g</span> key);
+      <span data-count="218">(</span>sections, true)
   in
   print_value formatter toml_value sections';
-  <span data-count="320">i</span>f add_linebreak then <span data-count="215">F</span>ormat.pp_print_char formatter '\n'
+  <span data-count="329">i</span>f add_linebreak then <span data-count="218">F</span>ormat.pp_print_char formatter '\n'
 
 let value formatter toml_value =
   <span data-count="39">p</span>rint_value formatter toml_value [];
@@ -580,20 +580,20 @@ let array formatter toml_array =
     <span data-count="1">F</span>ormat.pp_print_flush formatter ()
 
 let table formatter toml_table =
-  <span data-count="21">p</span>rint_table formatter toml_table [];
-  <span data-count="21">F</span>ormat.pp_print_flush formatter ()
+  <span data-count="23">p</span>rint_table formatter toml_table [];
+  <span data-count="23">F</span>ormat.pp_print_flush formatter ()
 
 let mk_printer fn x =
-  <span data-count="42">l</span>et b = Buffer.create 100 in
-  <span data-count="42">l</span>et fmt = Format.formatter_of_buffer b in
-  <span data-count="42">f</span>n fmt x;
-  <span data-count="40">B</span>uffer.contents b
+  <span data-count="44">l</span>et b = Buffer.create 100 in
+  <span data-count="44">l</span>et fmt = Format.formatter_of_buffer b in
+  <span data-count="44">f</span>n fmt x;
+  <span data-count="42">B</span>uffer.contents b
 
-let string_of_table = mk_printe<span data-count="6">r</span> table
+let string_of_table = mk_printe<span data-count="9">r</span> table
 
-let string_of_value = mk_printe<span data-count="6">r</span> value
+let string_of_value = mk_printe<span data-count="9">r</span> value
 
-let string_of_array = mk_printe<span data-count="6">r</span> array
+let string_of_array = mk_printe<span data-count="9">r</span> array
 </code></pre>
       </div>
     </div>
