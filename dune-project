@@ -1,8 +1,10 @@
-(lang dune 2.7)
+(lang dune 3.0)
 
 (name toml)
 
 (using menhir 2.0)
+
+(using mdx 0.2)
 
 (license LGPL3)
 
@@ -33,10 +35,12 @@
  (depends
   (ocaml
    (>= 4.07))
-  (dune
-   (>= 2.7))
   (menhir :build)
   (ounit2 :with-test)
+  (mdx
+   (and
+    :with-test
+    (>= "2.1")))
   (bisect_ppx
    (and
     :with-test

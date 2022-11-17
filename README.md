@@ -9,31 +9,31 @@ Have a look at the [online documentation]. Otherwise, here's a quickstart guide.
 ### Reading TOML data
 
 ```ocaml
-utop # (* This will return either `Ok $tomltable or `Error $error_with_location *)
-let ok_or_error = Toml.Parser.from_string "key=[1,2]";;
-val ok_or_error : Toml.Parser.result = `Ok <abstr> 
+# (* This will return either `Ok $tomltable or `Error $error_with_location *)
+  let ok_or_error = Toml.Parser.from_string "key=[1,2]";;
+val ok_or_error : Toml.Parser.result = `Ok <abstr>
 
-utop # (* You can use the 'unsafe' combinator to get the result directly, or an
-exception if a parsing error occurred *)
-let parsed_toml = Toml.Parser.(from_string "key=[1,2]" |> unsafe);;
+# (* You can use the 'unsafe' combinator to get the result directly, or an
+  exception if a parsing error occurred *)
+  let parsed_toml = Toml.Parser.(from_string "key=[1,2]" |> unsafe);;
 val parsed_toml : Toml.Types.table = <abstr>
 
-utop # (* Use simple pattern matching to read the value *)
-Toml.Types.Table.find (Toml.Min.key "key") parsed_toml;;
+# (* Use simple pattern matching to read the value *)
+  Toml.Types.Table.find (Toml.Min.key "key") parsed_toml;;
 - : Toml.Types.value = Toml.Types.TArray (Toml.Types.NodeInt [1; 2])
 ```
 
 ### Writing TOML data
 
 ```ocaml
-utop # let toml_data = Toml.of_key_values [
-    Toml.key "ints", Toml.Types.TArray (Toml.Types.NodeInt [1; 2]);
-    Toml.key "string", Toml.Types.TString "string value";
-];;
+# let toml_data = Toml.Min.of_key_values [
+    Toml.Min.key "ints", Toml.Types.TArray (Toml.Types.NodeInt [1; 2]);
+    Toml.Min.key "string", Toml.Types.TString "string value";
+  ];;
 val toml_data : Toml.Types.table = <abstr>
 
-utop # Toml.Printer.string_of_table toml_data;;
-- : bytes = "ints = [1, 2]\nstring = \"string value\"\n"
+# Toml.Printer.string_of_table toml_data;;
+- : string = "ints = [1, 2]\nstring = \"string value\"\n"
 ```
 
 ### Lenses
@@ -43,34 +43,32 @@ The `Toml.Lenses` module provides partial lenses (that is, lenses returning
 `option` types) to manipulate TOML data structures.
 
 ```ocaml
-utop # let toml_data = Toml.Parser.(from_string "
-[this.is.a.deeply.nested.table]
-answer=42" |> unsafe);;
+# let toml_data = Toml.Parser.(from_string
+    "[this.is.a.deeply.nested.table] answer=42" |> unsafe);;
 val toml_data : Toml.Types.table = <abstr>
 
-utop # Toml.Lenses.(get toml_data (
-  key "this" |-- table
-  |-- key "is" |-- table
-  |-- key "a" |-- table
-  |-- key "deeply" |-- table
-  |-- key "nested" |-- table
-  |-- key "table" |-- table
-  |-- key "answer"|-- int ));;
+# Toml.Lenses.(get toml_data (
+    key "this" |-- table
+    |-- key "is" |-- table
+    |-- key "a" |-- table
+    |-- key "deeply" |-- table
+    |-- key "nested" |-- table
+    |-- key "table" |-- table
+    |-- key "answer"|-- int ));;
 - : int option = Some 42
 
-utop # let maybe_toml_data' = Toml.Lenses.(set 2015 toml_data (
-  key "this" |-- table
-  |-- key "is" |-- table
-  |-- key "a" |-- table
-  |-- key "deeply" |-- table
-  |-- key "nested" |-- table
-  |-- key "table" |-- table
-  |-- key "answer"|-- int ));;
+# let maybe_toml_data' = Toml.Lenses.(set 2015 toml_data (
+    key "this" |-- table
+    |-- key "is" |-- table
+    |-- key "a" |-- table
+    |-- key "deeply" |-- table
+    |-- key "nested" |-- table
+    |-- key "table" |-- table
+    |-- key "answer"|-- int ));;
 val maybe_toml_data' : Toml.Types.table option = Some <abstr>
 
-utop # Toml.Printer.string_of_table toml_data';;
-- : bytes = "[this.is.a.deeply.nested.table]\nanswer = 2015\n"
-
+# Toml.Printer.string_of_table (Option.get maybe_toml_data');;
+- : string = "[this.is.a.deeply.nested.table]\nanswer = 2015\n"
 ```
 
 ## Limitations
