@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 7.1.0
+
+* enable type inference for Menhir
+* compatibility with recent dune version
+* remove everything related to cconv
+* bump minimal OCaml version to 4.08
+
 ## 7.0.0
 
 * treat quoted and bare keys the same with respect to comparison
