@@ -44,9 +44,7 @@ let () =
 let () =
   let tbl = unsafe_from_string "[imatable] imakey=0.1" in
   let out = get tbl (key "imatable" |-- table |-- key "imakey" |-- float) in
-  match out with
-  | None -> assert false
-  | Some f -> assert (Float.equal 0.1 f)
+  match out with None -> assert false | Some f -> assert (Float.equal 0.1 f)
 
 let () =
   let tbl = unsafe_from_string "[imatable] imakey=true" in

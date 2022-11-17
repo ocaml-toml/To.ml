@@ -8,10 +8,8 @@ let maybe_escape_char formatter ch =
   | '\t' -> Format.pp_print_string formatter "\\t"
   | _ ->
     let code = Char.code ch in
-    if code <= 31 then
-      Format.fprintf formatter "\\u%04x" code
-    else
-      Format.pp_print_char formatter ch
+    if code <= 31 then Format.fprintf formatter "\\u%04x" code
+    else Format.pp_print_char formatter ch
 
 let print_bool formatter value = Format.pp_print_bool formatter value
 
@@ -20,10 +18,8 @@ let print_int formatter value = Format.pp_print_int formatter value
 let print_float formatter value =
   let fractional = abs_float (value -. floor value) in
   (* Even 1.'s fractional value is not equal to 0. *)
-  if fractional <= epsilon_float then
-    Format.fprintf formatter "%.1f" value
-  else
-    Format.pp_print_float formatter value
+  if fractional <= epsilon_float then Format.fprintf formatter "%.1f" value
+  else Format.pp_print_float formatter value
 
 let print_string formatter value =
   let has_newline = ref false in
@@ -74,9 +70,7 @@ let is_table _ = function
   | TArray (NodeTable _) -> true
   | _ -> false
 
-let is_array_of_table _ = function
-  | TArray (NodeTable _) -> true
-  | _ -> false
+let is_array_of_table _ = function TArray (NodeTable _) -> true | _ -> false
 
 let rec print_array formatter toml_array sections =
   let print_list values ~f:print_item_func =

@@ -2,10 +2,7 @@ let rec list_compare ~f l1 l2 =
   match (l1, l2) with
   | head1 :: tail1, head2 :: tail2 ->
     let comp_result = f head1 head2 in
-    if comp_result != 0 then
-      comp_result
-    else
-      list_compare ~f tail1 tail2
+    if comp_result != 0 then comp_result else list_compare ~f tail1 tail2
   | [], _head2 :: _tail2 -> -1
   | _head1 :: _tail1, [] -> 1
   | [], [] -> 0

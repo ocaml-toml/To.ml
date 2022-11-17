@@ -16,8 +16,7 @@ let parse lexbuf source =
   try
     let result = Menhir_parser.toml Lexer.tomlex lexbuf in
     `Ok result
-  with
-  | (Menhir_parser.Error | Failure _) as error ->
+  with (Menhir_parser.Error | Failure _) as error ->
     let formatted_error_msg =
       match error with
       | Failure failure_msg -> Printf.sprintf ": %s" failure_msg

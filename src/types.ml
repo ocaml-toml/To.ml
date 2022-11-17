@@ -18,12 +18,7 @@ module Table = struct
       let i = ref 0 in
       while !valid_so_far && !i < String.length t do
         match String.unsafe_get t !i with
-        | 'a' .. 'z'
-        | 'A' .. 'Z'
-        | '0' .. '9'
-        | '_'
-        | '-' ->
-          incr i
+        | 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '-' -> incr i
         | _c -> valid_so_far := false
       done;
       !valid_so_far
@@ -33,11 +28,7 @@ module Table = struct
     (* This function needs to go to more effort to escape non-bare strings. The
        current implementation does not conform to the spec as it will not
        escape, e.g., question marks. *)
-    let to_string t =
-      if is_bare t then
-        t
-      else
-        "\"" ^ t ^ "\""
+    let to_string t = if is_bare t then t else "\"" ^ t ^ "\""
 
     let compare = String.compare
   end

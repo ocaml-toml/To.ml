@@ -10,9 +10,7 @@ let assert_table_equal expected testing =
     expected testing
 
 let force_opt opt =
-  match opt with
-  | Some value -> value
-  | None -> failwith "No value"
+  match opt with Some value -> value | None -> failwith "No value"
 
 let get_string k toml_table =
   Toml.Lenses.(get toml_table (key k |-- string)) |> force_opt

@@ -5,10 +5,22 @@
  (wrapped false))
 
 (tests
- (names compare_test key_test lenses_test parser_test printer_test types_test
-   unicode_test)
- (modules compare_test key_test lenses_test parser_test printer_test
-   types_test unicode_test)
+ (names
+  compare_test
+  key_test
+  lenses_test
+  parser_test
+  printer_test
+  types_test
+  unicode_test)
+ (modules
+  compare_test
+  key_test
+  lenses_test
+  parser_test
+  printer_test
+  types_test
+  unicode_test)
  (libraries ounit2 toml threads utils))
 
 (test

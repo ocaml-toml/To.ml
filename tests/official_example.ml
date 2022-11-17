@@ -14,8 +14,7 @@ let expected =
              ; (Toml.Min.key "organization", TString "GitHub")
              ; ( Toml.Min.key "bio"
                , TString "GitHub Cofounder & CEO\nLikes tater tots and beer." )
-             ; (Toml.Min.key "dob", TDate 296638320.)
-               (* 1979-05-27T07:32:00 *)
+             ; (Toml.Min.key "dob", TDate 296638320.) (* 1979-05-27T07:32:00 *)
              ] ) )
     ; ( Toml.Min.key "database"
       , TTable
