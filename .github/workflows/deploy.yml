@@ -15,7 +15,7 @@ jobs:
       - name: setup-ocaml
         uses: avsm/setup-ocaml@v1
         with:
-          ocaml-version: 4.10.0
+          ocaml-version: 4.14.0
       - name: setup-deploy
         run: |
           opam pin add . -y --no-action

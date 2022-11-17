@@ -34,7 +34,7 @@
   "toml is an OCaml library providing a parser, a serializer and a printer for TOML, a minimal configuration file format. Helpful getters to retrieve data as OCaml primitive types are also supplied.")
  (depends
   (ocaml
-   (>= 4.07))
+   (>= 4.08))
   (menhir :build)
   (ounit2 :with-test)
   (mdx
