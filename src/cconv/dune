@@ -1,5 +1,0 @@
-(library
- (public_name toml_cconv)
- (libraries toml cconv)
- (instrumentation
-  (backend bisect_ppx)))

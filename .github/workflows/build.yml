@@ -31,7 +31,7 @@ jobs:
       - name: setup
         run: |
           opam pin add . -y --no-action
-          opam depext -y toml toml_cconv
+          opam depext -y toml
           opam install -y ./*.opam --deps-only --with-test
           opam upgrade --fixup
       - name: build

@@ -73,35 +73,6 @@ utop # Toml.Printer.string_of_table toml_data';;
 
 ```
 
-### `toml_cconv`
-
-A second library, `toml_cconv` for encoding/decoding with [cconv] can be installed if `cconv` is present.
-
-`toml` supports ppx via [cconv]:
-
-``` ocaml
-utop # #require "cconv.ppx";;
-utop # #require "toml.cconv";;
-
-utop # type t = { ints : int list; string : string } [@@deriving cconv];;
-type t = { ints : int list; string : string; }                                                  
-val encode : t CConv.Encode.encoder = {CConv.Encode.emit = <fun>}                               
-val decode : t CConv.Decode.decoder =
-  {CConv.Decode.dec =
-    {CConv.Decode.accept_unit = <fun>; accept_bool = <fun>;
-     accept_float = <fun>; accept_int = <fun>; accept_int32 = <fun>;
-     accept_int64 = <fun>; accept_nativeint = <fun>; accept_char = <fun>;
-     accept_string = <fun>; accept_list = <fun>; accept_option = <fun>;
-     accept_record = <fun>; accept_tuple = <fun>; accept_sum = <fun>}}
-
-utop # let toml = Toml.Parser.(from_string "ints = [1, 2]\nstring = \"string value\"\n"
-                               |> unsafe);;
-val toml : Toml.Types.table = <abstr>
-
-utop # Toml_cconv.decode_exn decode toml;;
-- : t = {ints = [1; 2]; string = "string value"}
-```
-
 ## Limitations
 
 * Keys don't quite follow the TOML standard. Both section keys (eg,
@@ -118,12 +89,11 @@ following characters: space, `\t`, `\n`, `\r`, `.`, `[`, `]`, `"` and `#`.
 
 If you want to add your project, feel free to open a PR.
 
-[cconv]: https://github.com/c-cube/cconv
-[drom]: https://ocamlpro.github.io/drom/
+[drom]: https://ocamlpro.github.io/drom
 [hll]: https://hg.sr.ht/~mmatalka/hll
-[OCaml]: https://ocaml.org/
-[online documentation]: https://ocaml-toml.github.io/To.ml/
+[OCaml]: https://ocaml.org
+[online documentation]: https://ocaml-toml.github.io/To.ml
 [pds]: https://hg.sr.ht/~mmatalka/pds
 [snabela]: https://bitbucket.org/acslab/snabela
-[soupault]: https://soupault.neocities.org/
+[soupault]: https://soupault.neocities.org
 [TOML]: https://toml.io
