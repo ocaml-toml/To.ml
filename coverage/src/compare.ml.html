@@ -28,24 +28,21 @@
 <a id="L4"></a><span > </span>
 <a id="L5"></a><span class="visited"> </span>
 <a id="L6"></a><span class="visited"> </span>
-<a id="L7"></a><span > </span>
+<a id="L7"></a><span class="visited"> </span>
 <a id="L8"></a><span class="visited"> </span>
-<a id="L9"></a><span class="visited"> </span>
-<a id="L10"></a><span class="visited"> </span>
+<a id="L9"></a><span > </span>
+<a id="L10"></a><span > </span>
 <a id="L11"></a><span class="visited"> </span>
-<a id="L12"></a><span > </span>
-<a id="L13"></a><span > </span>
+<a id="L12"></a><span class="visited"> </span>
+<a id="L13"></a><span class="visited"> </span>
 <a id="L14"></a><span class="visited"> </span>
-<a id="L15"></a><span class="visited"> </span>
-<a id="L16"></a><span class="visited"> </span>
+<a id="L15"></a><span > </span>
+<a id="L16"></a><span > </span>
 <a id="L17"></a><span class="visited"> </span>
-<a id="L18"></a><span > </span>
-<a id="L19"></a><span > </span>
-<a id="L20"></a><span class="visited"> </span>
+<a id="L18"></a><span class="visited"> </span>
+<a id="L19"></a><span class="visited"> </span>
+<a id="L20"></a><span > </span>
 <a id="L21"></a><span class="visited"> </span>
-<a id="L22"></a><span class="visited"> </span>
-<a id="L23"></a><span > </span>
-<a id="L24"></a><span class="visited"> </span>
 </pre>
       </div>
       <div id="text-layer">
@@ -71,18 +68,12 @@
 <a href="#L19">19</a>
 <a href="#L20">20</a>
 <a href="#L21">21</a>
-<a href="#L22">22</a>
-<a href="#L23">23</a>
-<a href="#L24">24</a>
 </pre>
 <pre><code class="ocaml">let rec list_compare ~f l1 l2 =
   <span data-count="24">m</span>atch (l1, l2) with
   | <span data-count="15">h</span>ead1 :: tail1, head2 :: tail2 -&gt;
     let comp_result = f head1 head2 in
-    <span data-count="15">i</span>f comp_result != 0 then
-      <span data-count="1">c</span>omp_result
-    else
-      <span data-count="14">l</span>ist_compare ~f tail1 tail2
+    <span data-count="15">i</span>f comp_result != 0 then <span data-count="1">c</span>omp_result else <span data-count="14">l</span>ist_compare ~f tail1 tail2
   | <span data-count="1">[</span>], _head2 :: _tail2 -&gt; -1
   | <span data-count="1">_</span>head1 :: _tail1, [] -&gt; 1
   | <span data-count="7">[</span>], [] -&gt; 0
