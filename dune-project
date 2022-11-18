@@ -35,7 +35,10 @@
  (depends
   (ocaml
    (>= 4.08))
-  (menhir :build)
+  (menhir
+   (and
+    :build
+    (>= 20180528)))
   (ounit2 :with-test)
   (mdx
    (and
