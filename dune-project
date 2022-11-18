@@ -6,7 +6,7 @@
 
 (using mdx 0.2)
 
-(license LGPL3)
+(license LGPL-3.0-only)
 
 (authors
  "Julien Sagot"
